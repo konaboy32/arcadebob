@@ -40,7 +40,7 @@ public class Manic extends GdxTest {
         static float HEIGHT;
         static float MAX_VELOCITY = 5f;
         static float JUMP_VELOCITY = 17f;
-        static float DAMPING = 0.87f;
+        static float DAMPING = 0.0f;
 
         enum State {
             Standing, Walking, Jumping
@@ -73,6 +73,7 @@ public class Manic extends GdxTest {
         }
     };
     private Array<NearbyTile> tiles = new Array<NearbyTile>();
+    TextureRegion standingFrame;
 
     private static final float GRAVITY = -1f;
 
@@ -92,8 +93,9 @@ public class Manic extends GdxTest {
         walks.add(new TextureRegion(koalaTexture, 192 + 10, 328, 20, 32));
         walks.add(new TextureRegion(koalaTexture, 224 + 14, 328, 20, 32));
 
-        jump = new Animation(0.9f, walks.get(0), walks.get(1), walks.get(2), walks.get(3), walks.get(4), walks.get(5), walks.get(6), walks.get(7));
-        walk = new Animation(0.9f, walks.get(0), walks.get(1), walks.get(2), walks.get(3), walks.get(4), walks.get(5), walks.get(6), walks.get(7));
+        walk = new Animation(0.1f, walks.get(0), walks.get(1), walks.get(2), walks.get(3), walks.get(4), walks.get(5), walks.get(6), walks.get(7));
+        jump = walk;
+        standingFrame = walks.get(1);
         walk.setPlayMode(Animation.PlayMode.LOOP);
 
         // figure out the width and height of the koala for collision
@@ -183,7 +185,9 @@ public class Manic extends GdxTest {
         // clamp the velocity to 0 if it's < 1, and set the state to standing
         if (Math.abs(koala.velocity.x) < 1) {
             koala.velocity.x = 0;
-            if (koala.grounded) koala.state = Koala.State.Standing;
+            if (koala.grounded) {
+                koala.state = Koala.State.Standing;
+            }
         }
 
         // multiply by delta time so we know how far we go
@@ -318,9 +322,10 @@ public class Manic extends GdxTest {
     private void renderKoala(float deltaTime) {
         // based on the koala state, get the animation frame
         TextureRegion frame = null;
+        Gdx.app.log("STATE", "" + koala.state);
         switch (koala.state) {
             case Standing:
-                frame = walk.getKeyFrame(koala.stateTime);
+                frame = standingFrame;
                 break;
             case Walking:
                 frame = walk.getKeyFrame(koala.stateTime);
