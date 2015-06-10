@@ -3,6 +3,7 @@ package com.konaboy.arcadebob.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -40,7 +41,7 @@ public class Manic extends GdxTest {
         static float HEIGHT;
         static float MAX_VELOCITY = 5f;
         static float JUMP_VELOCITY = 17f;
-        static float DAMPING = 0.0f;
+        static float DAMPING = 0.8f;
 
         enum State {
             Standing, Walking, Jumping
@@ -54,15 +55,12 @@ public class Manic extends GdxTest {
         boolean grounded = false;
     }
 
-    private int fps = 4;
-    private long diff, start = System.currentTimeMillis();
     private BitmapFont font;
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
     private ShapeRenderer shapeRenderer;
     private OrthographicCamera camera;
     private Texture koalaTexture;
-    private Animation stand;
     private Animation walk;
     private Animation jump;
     private Koala koala;
@@ -115,6 +113,7 @@ public class Manic extends GdxTest {
 
         shapeRenderer = new ShapeRenderer();
         shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.setAutoShapeType(true);
 
         // create the Koala we want to move around the world
         koala = new Koala();
@@ -133,9 +132,6 @@ public class Manic extends GdxTest {
         // get the delta time
         float deltaTime = Gdx.graphics.getDeltaTime();
 
-        // update the koala (process input, collision detection, position update)
-        updateKoala(deltaTime);
-
         // let the camera follow the koala, x-axis only
         camera.update();
 
@@ -147,6 +143,10 @@ public class Manic extends GdxTest {
         // render the koala
         renderKoala(deltaTime);
 
+        // update the koala (process input, collision detection, position update)
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        updateKoala(deltaTime);
+        shapeRenderer.end();
     }
 
 
@@ -164,13 +164,17 @@ public class Manic extends GdxTest {
 
         if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A) || isTouched(0, 0.25f)) {
             koala.velocity.x = -Koala.MAX_VELOCITY;
-            if (koala.grounded) koala.state = Koala.State.Walking;
+            if (koala.grounded) {
+                koala.state = Koala.State.Walking;
+            }
             koala.facesRight = false;
         }
 
         if (Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D) || isTouched(0.25f, 0.5f)) {
             koala.velocity.x = Koala.MAX_VELOCITY;
-            if (koala.grounded) koala.state = Koala.State.Walking;
+            if (koala.grounded) {
+                koala.state = Koala.State.Walking;
+            }
             koala.facesRight = true;
         }
 
@@ -185,7 +189,8 @@ public class Manic extends GdxTest {
         // clamp the velocity to 0 if it's < 1, and set the state to standing
         if (Math.abs(koala.velocity.x) < 1) {
             koala.velocity.x = 0;
-            if (koala.grounded) {
+            if (koala.grounded && !koala.state.equals(Koala.State.Standing)) {
+                standingFrame = walk.getKeyFrame(koala.stateTime);
                 koala.state = Koala.State.Standing;
             }
         }
@@ -198,25 +203,36 @@ public class Manic extends GdxTest {
         // if the koala is moving right, check the tiles to the right of it's
         // right bounding box edge, otherwise check the ones to the left
 
+
+        Rectangle koalaRect = rectPool.obtain();
+        koalaRect.set(koala.position.x, koala.position.y, Koala.WIDTH, Koala.HEIGHT);
+
+        shapeRenderer.set(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.rect(koalaRect.x, koalaRect.y, koalaRect.width, koalaRect.height);
+
         /*
          * HORIZONTAL COLLISIONS
          */
-        Rectangle koalaRect = rectPool.obtain();
-        koalaRect.set(koala.position.x, koala.position.y, Koala.WIDTH, Koala.HEIGHT);
         int startX, startY, endX, endY;
-        if (koala.velocity.x > 0) {
-            startX = endX = (int) (koala.position.x + Koala.WIDTH + koala.velocity.x);
+        if (koala.facesRight) {
+            startX = (int) (koala.position.x + Koala.WIDTH + koala.velocity.x);
+            endX = startX + 1;
         } else {
-            startX = endX = (int) (koala.position.x + koala.velocity.x);
+            endX = (int) Math.ceil((double) koala.position.x + koala.velocity.x);
+            startX = endX - 1;
         }
-        startY = (int) (koala.position.y);
+        startY = (int) koala.position.y;
         endY = (int) (koala.position.y + Koala.HEIGHT);
         getTiles(startX, startY, endX, endY, tiles);
         koalaRect.x += koala.velocity.x;
         for (NearbyTile tile : tiles) {
             if (koalaRect.overlaps(tile.rect) && tile.id != 147) {
+                shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
+                shapeRenderer.setColor(Color.RED);
+                shapeRenderer.rect(tile.rect.x, tile.rect.y, tile.rect.width, tile.rect.height);
                 koala.velocity.x = 0;
-                break;
+//                break; //TODO
             }
         }
         koalaRect.x = koala.position.x;
@@ -227,17 +243,24 @@ public class Manic extends GdxTest {
         // if the koala is moving upwards, check the tiles to the top of it's
         // top bounding box edge, otherwise check the ones to the bottom
         if (koala.velocity.y > 0) {
-            startY = endY = (int) (koala.position.y + Koala.HEIGHT + koala.velocity.y);
+            startY = (int) (koala.position.y + Koala.HEIGHT + koala.velocity.y);
+            endY = startY + 1;
         } else {
-            startY = endY = (int) (koala.position.y + koala.velocity.y);
+            startY = (int) (koala.position.y + koala.velocity.y);
+            endY = startY + 1;
         }
         startX = (int) (koala.position.x);
-        endX = (int) (koala.position.x + Koala.WIDTH);
+        endX = (int) Math.ceil((double) koala.position.x + Koala.WIDTH);
         getTiles(startX, startY, endX, endY, tiles);
         koalaRect.y += koala.velocity.y;
         boolean overlap = false;
         for (NearbyTile tile : tiles) {
             if (koalaRect.overlaps(tile.rect)) {
+
+                shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
+                shapeRenderer.setColor(Color.BLUE);
+                shapeRenderer.rect(tile.rect.x, tile.rect.y, tile.rect.width, tile.rect.height);
+
                 overlap = true;
                 // we actually reset the koala y-position here
                 // so it is just below/above the tile we collided with
@@ -261,7 +284,7 @@ public class Manic extends GdxTest {
                         koala.velocity.y = 0;
                     }
                 }
-                break;
+//                break; //TODO
             }
         }
 
@@ -275,8 +298,6 @@ public class Manic extends GdxTest {
         // unscale the velocity by the inverse delta time and set
         // the latest position
         koala.position.add(koala.velocity);
-        Gdx.app.log("x", "=" + koala.position.x);
-
         koala.velocity.scl(1 / deltaTime);
 
         // Apply damping to the velocity on the x-axis so we don't
@@ -297,6 +318,10 @@ public class Manic extends GdxTest {
     }
 
     private void getTiles(int startX, int startY, int endX, int endY, Array<NearbyTile> tiles) {
+        shapeRenderer.set(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.WHITE);
+        shapeRenderer.rect(startX, startY, endX - startX, endY - startY);
+
         TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("Tile Layer 1");
 
         for (NearbyTile tile : tiles) {
@@ -322,7 +347,7 @@ public class Manic extends GdxTest {
     private void renderKoala(float deltaTime) {
         // based on the koala state, get the animation frame
         TextureRegion frame = null;
-        Gdx.app.log("STATE", "" + koala.state);
+
         switch (koala.state) {
             case Standing:
                 frame = standingFrame;
@@ -336,8 +361,9 @@ public class Manic extends GdxTest {
         }
 
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.end();
+//        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+//        shapeRenderer.rect(koala.position.x, koala.position.y, Koala.WIDTH, Koala.HEIGHT);
+//        shapeRenderer.end();
 
         // draw the koala, depending on the current velocity
         // on the x-axis, draw the koala facing either right
@@ -350,7 +376,7 @@ public class Manic extends GdxTest {
             batch.draw(frame, koala.position.x + Koala.WIDTH, koala.position.y, -Koala.WIDTH, Koala.HEIGHT);
         }
         String message = koala.position.x + " " + koala.position.y + " " + Koala.WIDTH + " " + Koala.HEIGHT;
-        font.draw(batch, message, 0, 16);
+//        font.draw(batch, message, 0, 16);
         batch.end();
 
 
