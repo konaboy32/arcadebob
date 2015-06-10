@@ -18,10 +18,12 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.konaboy.arcadebob.utils.GdxTest;
+
+import java.util.ArrayList;
+
 
 public class Manic extends GdxTest {
 
@@ -52,6 +54,8 @@ public class Manic extends GdxTest {
         boolean grounded = false;
     }
 
+    private int fps = 4;
+    private long diff, start = System.currentTimeMillis();
     private BitmapFont font;
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
@@ -77,19 +81,26 @@ public class Manic extends GdxTest {
 
         // load the koala frames, split them, and assign them to Animations
         koalaTexture = new Texture("ManicSpriteSheet2.png");
-        TextureRegion willy = new TextureRegion(koalaTexture, 2, 328, 512, 32);
 
-        TextureRegion[][] willies = willy.split(32, 32);
-        stand = new Animation(0, willies[0][0]);
-        jump = new Animation(0.25f, willies[0][0], willies[0][1], willies[0][2], willies[0][3], willies[0][4], willies[0][5], willies[0][6], willies[0][7]);
-        walk = new Animation(0.25f, willies[0][0], willies[0][1], willies[0][2], willies[0][3], willies[0][4], willies[0][5], willies[0][6], willies[0][7]);
+        ArrayList<TextureRegion> walks = new ArrayList<TextureRegion>();
+        walks.add(new TextureRegion(koalaTexture, 0 + 2, 328, 20, 32));
+        walks.add(new TextureRegion(koalaTexture, 32 + 6, 328, 20, 32));
+        walks.add(new TextureRegion(koalaTexture, 64 + 10, 328, 20, 32));
+        walks.add(new TextureRegion(koalaTexture, 96 + 14, 328, 20, 32));
+        walks.add(new TextureRegion(koalaTexture, 128 + 2, 328, 20, 32));
+        walks.add(new TextureRegion(koalaTexture, 160 + 6, 328, 20, 32));
+        walks.add(new TextureRegion(koalaTexture, 192 + 10, 328, 20, 32));
+        walks.add(new TextureRegion(koalaTexture, 224 + 14, 328, 20, 32));
+
+        jump = new Animation(0.9f, walks.get(0), walks.get(1), walks.get(2), walks.get(3), walks.get(4), walks.get(5), walks.get(6), walks.get(7));
+        walk = new Animation(0.9f, walks.get(0), walks.get(1), walks.get(2), walks.get(3), walks.get(4), walks.get(5), walks.get(6), walks.get(7));
         walk.setPlayMode(Animation.PlayMode.LOOP);
 
         // figure out the width and height of the koala for collision
         // detection and rendering by converting a koala frames pixel
         // size into world units (1 unit == 32 pixels)
-        Koala.WIDTH = 2;
-        Koala.HEIGHT = 2;
+        Koala.WIDTH = 1 / 16f * 20;
+        Koala.HEIGHT = 1 / 16f * 32;
 
         // load the map, set the unit scale to 1/32 (1 unit == 32 pixels)
         map = new TmxMapLoader().load("tilemap.tmx");
@@ -112,6 +123,7 @@ public class Manic extends GdxTest {
 
     @Override
     public void render() {
+
         // clear the screen
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -138,6 +150,7 @@ public class Manic extends GdxTest {
 
     private void updateKoala(float deltaTime) {
         if (deltaTime == 0) return;
+
         koala.stateTime += deltaTime;
 
         // check input and apply to velocity & state
@@ -282,9 +295,9 @@ public class Manic extends GdxTest {
     private void getTiles(int startX, int startY, int endX, int endY, Array<NearbyTile> tiles) {
         TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("Tile Layer 1");
 
-//        for (NearbyTile tile : tiles) {
-//            rectPool.free(tile.rect);
-//        }
+        for (NearbyTile tile : tiles) {
+            rectPool.free(tile.rect);
+        }
 
         tiles.clear();
         for (int y = startY; y <= endY; y++) {
@@ -318,24 +331,7 @@ public class Manic extends GdxTest {
         }
 
 
-        Rectangle rect = rectPool.obtain();
-
-        if (koala.facesRight) {
-            float divided = koala.position.x / 2;
-            double roundedDown = Math.floor(divided);
-            float x = (float) roundedDown * 2;
-            rect.set(x , koala.position.y,  Koala.WIDTH, Koala.HEIGHT);
-        } else {
-            float divided = koala.position.x / 2;
-            double roundedUp = Math.ceil(divided);
-            float x = (float) roundedUp * 2;
-            rect.set(x , koala.position.y,  Koala.WIDTH, Koala.HEIGHT);
-        }
-
-
-
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.rect(rect.getX(), rect.getY(), rect.width, rect.height);
         shapeRenderer.end();
 
         // draw the koala, depending on the current velocity
@@ -344,9 +340,9 @@ public class Manic extends GdxTest {
         Batch batch = renderer.getBatch();
         batch.begin();
         if (koala.facesRight) {
-            batch.draw(frame, rect.getX(), rect.getY(), rect.width, rect.height);
+            batch.draw(frame, koala.position.x, koala.position.y, Koala.WIDTH, Koala.HEIGHT);
         } else {
-            batch.draw(frame, rect.getX(), rect.getY(), rect.width, rect.height);
+            batch.draw(frame, koala.position.x + Koala.WIDTH, koala.position.y, -Koala.WIDTH, Koala.HEIGHT);
         }
         String message = koala.position.x + " " + koala.position.y + " " + Koala.WIDTH + " " + Koala.HEIGHT;
         font.draw(batch, message, 0, 16);
@@ -354,6 +350,7 @@ public class Manic extends GdxTest {
 
 
     }
+
 
     @Override
     public void dispose() {
