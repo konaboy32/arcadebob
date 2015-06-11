@@ -29,7 +29,7 @@ public class MapLoader {
     }
 
     public void load(Texture texture) {
-        TextureRegion[] blocks = TextureRegionHelper.getRegions(texture, 660, 2, 304, 320, TILE_SIZE);
+        TextureRegion[] blocks = TextureRegionHelper.getRegions(texture, 660, 2, 288, 320, TILE_SIZE);
         String[] lines = properties.getLines();
         Map<String, Integer> regionMappings = properties.getRegionMappings();
         TiledMapTileLayer layer = new TiledMapTileLayer(TILES_X, TILES_Y, TILE_SIZE, TILE_SIZE);

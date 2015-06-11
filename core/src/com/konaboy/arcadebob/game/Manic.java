@@ -46,18 +46,18 @@ public class Manic extends GdxTest {
         static float DAMPING = 0.8f;
 
         enum State {
-            Standing, Walking, Jumping, Falling
+            Standing, Walking, Jumping
         }
 
         final Vector2 position = new Vector2();
         final Vector2 velocity = new Vector2();
-        State state = State.Falling;
+        State state = State.Standing;
         float stateTime = 0;
         boolean facesRight = true;
         boolean grounded = false;
     }
 
-    private static final float CUSHION = 0.2f;
+    private static final float CUSHION = 0.1f;
     private static final float TILE_SIZE = 16f;
     private BitmapFont font;
     private TiledMap map;
@@ -176,7 +176,6 @@ public class Manic extends GdxTest {
         }
 
 
-
         // clamp the velocity to the maximum, x-axis only
         if (Math.abs(koala.velocity.x) > Koala.MAX_VELOCITY) {
             koala.velocity.x = Math.signum(koala.velocity.x) * Koala.MAX_VELOCITY;
@@ -193,43 +192,40 @@ public class Manic extends GdxTest {
 
         koala.velocity.add(0, GRAVITY);
 
-        // multiply by delta time so we know how far we go
-        // in this frame
+        // multiply by delta time so we know how far we go in this frame
         koala.velocity.scl(deltaTime);
-
-        // perform collision detection & response, on each axis, separately
-        // if the koala is moving right, check the tiles to the right of it's
-        // right bounding box edge, otherwise check the ones to the left
 
         Rectangle koalaRect = rectPool.obtain();
         koalaRect.set(koala.position.x, koala.position.y, Koala.WIDTH, Koala.HEIGHT);
-        renderRectangle(koalaRect, ShapeRenderer.ShapeType.Filled, Color.WHITE);
-        renderRectangles(mapLoader.getRectangles(), ShapeRenderer.ShapeType.Line, Color.WHITE);
+
+
         Rectangle leftCushion = new Rectangle(koala.position.x, koala.position.y + CUSHION, CUSHION, Koala.HEIGHT - 2 * CUSHION);
         Rectangle rightCushion = new Rectangle(koala.position.x + koala.WIDTH - CUSHION, koala.position.y + CUSHION, CUSHION, Koala.HEIGHT - 2 * CUSHION);
-        renderRectangle(leftCushion, ShapeRenderer.ShapeType.Filled, Color.BLUE);
-        renderRectangle(rightCushion, ShapeRenderer.ShapeType.Filled, Color.BLUE);
         Rectangle topCushion = new Rectangle(koala.position.x + +CUSHION, koala.position.y + Koala.HEIGHT - CUSHION, Koala.WIDTH - 2 * CUSHION, CUSHION);
         Rectangle bottomCushion = new Rectangle(koala.position.x + CUSHION, koala.position.y, Koala.WIDTH - 2 * CUSHION, CUSHION);
 
-        renderRectangle(topCushion, ShapeRenderer.ShapeType.Filled, Color.BLUE);
-        renderRectangle(bottomCushion, ShapeRenderer.ShapeType.Filled, Color.BLUE);
+//        renderRectangles(mapLoader.getRectangles(), ShapeRenderer.ShapeType.Line, Color.WHITE);
+//        renderRectangle(koalaRect, ShapeRenderer.ShapeType.Filled, Color.WHITE);
+//        renderRectangle(leftCushion, ShapeRenderer.ShapeType.Filled, Color.BLUE);
+//        renderRectangle(rightCushion, ShapeRenderer.ShapeType.Filled, Color.BLUE);
+//        renderRectangle(topCushion, ShapeRenderer.ShapeType.Filled, Color.BLUE);
+//        renderRectangle(bottomCushion, ShapeRenderer.ShapeType.Filled, Color.BLUE);
 
         //left edge detection
         if (CollisionDetector.overlaps(leftCushion, mapLoader.getRectangles()) && !koala.facesRight) {
-//            System.out.println("LEFT COLLIDE!");
+            System.out.println("LEFT COLLIDE!");
             koala.velocity.x = 0;
         }
 
         //right edge detection
         if (CollisionDetector.overlaps(rightCushion, mapLoader.getRectangles()) && koala.facesRight) {
-//            System.out.println("RIGHT COLLIDE!");
+            System.out.println("RIGHT COLLIDE!");
             koala.velocity.x = 0;
         }
 
         //top detection
         if (CollisionDetector.overlaps(topCushion, mapLoader.getRectangles())) {
-//            System.out.println("TOP COLLIDE!");
+            System.out.println("TOP COLLIDE!");
             if (koala.velocity.y > 0) {
                 koala.velocity.y = 0;
             }
@@ -237,18 +233,12 @@ public class Manic extends GdxTest {
 
         //bottom detection
         if (CollisionDetector.overlaps(bottomCushion, mapLoader.getRectangles())) {
-//            System.out.println("BOTTOM COLLIDE!");
+            System.out.println("BOTTOM COLLIDE!");
             koala.grounded = true;
             koala.velocity.y = 0;
             koala.position.y = (float) Math.ceil((double) koala.position.y);
-        } else {
-            if (new Float(koala.velocity.y).compareTo(-0.1f) < 0) {
-                System.out.println(koala.state);
-                koala.velocity.x = 0;
-                koala.state = Koala.State.Falling;
-                koala.grounded = false;
-            }
         }
+
 
 
 
@@ -381,7 +371,6 @@ public class Manic extends GdxTest {
 
         switch (koala.state) {
             case Standing:
-            case Falling:
                 frame = standingFrame;
                 break;
             case Walking:
