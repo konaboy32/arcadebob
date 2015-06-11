@@ -21,9 +21,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+import com.konaboy.arcadebob.helpers.MapLoader;
+import com.konaboy.arcadebob.helpers.TextureRegionHelper;
 import com.konaboy.arcadebob.utils.GdxTest;
-
-import java.util.ArrayList;
 
 
 public class Manic extends GdxTest {
@@ -55,12 +55,13 @@ public class Manic extends GdxTest {
         boolean grounded = false;
     }
 
+    private static final int TILE_SIZE = 16;
     private BitmapFont font;
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
     private ShapeRenderer shapeRenderer;
     private OrthographicCamera camera;
-    private Texture koalaTexture;
+    private Texture manicSpriteSheet;
     private Animation walk;
     private Animation jump;
     private Koala koala;
@@ -71,7 +72,8 @@ public class Manic extends GdxTest {
         }
     };
     private Array<NearbyTile> tiles = new Array<NearbyTile>();
-    TextureRegion standingFrame;
+    private TextureRegion standingFrame;
+    private MapLoader mapLoader;
 
     private static final float GRAVITY = -1f;
 
@@ -79,21 +81,13 @@ public class Manic extends GdxTest {
     public void create() {
 
         // load the koala frames, split them, and assign them to Animations
-        koalaTexture = new Texture("ManicSpriteSheet2.png");
+        manicSpriteSheet = new Texture("ManicSpriteSheet2.png");
 
-        ArrayList<TextureRegion> walks = new ArrayList<TextureRegion>();
-        walks.add(new TextureRegion(koalaTexture, 0 + 2, 328, 20, 32));
-        walks.add(new TextureRegion(koalaTexture, 32 + 6, 328, 20, 32));
-        walks.add(new TextureRegion(koalaTexture, 64 + 10, 328, 20, 32));
-        walks.add(new TextureRegion(koalaTexture, 96 + 14, 328, 20, 32));
-        walks.add(new TextureRegion(koalaTexture, 128 + 2, 328, 20, 32));
-        walks.add(new TextureRegion(koalaTexture, 160 + 6, 328, 20, 32));
-        walks.add(new TextureRegion(koalaTexture, 192 + 10, 328, 20, 32));
-        walks.add(new TextureRegion(koalaTexture, 224 + 14, 328, 20, 32));
-
-        walk = new Animation(0.1f, walks.get(0), walks.get(1), walks.get(2), walks.get(3), walks.get(4), walks.get(5), walks.get(6), walks.get(7));
+        //Create player
+        TextureRegion[] playerRegions = TextureRegionHelper.getPlayerRegions(manicSpriteSheet);
+        walk = new Animation(0.1f, playerRegions);
         jump = walk;
-        standingFrame = walks.get(1);
+        standingFrame = playerRegions[1];
         walk.setPlayMode(Animation.PlayMode.LOOP);
 
         // figure out the width and height of the koala for collision
@@ -101,6 +95,9 @@ public class Manic extends GdxTest {
         // size into world units (1 unit == 32 pixels)
         Koala.WIDTH = 1 / 16f * 20;
         Koala.HEIGHT = 1 / 16f * 32;
+
+        mapLoader = new MapLoader(1);
+        mapLoader.load(manicSpriteSheet);
 
         // load the map, set the unit scale to 1/32 (1 unit == 32 pixels)
         map = new TmxMapLoader().load("tilemap.tmx");
