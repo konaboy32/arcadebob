@@ -15,7 +15,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -55,7 +54,7 @@ public class Manic extends GdxTest {
         boolean grounded = false;
     }
 
-    private static final int TILE_SIZE = 16;
+    private static final float TILE_SIZE = 16f;
     private BitmapFont font;
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
@@ -83,8 +82,6 @@ public class Manic extends GdxTest {
         // load the koala frames, split them, and assign them to Animations
         manicSpriteSheet = new Texture("ManicSpriteSheet2.png");
 
-        //text
-
         //Create player
         TextureRegion[] playerRegions = TextureRegionHelper.getPlayerRegions(manicSpriteSheet);
         walk = new Animation(0.1f, playerRegions);
@@ -94,16 +91,16 @@ public class Manic extends GdxTest {
 
         // figure out the width and height of the koala for collision
         // detection and rendering by converting a koala frames pixel
-        // size into world units (1 unit == 32 pixels)
-        Koala.WIDTH = 1 / 16f * 20;
-        Koala.HEIGHT = 1 / 16f * 32;
+        // size into world units (1 unit == 16 pixels)
+        Koala.WIDTH = 1 / TILE_SIZE * 20;
+        Koala.HEIGHT = 1 / TILE_SIZE * 32;
 
         mapLoader = new MapLoader(1);
         mapLoader.load(manicSpriteSheet);
 
-        // load the map, set the unit scale to 1/32 (1 unit == 32 pixels)
-        map = new TmxMapLoader().load("tilemap.tmx");
-        renderer = new OrthogonalTiledMapRenderer(map, 1 / 32f);
+        // load the map, set the unit scale to 1/16 (1 unit == 16 pixels)
+        map = mapLoader.getMap();
+        renderer = new OrthogonalTiledMapRenderer(map, 1 / TILE_SIZE);
 
         // create an orthographic camera, shows us 32x16 units of the world
         camera = new OrthographicCamera();
@@ -321,7 +318,7 @@ public class Manic extends GdxTest {
         shapeRenderer.setColor(Color.WHITE);
         shapeRenderer.rect(startX, startY, endX - startX, endY - startY);
 
-        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("Tile Layer 1");
+        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(0);
 
         for (NearbyTile tile : tiles) {
             rectPool.free(tile.rect);

@@ -3,8 +3,6 @@ package com.konaboy.arcadebob.helpers;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import java.util.ArrayList;
-
 public class TextureRegionHelper {
 
     public static TextureRegion[] getRegions(Texture texture, int startX, int startY, int sizeX, int sizeY, int regionSize) {
@@ -13,8 +11,8 @@ public class TextureRegionHelper {
         final int totalRegions = xRegions * yRegions;
         TextureRegion[] regions = new TextureRegion[totalRegions];
         int count = 0;
-        for (int x = startX; x < startX + sizeX; x += regionSize) {
-            for (int y = startY; x < startY + sizeY; y += regionSize) {
+        for (int y = startY; y < startY + sizeY; y = y + regionSize) {
+            for (int x = startX; x < startX + sizeX; x = x + regionSize) {
                 regions[count++] = new TextureRegion(texture, x, y, regionSize, regionSize);
             }
         }

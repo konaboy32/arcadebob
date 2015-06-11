@@ -12,12 +12,10 @@ public class LevelProperties {
     private static final int TOTAL_LINES = 16;
     private static final String PREFIX_LINE = "line";
     private static final String PREFIX_MAPPING = "char";
-    private final String filename;
     private Properties prop;
 
     public LevelProperties(String filename) {
-        this.filename = filename;
-        load();
+        load(filename);
     }
 
     public String[] getLines() {
@@ -29,8 +27,8 @@ public class LevelProperties {
         return lines;
     }
 
-    public Map getRegionMappings() {
-        Map mappings = new HashMap();
+    public Map<String, Integer> getRegionMappings() {
+        Map<String, Integer> mappings = new HashMap<String, Integer>();
         int count = 1;
         String value = "";
         while (value != null) {
@@ -38,13 +36,13 @@ public class LevelProperties {
             value = prop.getProperty(key);
             if (value != null) {
                 StringTokenizer tokenizer = new StringTokenizer(value, ",");
-                mappings.put(tokenizer.nextToken(), tokenizer.nextToken());
+                mappings.put(tokenizer.nextToken(), new Integer(tokenizer.nextToken()));
             }
         }
         return mappings;
     }
 
-    private void load() {
+    private void load(String filename) {
         prop = new Properties();
         InputStream input = null;
         try {
