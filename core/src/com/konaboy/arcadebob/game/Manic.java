@@ -83,6 +83,8 @@ public class Manic extends GdxTest {
         // load the koala frames, split them, and assign them to Animations
         manicSpriteSheet = new Texture("ManicSpriteSheet2.png");
 
+        //text
+
         //Create player
         TextureRegion[] playerRegions = TextureRegionHelper.getPlayerRegions(manicSpriteSheet);
         walk = new Animation(0.1f, playerRegions);
