@@ -17,6 +17,7 @@ public class MapLoader {
     public static final int TILE_SIZE = 16;
     public static final int TILES_X = 32;
     public static final int TILES_Y = 16;
+    private static final String KEY_TYPE = "TYPE";
 
     private static final char EMPTY_TILE = '.';
     private TiledMap map;
@@ -40,13 +41,25 @@ public class MapLoader {
                 if (!(tileType == EMPTY_TILE)) {
                     int regionIndex = regionMappings.get("" + tileType);
                     Cell cell = new Cell();
-                    cell.setTile(new StaticTiledMapTile(blocks[regionIndex]));
+                    StaticTiledMapTile tile = new StaticTiledMapTile(blocks[regionIndex]);
+                    tile.getProperties().put(KEY_TYPE, "" + tileType);
+                    cell.setTile(tile);
                     layer.setCell(x, y, cell);
                     rectangles.add(new Rectangle(x, y, 1, 1));
                 }
             }
         }
         map.getLayers().add(layer);
+    }
+
+    public boolean isImpassable(Rectangle rect) {
+        String type = getTileType(rect);
+        return type.equals("3");
+    }
+
+    private String getTileType(Rectangle rect) {
+        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(0);
+        return (String) layer.getCell((int)rect.x, (int)rect.y).getTile().getProperties().get(KEY_TYPE);
     }
 
     public TiledMap getMap() {

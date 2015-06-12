@@ -84,7 +84,7 @@ public class Manic extends GdxTest {
     public void render() {
 
         //Clear the screen
-        Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
+        Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         //Get the delta time and update
@@ -105,53 +105,60 @@ public class Manic extends GdxTest {
 
     private void updatePlayer(float deltaTime) {
         if (deltaTime == 0) return;
-        System.out.println(Player.position + " " + Player.velocity);
         Player.stateTime += deltaTime;
         checkInputs();
-        movePlayer(deltaTime);
         collisionDetect();
+        movePlayer(deltaTime);
     }
 
     private void collisionDetect() {
-        Player.rectangle.set(Player.position.x, Player.position.y, Player.WIDTH, Player.HEIGHT);
 
-        Rectangle leftCushion = new Rectangle(Player.position.x, Player.position.y + CUSHION, CUSHION, Player.HEIGHT - 2 * CUSHION);
-        Rectangle rightCushion = new Rectangle(Player.position.x + Player.WIDTH - CUSHION, Player.position.y + CUSHION, CUSHION, Player.HEIGHT - 2 * CUSHION);
-        Rectangle topCushion = new Rectangle(Player.position.x + +CUSHION, Player.position.y + Player.HEIGHT - CUSHION, Player.WIDTH - 2 * CUSHION, CUSHION);
-        Rectangle bottomCushion = new Rectangle(Player.position.x + CUSHION, Player.position.y, Player.WIDTH - 2 * CUSHION, CUSHION);
+//        renderRectangles(mapLoader.getRectangles(), ShapeRenderer.ShapeType.Line, Color.WHITE);
+//        renderRectangle(Player.rectangle, ShapeRenderer.ShapeType.Filled, Color.WHITE);
 
-        renderRectangles(mapLoader.getRectangles(), ShapeRenderer.ShapeType.Line, Color.WHITE);
-        renderRectangle(Player.rectangle, ShapeRenderer.ShapeType.Filled, Color.WHITE);
-        renderRectangle(leftCushion, ShapeRenderer.ShapeType.Filled, Color.BLUE);
-        renderRectangle(rightCushion, ShapeRenderer.ShapeType.Filled, Color.BLUE);
-        renderRectangle(topCushion, ShapeRenderer.ShapeType.Filled, Color.BLUE);
-        renderRectangle(bottomCushion, ShapeRenderer.ShapeType.Filled, Color.BLUE);
+        Collection<Rectangle> overlaps = CollisionDetector.getOverlappingRectangles(Player.rectangle, mapLoader.getRectangles());
+        renderRectangles(overlaps, ShapeRenderer.ShapeType.Filled, Color.RED);
 
-        //left edge detection
-        if (CollisionDetector.overlaps(leftCushion, mapLoader.getRectangles()) && !Player.facesRight) {
-            System.out.println("LEFT COLLIDE!");
-            Player.velocity.x = 0;
-        }
-
-        //right edge detection
-        if (CollisionDetector.overlaps(rightCushion, mapLoader.getRectangles()) && Player.facesRight) {
-            System.out.println("RIGHT COLLIDE!");
-            Player.velocity.x = 0;
-        }
-
-        //top detection
-        if (CollisionDetector.overlaps(topCushion, mapLoader.getRectangles())) {
-            System.out.println("TOP COLLIDE!");
-            if (Player.velocity.y > 0) {
-                Player.velocity.y = 0;
+        if (Player.velocity.x < 0) {
+            for (Rectangle rect : overlaps) {
+                if (rect.x < Player.position.x && rect.y >= Player.position.y) {
+                    if (mapLoader.isImpassable(rect)) {
+                        Player.velocity.x = 0;
+                        Player.position.x = rect.x + rect.width;
+                    }
+                    break;
+                }
+            }
+        } else if (Player.velocity.x > 0) {
+            for (Rectangle rect : overlaps) {
+                if (rect.x > Player.position.x && rect.y >= Player.position.y) {
+                    if (mapLoader.isImpassable(rect)) {
+                        Player.velocity.x = 0;
+                        Player.position.x = rect.x - Player.WIDTH;
+                    }
+                    break;
+                }
             }
         }
 
-        //bottom detection
-        if (CollisionDetector.overlaps(bottomCushion, mapLoader.getRectangles())) {
-            System.out.println("BOTTOM COLLIDE!");
-            Player.velocity.y = 0;
-            Player.position.y = (float) Math.ceil((double) Player.position.y);
+        if (Player.velocity.y < 0) {
+            for (Rectangle rect : overlaps) {
+                if (rect.y < Player.position.y) {
+                    Player.velocity.y = 0;
+                    Player.position.y = (float) Math.ceil(Player.position.y);
+                    Player.grounded = true;
+                    break;
+                }
+            }
+        } else if (Player.velocity.y > 0) {
+            for (Rectangle rect : overlaps) {
+                if (rect.y > Player.position.y + 1) {
+                    if (mapLoader.isImpassable(rect)) {
+                        Player.velocity.y = 0;
+                    }
+                    break;
+                }
+            }
         }
     }
 
@@ -164,7 +171,7 @@ public class Manic extends GdxTest {
         // clamp the velocity to 0 if it's < 1, and set the state to standing
         if (Math.abs(Player.velocity.x) < 1) {
             Player.velocity.x = 0;
-            if (Player.isGrounded() && !Player.state.equals(Player.State.Standing)) {
+            if (Player.grounded && !Player.state.equals(Player.State.Standing)) {
                 standingFrame = walk.getKeyFrame(Player.stateTime);
                 Player.state = Player.State.Standing;
             }
@@ -183,18 +190,22 @@ public class Manic extends GdxTest {
         // Apply damping to the velocity on the x-axis so we don't
         // walk infinitely once a key was pressed
         Player.velocity.x *= Player.DAMPING;
+
+        //Update the rectangle
+        Player.rectangle.set(Player.position.x, Player.position.y, Player.WIDTH, Player.HEIGHT);
     }
 
     private void checkInputs() {
         // check input and apply to velocity & state
-        if ((Gdx.input.isKeyPressed(Keys.SPACE) || isTouched(0.5f, 1)) && Player.isGrounded()) {
+        if ((Gdx.input.isKeyPressed(Keys.SPACE) || isTouched(0.5f, 1)) && Player.grounded) {
             Player.velocity.y += Player.JUMP_VELOCITY;
             Player.state = Player.State.Jumping;
+            Player.grounded = false;
         }
 
         if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A) || isTouched(0, 0.25f)) {
             Player.velocity.x = -Player.MAX_VELOCITY;
-            if (Player.isGrounded()) {
+            if (Player.grounded) {
                 Player.state = Player.State.Walking;
             }
             Player.facesRight = false;
@@ -202,7 +213,7 @@ public class Manic extends GdxTest {
 
         if (Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D) || isTouched(0.25f, 0.5f)) {
             Player.velocity.x = Player.MAX_VELOCITY;
-            if (Player.isGrounded()) {
+            if (Player.grounded) {
                 Player.state = Player.State.Walking;
             }
             Player.facesRight = true;
@@ -222,6 +233,7 @@ public class Manic extends GdxTest {
     }
 
     private void renderPlayer() {
+        System.out.println(Player.state);
 
         // based on the Player state, get the animation frame
         TextureRegion frame = standingFrame;
