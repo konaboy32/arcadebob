@@ -14,9 +14,10 @@ import java.util.Map;
 
 public class MapLoader {
 
-    private static final int TILE_SIZE = 16;
-    private static final int TILES_X = 32;
-    private static final int TILES_Y = 16;
+    public static final int TILE_SIZE = 16;
+    public static final int TILES_X = 32;
+    public static final int TILES_Y = 16;
+
     private static final char EMPTY_TILE = '.';
     private TiledMap map;
     private Collection<Rectangle> rectangles;

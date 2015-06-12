@@ -107,7 +107,7 @@ public class SuperKoalio extends GdxTest {
         camera.setToOrtho(false, 30, 20);
         camera.update();
 
-        // create the Koala we want to move around the world
+        // create the Player we want to move around the world
         koala = new Koala();
         koala.position.set(20, 20);
     }
