@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -150,7 +151,8 @@ public class Manic extends GdxTest {
                 }
             }
         }
-        overlaps = CollisionDetector.getOverlaps(Player.getBounds(), overlaps);
+
+        CollisionDetector.removeNonOverlaps(Player.getBounds(), overlaps);
         if (Player.goingDown()) {
             for (Rectangle rect : overlaps) {
                 if (rect.y < Player.position.y - rect.width / 2f) {
