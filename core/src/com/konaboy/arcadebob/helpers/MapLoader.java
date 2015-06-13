@@ -22,7 +22,9 @@ public class MapLoader {
     public static final int TILES_X = 32;
     public static final int TILES_Y = 16;
     private static final String KEY_TYPE = "TYPE";
+    private static final String KEY_TOUCHED = "TOUCHED";
     private static final char EMPTY_TILE = '.';
+    private static final Integer COLLAPSE_LIMIT = 14;
 
     private TiledMap map;
     private Collection<Rectangle> rectangles;
@@ -47,7 +49,11 @@ public class MapLoader {
                     int regionIndex = regionMappings.get("" + tileType);
                     Cell cell = new Cell();
                     StaticTiledMapTile tile = new StaticTiledMapTile(blocks[regionIndex]);
-                    tile.getProperties().put(KEY_TYPE, mapCharToTileTypeEnum(tileType));
+                    Enum tileTypeEnum = mapCharToTileTypeEnum(tileType);
+                    tile.getProperties().put(KEY_TYPE, tileTypeEnum);
+                    if (TileType.Collapsible.equals(tileTypeEnum)) {
+                        tile.getProperties().put(KEY_TOUCHED, 0);
+                    }
                     cell.setTile(tile);
                     layer.setCell(x, y, cell);
                     rectangles.add(new Rectangle(x, y, 1, 1));
@@ -69,12 +75,27 @@ public class MapLoader {
         return getTileType(rect).equals(TileType.Impassable);
     }
 
+    public boolean isCollapsible(Rectangle rect) {
+        return getTileType(rect).equals(TileType.Collapsible);
+    }
+
     public boolean isCollectable(Rectangle rect) {
         return getTileType(rect).equals(TileType.Collectable);
     }
 
     public boolean isHazard(Rectangle rect) {
         return getTileType(rect).equals(TileType.Hazard);
+    }
+
+
+    public boolean updateCollapsible(Rectangle rect) {
+        Integer touched = (Integer) layer.getCell((int) rect.x, (int) rect.y).getTile().getProperties().get(KEY_TOUCHED);
+        if (touched > COLLAPSE_LIMIT) {
+            removeTile(rect);
+            return true;
+        }
+        layer.getCell((int) rect.x, (int) rect.y).getTile().getProperties().put(KEY_TOUCHED, ++touched);
+        return false;
     }
 
     public void removeTile(Rectangle rect) {

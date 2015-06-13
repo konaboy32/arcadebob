@@ -28,6 +28,7 @@ public class Manic extends GdxTest {
     private OrthogonalTiledMapRenderer tileRenderer;
     private ShapeRenderer shapeRenderer;
     private SpriteBatch spriteBatch;
+    private Batch tileBatch;
     private OrthographicCamera gameCamera;
     private OrthographicCamera debugCamera;
     private Texture manicSpriteSheet;
@@ -55,6 +56,7 @@ public class Manic extends GdxTest {
 
         //Create renderers and cameras
         tileRenderer = new OrthogonalTiledMapRenderer(mapLoader.getMap(), 1f / MapLoader.TILE_SIZE);
+        tileBatch = tileRenderer.getBatch();
         gameCamera = new OrthographicCamera();
         gameCamera.setToOrtho(false, MapLoader.TILES_X, MapLoader.TILES_Y + DEBUG_LINES);
         gameCamera.update();
@@ -209,6 +211,7 @@ public class Manic extends GdxTest {
                     Player.position.y = rect.y + rect.height;
                     Player.grounded = true;
                     checkIfStandingOnConveyer(rect);
+                    checkIfStandingOnCollapsible(rect, overlaps);
                     break;
                 }
             }
@@ -220,6 +223,15 @@ public class Manic extends GdxTest {
                     }
                     break;
                 }
+            }
+        }
+    }
+
+    private void checkIfStandingOnCollapsible(Rectangle rect, Collection<Rectangle> overlaps) {
+        if (mapLoader.isCollapsible(rect)) {
+            boolean collapsed = mapLoader.updateCollapsible(rect);
+            if (collapsed) {
+                overlaps.remove(rect);
             }
         }
     }
@@ -256,38 +268,33 @@ public class Manic extends GdxTest {
             }
         }
 
+        //apply gravity to y-axis
         Player.velocity.add(0, GRAVITY);
 
         // multiply by delta time so we know how far we go in this frame
         Player.velocity.scl(deltaTime);
 
-        // unscale the velocity by the inverse delta time and set
-        // the latest position
+        // unscale the velocity by the inverse delta time and set to the latest position
         Player.position.add(Player.velocity);
         Player.velocity.scl(1 / deltaTime);
 
-        // Apply damping to the velocity on the x-axis so we don't
-        // walk infinitely once a key was pressed
+        // Apply damping to the velocity so we don't walk infinitely once a key was pressed
         if (Player.grounded) {
             Player.velocity.x *= Player.DAMPING;
         }
     }
 
     private void checkInputs() {
-        // check input and apply to velocity & state
         if ((Gdx.input.isKeyPressed(Keys.SPACE) || isTouched(0.5f, 1))) {
             Player.jump();
         }
-
         if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A) || isTouched(0, 0.25f)) {
             Player.walkLeft();
         }
-
         if (Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D) || isTouched(0.25f, 0.5f)) {
             Player.walkRight();
         }
     }
-
 
     private boolean isTouched(float startX, float endX) {
         // check if any finge is touch the area between startX and endX
@@ -311,14 +318,13 @@ public class Manic extends GdxTest {
                 frame = walk.getKeyFrame(Player.stateTime);
         }
 
-        Batch batch = tileRenderer.getBatch();
-        batch.begin();
+        tileBatch.begin();
         if (Player.facesRight) {
-            batch.draw(frame, Player.position.x, Player.position.y, Player.WIDTH, Player.HEIGHT);
+            tileBatch.draw(frame, Player.position.x, Player.position.y, Player.WIDTH, Player.HEIGHT);
         } else {
-            batch.draw(frame, Player.position.x + Player.WIDTH, Player.position.y, -Player.WIDTH, Player.HEIGHT);
+            tileBatch.draw(frame, Player.position.x + Player.WIDTH, Player.position.y, -Player.WIDTH, Player.HEIGHT);
         }
-        batch.end();
+        tileBatch.end();
     }
 
     private void renderRectangles(Collection<Rectangle> rects, ShapeRenderer.ShapeType shapeType, Color color) {
@@ -336,7 +342,6 @@ public class Manic extends GdxTest {
         shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
         shapeRenderer.end();
     }
-
 
     @Override
     public void dispose() {
