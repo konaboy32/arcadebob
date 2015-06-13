@@ -14,12 +14,16 @@ import java.util.Map;
 
 public class MapLoader {
 
+    private enum TileType {
+        Solid, Impassable, Collapsible, Hazard, ConveyorLeft, ConveyorRight, Collectable, Exit, ExitControl, Special
+    }
+
     public static final int TILE_SIZE = 16;
     public static final int TILES_X = 32;
     public static final int TILES_Y = 16;
     private static final String KEY_TYPE = "TYPE";
-
     private static final char EMPTY_TILE = '.';
+
     private TiledMap map;
     private Collection<Rectangle> rectangles;
     private LevelProperties properties;
@@ -43,7 +47,7 @@ public class MapLoader {
                     int regionIndex = regionMappings.get("" + tileType);
                     Cell cell = new Cell();
                     StaticTiledMapTile tile = new StaticTiledMapTile(blocks[regionIndex]);
-                    tile.getProperties().put(KEY_TYPE, "" + tileType);
+                    tile.getProperties().put(KEY_TYPE, mapCharToTileTypeEnum(tileType));
                     cell.setTile(tile);
                     layer.setCell(x, y, cell);
                     rectangles.add(new Rectangle(x, y, 1, 1));
@@ -54,27 +58,24 @@ public class MapLoader {
     }
 
     public boolean isImpassable(Rectangle rect) {
-        String type = getTileType(rect);
-        return type.equals("3");
+        return getTileType(rect).equals(TileType.Impassable);
     }
 
     public boolean isCollectable(Rectangle rect) {
-        String type = getTileType(rect);
-        return type.equals("9");
+        return getTileType(rect).equals(TileType.Collectable);
     }
 
     public boolean isHazard(Rectangle rect) {
-        String type = getTileType(rect);
-        return type.equals("5") || type.equals("6");
+        return getTileType(rect).equals(TileType.Hazard);
     }
 
     public void removeTile(Rectangle rect) {
-        layer.setCell((int)rect.x, (int)rect.y, null);
+        layer.setCell((int) rect.x, (int) rect.y, null);
         rectangles.remove(rect);
     }
 
-    private String getTileType(Rectangle rect) {
-        return (String) layer.getCell((int)rect.x, (int)rect.y).getTile().getProperties().get(KEY_TYPE);
+    private TileType getTileType(Rectangle rect) {
+        return (TileType) layer.getCell((int) rect.x, (int) rect.y).getTile().getProperties().get(KEY_TYPE);
     }
 
     public TiledMap getMap() {
@@ -83,6 +84,34 @@ public class MapLoader {
 
     public Collection<Rectangle> getRectangles() {
         return rectangles;
+    }
+
+    private TileType mapCharToTileTypeEnum(char s) {
+        switch (s) {
+            case '1':
+            case '2':
+                return TileType.Solid;
+            case '3':
+                return TileType.Impassable;
+            case '4':
+                return TileType.Collapsible;
+            case '5':
+            case '6':
+                return TileType.Hazard;
+            case '7':
+                return TileType.ConveyorLeft;
+            case '8':
+                return TileType.ConveyorRight;
+            case '9':
+                return TileType.Collectable;
+            case 'A':
+                return TileType.Exit;
+            case 'B':
+                return TileType.ExitControl;
+            case 'F':
+                return TileType.Special;
+        }
+        return null;
     }
 
 
