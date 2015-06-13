@@ -65,6 +65,9 @@ public class Manic extends GdxTest {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.setAutoShapeType(true);
 
+        //init player
+        Player.init(mapLoader.getLevelProperties().getStartPosition(), mapLoader.getLevelProperties().startFacingRight());
+
         //Create a font and debug area
         font = new BitmapFont();
         debugRect = new Rectangle(0, MapLoader.TILES_Y, MapLoader.TILES_X, DEBUG_LINES);

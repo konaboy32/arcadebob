@@ -6,6 +6,12 @@ import com.konaboy.arcadebob.helpers.MapLoader;
 
 public class Player {
 
+    public static void init(Vector2 startPosition, boolean b) {
+        position = startPosition;
+        velocity = new Vector2(0, 0);
+        bounds = new Rectangle(position.x, position.y, WIDTH, HEIGHT);
+    }
+
     public enum State {
         Standing, Walking, Jumping
     }
@@ -16,11 +22,11 @@ public class Player {
     public static final float MAX_VELOCITY = 5f;
     public static final float JUMP_VELOCITY = 16f;
     public static final float DAMPING = 0.8f;
-    public static final Vector2 position = new Vector2(1, 1);
-    public static final Vector2 velocity = new Vector2(0, 0);
-    private static final Rectangle bounds = new Rectangle(position.x, position.y, WIDTH, HEIGHT);
 
     //variables
+    public static Vector2 position;
+    public static Vector2 velocity;
+    private static Rectangle bounds;
     public static State state = State.Standing;
     public static float stateTime = 0;
     public static boolean facesRight = true;

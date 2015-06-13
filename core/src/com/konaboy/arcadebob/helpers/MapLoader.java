@@ -86,6 +86,10 @@ public class MapLoader {
         return rectangles;
     }
 
+    public LevelProperties getLevelProperties() {
+        return properties;
+    }
+
     private TileType mapCharToTileTypeEnum(char s) {
         switch (s) {
             case '1':
