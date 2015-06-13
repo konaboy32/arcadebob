@@ -57,6 +57,14 @@ public class MapLoader {
         map.getLayers().add(layer);
     }
 
+    public boolean isConveyerLeft(Rectangle rect) {
+        return getTileType(rect).equals(TileType.ConveyorLeft);
+    }
+
+    public boolean isConveyerRight(Rectangle rect) {
+        return getTileType(rect).equals(TileType.ConveyorRight);
+    }
+
     public boolean isImpassable(Rectangle rect) {
         return getTileType(rect).equals(TileType.Impassable);
     }

@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.konaboy.arcadebob.gameobjects.Player;
@@ -27,7 +26,6 @@ public class Manic extends GdxTest {
 
     public static final int DEBUG_LINES = 4;
     private BitmapFont font;
-    private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
     private ShapeRenderer shapeRenderer;
     private OrthographicCamera camera;
@@ -52,10 +50,9 @@ public class Manic extends GdxTest {
         //load the map
         mapLoader = new MapLoader(1);
         mapLoader.load(manicSpriteSheet);
-        map = mapLoader.getMap();
 
         //Create renderers and cameras
-        renderer = new OrthogonalTiledMapRenderer(map, 1f / MapLoader.TILE_SIZE);
+        renderer = new OrthogonalTiledMapRenderer(mapLoader.getMap(), 1f / MapLoader.TILE_SIZE);
         camera = new OrthographicCamera();
         camera.setToOrtho(false, MapLoader.TILES_X, MapLoader.TILES_Y + DEBUG_LINES);
         camera.update();
@@ -121,10 +118,11 @@ public class Manic extends GdxTest {
             if (mapLoader.isCollectable(rect)) {
                 handleCollectable(rect);
                 overlaps.remove(rect);
-                break;
-            } else if (mapLoader.isHazard(rect)) {
+                return;
+            }
+            if (mapLoader.isHazard(rect)) {
                 handleHazard();
-                break;
+                return;
             }
         }
     }
@@ -167,6 +165,7 @@ public class Manic extends GdxTest {
                     Player.stopY();
                     Player.position.y = rect.y + rect.height;
                     Player.grounded = true;
+                    checkIfStandingOnConveyer(rect);
                     break;
                 }
             }
@@ -182,7 +181,29 @@ public class Manic extends GdxTest {
         }
     }
 
+    private void checkIfStandingOnConveyer(Rectangle rect) {
+        if (mapLoader.isConveyerLeft(rect)) {
+            Player.onLeftConveyer = true;
+            return;
+        }
+        if (mapLoader.isConveyerRight(rect)) {
+            Player.onRightConveyer = true;
+            Player.walkRight();
+            return;
+        }
+        Player.onLeftConveyer = false;
+        Player.onRightConveyer = false;
+    }
+
     private void movePlayer(float deltaTime) {
+        if (Player.onLeftConveyer) {
+            Player.walkLeft();
+        }
+
+        if (Player.onRightConveyer) {
+            Player.walkRight();
+        }
+
         // clamp the velocity to the maximum, x-axis only
         if (Math.abs(Player.velocity.x) > Player.MAX_VELOCITY) {
             Player.velocity.x = Math.signum(Player.velocity.x) * Player.MAX_VELOCITY;

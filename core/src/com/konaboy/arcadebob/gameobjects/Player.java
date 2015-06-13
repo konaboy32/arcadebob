@@ -21,7 +21,7 @@ public class Player {
     public static final float HEIGHT = 1f / MapLoader.TILE_SIZE * 32;
     public static final float MAX_VELOCITY = 5f;
     public static final float JUMP_VELOCITY = 16f;
-    public static final float DAMPING = 0.8f;
+    public static final float DAMPING = 0.5f;
 
     //variables
     public static Vector2 position;
@@ -31,6 +31,8 @@ public class Player {
     public static float stateTime = 0;
     public static boolean facesRight = true;
     public static boolean grounded = true;
+    public static boolean onLeftConveyer = false;
+    public static boolean onRightConveyer = false;
 
     public static boolean goingLeft() {
         return velocity.x < 0;
@@ -69,6 +71,9 @@ public class Player {
     }
 
     public static void walkLeft() {
+        if (onRightConveyer) {
+            return;
+        }
         velocity.x = -MAX_VELOCITY;
         if (grounded) {
             state = State.Walking;
@@ -77,6 +82,9 @@ public class Player {
     }
 
     public static void walkRight() {
+        if (onLeftConveyer) {
+            return;
+        }
         velocity.x = MAX_VELOCITY;
         if (grounded) {
             state = State.Walking;
