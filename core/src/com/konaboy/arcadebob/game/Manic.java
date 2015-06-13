@@ -25,6 +25,7 @@ import java.util.Collection;
 
 public class Manic extends GdxTest {
 
+    public static final int DEBUG_LINES = 4;
     private BitmapFont font;
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
@@ -34,6 +35,7 @@ public class Manic extends GdxTest {
     private Animation walk;
     private TextureRegion standingFrame;
     private MapLoader mapLoader;
+    private Rectangle debugRect;
 
     private static final float GRAVITY = -0.8f;
 
@@ -51,11 +53,11 @@ public class Manic extends GdxTest {
         mapLoader = new MapLoader(1);
         mapLoader.load(manicSpriteSheet);
         map = mapLoader.getMap();
-        renderer = new OrthogonalTiledMapRenderer(map, 1f / MapLoader.TILE_SIZE);
 
-        //Create an orthographic camera, shows us 32x16 units of the world
+        //Create renderers and cameras
+        renderer = new OrthogonalTiledMapRenderer(map, 1f / MapLoader.TILE_SIZE);
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, MapLoader.TILES_X, MapLoader.TILES_Y);
+        camera.setToOrtho(false, MapLoader.TILES_X, MapLoader.TILES_Y + DEBUG_LINES);
         camera.update();
 
         //Create renderer for debugging
@@ -63,11 +65,9 @@ public class Manic extends GdxTest {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.setAutoShapeType(true);
 
-        //Create a font
+        //Create a font and debug area
         font = new BitmapFont();
-
-        //Create the Player we want to move around the world
-        Player.position.set(4, 4);
+        debugRect = new Rectangle(0, MapLoader.TILES_Y, MapLoader.TILES_X, DEBUG_LINES);
     }
 
     @Override
@@ -90,6 +90,12 @@ public class Manic extends GdxTest {
 
         //Update the Player
         updatePlayer(deltaTime);
+
+        debug();
+    }
+
+    private void debug() {
+        renderRectangle(debugRect, ShapeRenderer.ShapeType.Filled, Color.DARK_GRAY);
     }
 
 
