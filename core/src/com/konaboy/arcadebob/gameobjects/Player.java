@@ -56,4 +56,26 @@ public class Player {
     public static void stopY() {
         velocity.y = 0;
     }
+
+    public static void jump() {
+        velocity.y += JUMP_VELOCITY;
+        state = State.Jumping;
+        grounded = false;
+    }
+
+    public static void walkLeft() {
+        velocity.x = -MAX_VELOCITY;
+        if (grounded) {
+            state = State.Walking;
+        }
+        facesRight = false;
+    }
+
+    public static void walkRight() {
+        velocity.x = MAX_VELOCITY;
+        if (grounded) {
+            state = State.Walking;
+        }
+        facesRight = true;
+    }
 }

@@ -22,7 +22,8 @@ public class MapLoader {
     private static final char EMPTY_TILE = '.';
     private TiledMap map;
     private Collection<Rectangle> rectangles;
-    LevelProperties properties;
+    private LevelProperties properties;
+    private TiledMapTileLayer layer;
 
     public MapLoader(int level) {
         this.properties = new LevelProperties("level" + level + ".properties");
@@ -34,7 +35,7 @@ public class MapLoader {
         TextureRegion[] blocks = TextureRegionHelper.getRegions(texture, 660, 2, 288, 320, TILE_SIZE);
         String[] lines = properties.getLines();
         Map<String, Integer> regionMappings = properties.getRegionMappings();
-        TiledMapTileLayer layer = new TiledMapTileLayer(TILES_X, TILES_Y, TILE_SIZE, TILE_SIZE);
+        layer = new TiledMapTileLayer(TILES_X, TILES_Y, TILE_SIZE, TILE_SIZE);
         for (int y = 0; y < TILES_Y; y++) {
             for (int x = 0; x < TILES_X; x++) {
                 char tileType = lines[y].charAt(x);
@@ -57,8 +58,22 @@ public class MapLoader {
         return type.equals("3");
     }
 
+    public boolean isCollectable(Rectangle rect) {
+        String type = getTileType(rect);
+        return type.equals("9");
+    }
+
+    public boolean isHazard(Rectangle rect) {
+        String type = getTileType(rect);
+        return type.equals("5") || type.equals("6");
+    }
+
+    public void removeTile(Rectangle rect) {
+        layer.setCell((int)rect.x, (int)rect.y, null);
+        rectangles.remove(rect);
+    }
+
     private String getTileType(Rectangle rect) {
-        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(0);
         return (String) layer.getCell((int)rect.x, (int)rect.y).getTile().getProperties().get(KEY_TYPE);
     }
 

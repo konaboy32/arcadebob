@@ -102,8 +102,33 @@ public class Manic extends GdxTest {
     }
 
     private void collisionDetect() {
-
         Collection<Rectangle> overlaps = CollisionDetector.getOverlaps(Player.getBounds(), mapLoader.getRectangles());
+        checkObjectCollisions(overlaps);
+        checkMapCollisions(overlaps);
+    }
+
+    private void checkObjectCollisions(Collection<Rectangle> overlaps) {
+        for (Rectangle rect : overlaps) {
+            if (mapLoader.isCollectable(rect)) {
+                handleCollectable(rect);
+                overlaps.remove(rect);
+                break;
+            } else if (mapLoader.isHazard(rect)) {
+                handleHazard();
+                break;
+            }
+        }
+    }
+
+    private void handleHazard() {
+        renderRectangle(Player.getBounds(), ShapeRenderer.ShapeType.Filled, Color.RED);
+    }
+
+    private void handleCollectable(Rectangle rect) {
+        mapLoader.removeTile(rect);
+    }
+
+    private void checkMapCollisions(Collection<Rectangle> overlaps) {
         if (Player.goingLeft()) {
             for (Rectangle rect : overlaps) {
                 if (rect.x < Player.position.x && rect.y > Player.position.y) {
@@ -125,7 +150,6 @@ public class Manic extends GdxTest {
                 }
             }
         }
-
         overlaps = CollisionDetector.getOverlaps(Player.getBounds(), overlaps);
         if (Player.goingDown()) {
             for (Rectangle rect : overlaps) {
@@ -181,25 +205,15 @@ public class Manic extends GdxTest {
     private void checkInputs() {
         // check input and apply to velocity & state
         if ((Gdx.input.isKeyPressed(Keys.SPACE) || isTouched(0.5f, 1)) && Player.grounded) {
-            Player.velocity.y += Player.JUMP_VELOCITY;
-            Player.state = Player.State.Jumping;
-            Player.grounded = false;
+            Player.jump();
         }
 
         if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A) || isTouched(0, 0.25f)) {
-            Player.velocity.x = -Player.MAX_VELOCITY;
-            if (Player.grounded) {
-                Player.state = Player.State.Walking;
-            }
-            Player.facesRight = false;
+            Player.walkLeft();
         }
 
         if (Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D) || isTouched(0.25f, 0.5f)) {
-            Player.velocity.x = Player.MAX_VELOCITY;
-            if (Player.grounded) {
-                Player.state = Player.State.Walking;
-            }
-            Player.facesRight = true;
+            Player.walkRight();
         }
     }
 
@@ -217,7 +231,6 @@ public class Manic extends GdxTest {
     }
 
     private void renderPlayer() {
-        System.out.println(Player.state);
 
         // based on the Player state, get the animation frame
         TextureRegion frame = standingFrame;
