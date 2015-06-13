@@ -6,13 +6,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.konaboy.arcadebob.gameobjects.Player;
 import com.konaboy.arcadebob.helpers.CollisionDetector;
 import com.konaboy.arcadebob.helpers.MapLoader;
@@ -21,19 +19,23 @@ import com.konaboy.arcadebob.utils.GdxTest;
 
 import java.util.Collection;
 
-
 public class Manic extends GdxTest {
 
     public static final int DEBUG_LINES = 4;
+    public static final int WIDTH_PX = 1024;
+    public static final int HEIGHT_PX = 512 + (512 / MapLoader.TILES_Y * Manic.DEBUG_LINES);
     private BitmapFont font;
-    private OrthogonalTiledMapRenderer renderer;
+    private OrthogonalTiledMapRenderer tileRenderer;
     private ShapeRenderer shapeRenderer;
-    private OrthographicCamera camera;
+    private SpriteBatch spriteBatch;
+    private OrthographicCamera gameCamera;
+    private OrthographicCamera debugCamera;
     private Texture manicSpriteSheet;
     private Animation walk;
     private TextureRegion standingFrame;
     private MapLoader mapLoader;
     private Rectangle debugRect;
+    private int touchingTiles;
 
     private static final float GRAVITY = -0.8f;
 
@@ -52,20 +54,25 @@ public class Manic extends GdxTest {
         mapLoader.load(manicSpriteSheet);
 
         //Create renderers and cameras
-        renderer = new OrthogonalTiledMapRenderer(mapLoader.getMap(), 1f / MapLoader.TILE_SIZE);
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, MapLoader.TILES_X, MapLoader.TILES_Y + DEBUG_LINES);
-        camera.update();
+        tileRenderer = new OrthogonalTiledMapRenderer(mapLoader.getMap(), 1f / MapLoader.TILE_SIZE);
+        gameCamera = new OrthographicCamera();
+        gameCamera.setToOrtho(false, MapLoader.TILES_X, MapLoader.TILES_Y + DEBUG_LINES);
+        gameCamera.update();
 
-        //Create renderer for debugging
+        //Create tileRenderer for debugging
         shapeRenderer = new ShapeRenderer();
-        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.setProjectionMatrix(gameCamera.combined);
         shapeRenderer.setAutoShapeType(true);
 
         //init player
         Player.init(mapLoader.getLevelProperties().getStartPosition(), mapLoader.getLevelProperties().startFacingRight());
 
-        //Create a font and debug area
+        //Create font and debug renderer
+        debugCamera = new OrthographicCamera();
+        debugCamera.setToOrtho(false, WIDTH_PX / 2, HEIGHT_PX / 2);
+        debugCamera.update();
+        spriteBatch = new SpriteBatch();
+        spriteBatch.setProjectionMatrix(debugCamera.combined);
         font = new BitmapFont();
         debugRect = new Rectangle(0, MapLoader.TILES_Y, MapLoader.TILES_X, DEBUG_LINES);
     }
@@ -79,11 +86,11 @@ public class Manic extends GdxTest {
 
         //Get the delta time and update
         float deltaTime = Gdx.graphics.getDeltaTime();
-        camera.update();
+        gameCamera.update();
 
         //Render the map
-        renderer.setView(camera);
-        renderer.render();
+        tileRenderer.setView(gameCamera);
+        tileRenderer.render();
 
         //Render the Player
         renderPlayer();
@@ -96,6 +103,32 @@ public class Manic extends GdxTest {
 
     private void debug() {
         renderRectangle(debugRect, ShapeRenderer.ShapeType.Filled, Color.DARK_GRAY);
+        spriteBatch.begin();
+
+        //column 1
+        font.draw(spriteBatch, "Pos: " + formatVector(Player.position), 10, 310);
+        font.draw(spriteBatch, "Vel: " + formatVector(Player.velocity), 10, 290);
+
+        //column 2
+        font.draw(spriteBatch, "State: " + Player.state, 140, 310);
+        font.draw(spriteBatch, "Ground: " + Player.grounded, 140, 290);
+
+        //column 3
+        font.draw(spriteBatch, "ConvLeft: " + Player.onLeftConveyer, 250, 310);
+        font.draw(spriteBatch, "ConvRight: " + Player.onRightConveyer, 250, 290);
+
+        //column 4
+        font.draw(spriteBatch, "Coll: " + touchingTiles, 370, 310);
+
+        spriteBatch.end();
+    }
+
+    private String formatFloat(float f) {
+        return String.format("%.2f", f);
+    }
+
+    private String formatVector(Vector2 v) {
+        return formatFloat(v.x) + " , " + formatFloat(v.y);
     }
 
 
@@ -109,6 +142,7 @@ public class Manic extends GdxTest {
 
     private void collisionDetect() {
         Collection<Rectangle> overlaps = CollisionDetector.getOverlaps(Player.getBounds(), mapLoader.getRectangles());
+        touchingTiles = overlaps.size();
         checkObjectCollisions(overlaps);
         checkMapCollisions(overlaps);
     }
@@ -271,7 +305,7 @@ public class Manic extends GdxTest {
                 frame = walk.getKeyFrame(Player.stateTime);
         }
 
-        Batch batch = renderer.getBatch();
+        Batch batch = tileRenderer.getBatch();
         batch.begin();
         if (Player.facesRight) {
             batch.draw(frame, Player.position.x, Player.position.y, Player.WIDTH, Player.HEIGHT);
