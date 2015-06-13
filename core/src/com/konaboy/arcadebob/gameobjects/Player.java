@@ -65,9 +65,11 @@ public class Player {
     }
 
     public static void jump() {
-        velocity.y += JUMP_VELOCITY;
-        state = State.Jumping;
-        grounded = false;
+        if (grounded) {
+            velocity.y += JUMP_VELOCITY;
+            state = State.Jumping;
+            grounded = false;
+        }
     }
 
     public static void walkLeft() {

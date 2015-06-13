@@ -145,6 +145,10 @@ public class Manic extends GdxTest {
         touchingTiles = overlaps.size();
         checkObjectCollisions(overlaps);
         checkMapCollisions(overlaps);
+        checkGuardianCollisions();
+    }
+
+    private void checkGuardianCollisions() {
     }
 
     private void checkObjectCollisions(Collection<Rectangle> overlaps) {
@@ -269,7 +273,7 @@ public class Manic extends GdxTest {
 
     private void checkInputs() {
         // check input and apply to velocity & state
-        if ((Gdx.input.isKeyPressed(Keys.SPACE) || isTouched(0.5f, 1)) && Player.grounded) {
+        if ((Gdx.input.isKeyPressed(Keys.SPACE) || isTouched(0.5f, 1))) {
             Player.jump();
         }
 
