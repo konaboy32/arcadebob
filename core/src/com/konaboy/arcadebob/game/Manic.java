@@ -45,7 +45,7 @@ public class Manic extends GdxTest {
     private TextureRegion standingFrame;
     private MapLoader mapLoader;
 
-    private static final float GRAVITY = -1f;
+    private static final float GRAVITY = -0.8f;
 
     @Override
     public void create() {
@@ -113,48 +113,48 @@ public class Manic extends GdxTest {
 
     private void collisionDetect() {
 
-//        renderRectangles(mapLoader.getRectangles(), ShapeRenderer.ShapeType.Line, Color.WHITE);
-//        renderRectangle(Player.rectangle, ShapeRenderer.ShapeType.Filled, Color.WHITE);
-
+        Player.rectangle.set(Player.position.x, Player.position.y, Player.WIDTH, Player.HEIGHT);
         Collection<Rectangle> overlaps = CollisionDetector.getOverlappingRectangles(Player.rectangle, mapLoader.getRectangles());
         renderRectangles(overlaps, ShapeRenderer.ShapeType.Filled, Color.RED);
 
-        if (Player.velocity.x < 0) {
+        if (Player.goingLeft()) {
             for (Rectangle rect : overlaps) {
                 if (rect.x < Player.position.x && rect.y >= Player.position.y) {
                     if (mapLoader.isImpassable(rect)) {
-                        Player.velocity.x = 0;
+                        Player.stopVelocityX();
                         Player.position.x = rect.x + rect.width;
+                        Player.canWalkLeft = false;
                     }
                     break;
                 }
             }
-        } else if (Player.velocity.x > 0) {
+        } else if (Player.goingRight()) {
             for (Rectangle rect : overlaps) {
                 if (rect.x > Player.position.x && rect.y >= Player.position.y) {
                     if (mapLoader.isImpassable(rect)) {
-                        Player.velocity.x = 0;
+                        Player.stopVelocityX();
                         Player.position.x = rect.x - Player.WIDTH;
+                        Player.canWalkRight = false;
                     }
                     break;
                 }
             }
         }
 
-        if (Player.velocity.y < 0) {
+        if (Player.goingDown()) {
             for (Rectangle rect : overlaps) {
-                if (rect.y < Player.position.y) {
-                    Player.velocity.y = 0;
-                    Player.position.y = (float) Math.ceil(Player.position.y);
+                if (rect.y < Player.position.y - rect.width / 2f) {
+                    Player.stopVelocityY();
+                    Player.position.y = rect.y + rect.height;
                     Player.grounded = true;
                     break;
                 }
             }
-        } else if (Player.velocity.y > 0) {
+        } else if (Player.goingUp()) {
             for (Rectangle rect : overlaps) {
                 if (rect.y > Player.position.y + 1) {
                     if (mapLoader.isImpassable(rect)) {
-                        Player.velocity.y = 0;
+                        Player.stopVelocityY();
                     }
                     break;
                 }
@@ -170,7 +170,7 @@ public class Manic extends GdxTest {
 
         // clamp the velocity to 0 if it's < 1, and set the state to standing
         if (Math.abs(Player.velocity.x) < 1) {
-            Player.velocity.x = 0;
+            Player.stopVelocityX();
             if (Player.grounded && !Player.state.equals(Player.State.Standing)) {
                 standingFrame = walk.getKeyFrame(Player.stateTime);
                 Player.state = Player.State.Standing;
@@ -190,9 +190,6 @@ public class Manic extends GdxTest {
         // Apply damping to the velocity on the x-axis so we don't
         // walk infinitely once a key was pressed
         Player.velocity.x *= Player.DAMPING;
-
-        //Update the rectangle
-        Player.rectangle.set(Player.position.x, Player.position.y, Player.WIDTH, Player.HEIGHT);
     }
 
     private void checkInputs() {
@@ -204,19 +201,25 @@ public class Manic extends GdxTest {
         }
 
         if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A) || isTouched(0, 0.25f)) {
-            Player.velocity.x = -Player.MAX_VELOCITY;
-            if (Player.grounded) {
-                Player.state = Player.State.Walking;
+            if (Player.canWalkLeft) {
+                Player.canWalkRight = true;
+                Player.velocity.x = -Player.MAX_VELOCITY;
+                if (Player.grounded) {
+                    Player.state = Player.State.Walking;
+                }
+                Player.facesRight = false;
             }
-            Player.facesRight = false;
         }
 
         if (Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D) || isTouched(0.25f, 0.5f)) {
-            Player.velocity.x = Player.MAX_VELOCITY;
-            if (Player.grounded) {
-                Player.state = Player.State.Walking;
+            if (Player.canWalkRight) {
+                Player.canWalkLeft = true;
+                Player.velocity.x = Player.MAX_VELOCITY;
+                if (Player.grounded) {
+                    Player.state = Player.State.Walking;
+                }
+                Player.facesRight = true;
             }
-            Player.facesRight = true;
         }
     }
 
@@ -243,9 +246,6 @@ public class Manic extends GdxTest {
                 frame = walk.getKeyFrame(Player.stateTime);
         }
 
-        // draw the Player, depending on the current velocity
-        // on the x-axis, draw the Player facing either right
-        // or left
         Batch batch = renderer.getBatch();
         batch.begin();
         if (Player.facesRight) {
