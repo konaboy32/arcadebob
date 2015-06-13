@@ -8,8 +8,8 @@ import java.util.Collection;
 
 public class CollisionDetector {
 
-    public static Collection<Rectangle> getOverlappingRectangles(Rectangle rectToCheck, Collection<Rectangle> rects) {
-        Collection<Rectangle> overlaps = new ArrayList<Rectangle>();
+    public static Collection<Rectangle> getOverlaps(final Rectangle rectToCheck, final Collection<Rectangle> rects) {
+        final Collection<Rectangle> overlaps = new ArrayList<Rectangle>();
         for (Rectangle rect : rects) {
             if (rectToCheck.overlaps(rect)) {
                 overlaps.add(rect);
@@ -18,18 +18,4 @@ public class CollisionDetector {
         return overlaps;
     }
 
-    public static boolean overlaps(Rectangle rectToCheck, Collection<Rectangle> rects) {
-        for (Rectangle rect : rects) {
-            if (rectToCheck.overlaps(rect)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static Rectangle getIntersection(Rectangle rectToCheck, Rectangle rect) {
-        Rectangle intersection = new Rectangle();
-        Intersector.intersectRectangles(rectToCheck, rect, intersection);
-        return intersection;
-    }
 }

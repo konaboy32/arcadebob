@@ -14,7 +14,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Pool;
 import com.konaboy.arcadebob.gameobjects.Player;
 import com.konaboy.arcadebob.helpers.CollisionDetector;
 import com.konaboy.arcadebob.helpers.MapLoader;
@@ -26,8 +25,6 @@ import java.util.Collection;
 
 public class Manic extends GdxTest {
 
-    private static final float CUSHION = 0.1f;
-
     private BitmapFont font;
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
@@ -35,13 +32,6 @@ public class Manic extends GdxTest {
     private OrthographicCamera camera;
     private Texture manicSpriteSheet;
     private Animation walk;
-    private Player player;
-    private Pool<Rectangle> rectPool = new Pool<Rectangle>(512, 512) {
-        @Override
-        protected Rectangle newObject() {
-            return new Rectangle();
-        }
-    };
     private TextureRegion standingFrame;
     private MapLoader mapLoader;
 
@@ -113,38 +103,34 @@ public class Manic extends GdxTest {
 
     private void collisionDetect() {
 
-        Player.rectangle.set(Player.position.x, Player.position.y, Player.WIDTH, Player.HEIGHT);
-        Collection<Rectangle> overlaps = CollisionDetector.getOverlappingRectangles(Player.rectangle, mapLoader.getRectangles());
-        renderRectangles(overlaps, ShapeRenderer.ShapeType.Filled, Color.RED);
-
+        Collection<Rectangle> overlaps = CollisionDetector.getOverlaps(Player.getBounds(), mapLoader.getRectangles());
         if (Player.goingLeft()) {
             for (Rectangle rect : overlaps) {
-                if (rect.x < Player.position.x && rect.y >= Player.position.y) {
+                if (rect.x < Player.position.x && rect.y > Player.position.y) {
                     if (mapLoader.isImpassable(rect)) {
-                        Player.stopVelocityX();
+                        Player.stopX();
                         Player.position.x = rect.x + rect.width;
-                        Player.canWalkLeft = false;
                     }
                     break;
                 }
             }
         } else if (Player.goingRight()) {
             for (Rectangle rect : overlaps) {
-                if (rect.x > Player.position.x && rect.y >= Player.position.y) {
+                if (rect.x > Player.position.x && rect.y > Player.position.y) {
                     if (mapLoader.isImpassable(rect)) {
-                        Player.stopVelocityX();
+                        Player.stopX();
                         Player.position.x = rect.x - Player.WIDTH;
-                        Player.canWalkRight = false;
                     }
                     break;
                 }
             }
         }
 
+        overlaps = CollisionDetector.getOverlaps(Player.getBounds(), overlaps);
         if (Player.goingDown()) {
             for (Rectangle rect : overlaps) {
                 if (rect.y < Player.position.y - rect.width / 2f) {
-                    Player.stopVelocityY();
+                    Player.stopY();
                     Player.position.y = rect.y + rect.height;
                     Player.grounded = true;
                     break;
@@ -154,7 +140,7 @@ public class Manic extends GdxTest {
             for (Rectangle rect : overlaps) {
                 if (rect.y > Player.position.y + 1) {
                     if (mapLoader.isImpassable(rect)) {
-                        Player.stopVelocityY();
+                        Player.stopY();
                     }
                     break;
                 }
@@ -170,7 +156,7 @@ public class Manic extends GdxTest {
 
         // clamp the velocity to 0 if it's < 1, and set the state to standing
         if (Math.abs(Player.velocity.x) < 1) {
-            Player.stopVelocityX();
+            Player.stopX();
             if (Player.grounded && !Player.state.equals(Player.State.Standing)) {
                 standingFrame = walk.getKeyFrame(Player.stateTime);
                 Player.state = Player.State.Standing;
@@ -201,27 +187,22 @@ public class Manic extends GdxTest {
         }
 
         if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A) || isTouched(0, 0.25f)) {
-            if (Player.canWalkLeft) {
-                Player.canWalkRight = true;
-                Player.velocity.x = -Player.MAX_VELOCITY;
-                if (Player.grounded) {
-                    Player.state = Player.State.Walking;
-                }
-                Player.facesRight = false;
+            Player.velocity.x = -Player.MAX_VELOCITY;
+            if (Player.grounded) {
+                Player.state = Player.State.Walking;
             }
+            Player.facesRight = false;
         }
 
         if (Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D) || isTouched(0.25f, 0.5f)) {
-            if (Player.canWalkRight) {
-                Player.canWalkLeft = true;
-                Player.velocity.x = Player.MAX_VELOCITY;
-                if (Player.grounded) {
-                    Player.state = Player.State.Walking;
-                }
-                Player.facesRight = true;
+            Player.velocity.x = Player.MAX_VELOCITY;
+            if (Player.grounded) {
+                Player.state = Player.State.Walking;
             }
+            Player.facesRight = true;
         }
     }
+
 
     private boolean isTouched(float startX, float endX) {
         // check if any finge is touch the area between startX and endX
