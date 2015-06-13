@@ -19,9 +19,11 @@ public class Player {
     //constants
     public static final float WIDTH = 1f / MapLoader.TILE_SIZE * 20;
     public static final float HEIGHT = 1f / MapLoader.TILE_SIZE * 32;
-    public static final float MAX_VELOCITY = 5f;
-    public static final float JUMP_VELOCITY = 16f;
+    public static final float MAX_VELOCITY = 3.6f;
+    public static final float JUMP_VELOCITY_Y = 7f;
+    public static final float JUMP_VELOCITY_X = 2.8f;
     public static final float DAMPING = 0.5f;
+
 
     //variables
     public static Vector2 position;
@@ -66,31 +68,32 @@ public class Player {
 
     public static void jump() {
         if (grounded) {
-            velocity.y += JUMP_VELOCITY;
+            velocity.y += JUMP_VELOCITY_Y;
+            if (goingRight()) {
+                velocity.x = JUMP_VELOCITY_X;
+            } else if (goingLeft()) {
+                velocity.x = -JUMP_VELOCITY_X;
+            }
             state = State.Jumping;
             grounded = false;
         }
     }
 
     public static void walkLeft() {
-        if (onRightConveyer) {
+        if (!grounded || onRightConveyer) {
             return;
         }
         velocity.x = -MAX_VELOCITY;
-        if (grounded) {
-            state = State.Walking;
-        }
+        state = State.Walking;
         facesRight = false;
     }
 
     public static void walkRight() {
-        if (onLeftConveyer) {
+        if (!grounded || onLeftConveyer) {
             return;
         }
         velocity.x = MAX_VELOCITY;
-        if (grounded) {
-            state = State.Walking;
-        }
+        state = State.Walking;
         facesRight = true;
     }
 }

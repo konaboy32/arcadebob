@@ -37,7 +37,7 @@ public class Manic extends GdxTest {
     private Rectangle debugRect;
     private int touchingTiles;
 
-    private static final float GRAVITY = -0.8f;
+    private static final float GRAVITY = -0.15f;
 
     @Override
     public void create() {
@@ -65,7 +65,7 @@ public class Manic extends GdxTest {
         shapeRenderer.setAutoShapeType(true);
 
         //init player
-        Player.init(mapLoader.getLevelProperties().getStartPosition(), mapLoader.getLevelProperties().startFacingRight());
+        initPlayer();
 
         //Create font and debug renderer
         debugCamera = new OrthographicCamera();
@@ -167,6 +167,11 @@ public class Manic extends GdxTest {
 
     private void handleHazard() {
         renderRectangle(Player.getBounds(), ShapeRenderer.ShapeType.Filled, Color.RED);
+//        initPlayer();
+    }
+
+    private void initPlayer() {
+        Player.init(mapLoader.getLevelProperties().getStartPosition(), mapLoader.getLevelProperties().startFacingRight());
     }
 
     private void handleCollectable(Rectangle rect) {
@@ -199,7 +204,7 @@ public class Manic extends GdxTest {
         CollisionDetector.removeNonOverlaps(Player.getBounds(), overlaps);
         if (Player.goingDown()) {
             for (Rectangle rect : overlaps) {
-                if (rect.y < Player.position.y - rect.width / 2f) {
+                if (rect.y < Player.position.y - (rect.width * 0.9)) {
                     Player.stopY();
                     Player.position.y = rect.y + rect.height;
                     Player.grounded = true;
@@ -242,11 +247,6 @@ public class Manic extends GdxTest {
             Player.walkRight();
         }
 
-        // clamp the velocity to the maximum, x-axis only
-        if (Math.abs(Player.velocity.x) > Player.MAX_VELOCITY) {
-            Player.velocity.x = Math.signum(Player.velocity.x) * Player.MAX_VELOCITY;
-        }
-
         // clamp the velocity to 0 if it's < 1, and set the state to standing
         if (Math.abs(Player.velocity.x) < 1) {
             Player.stopX();
@@ -268,7 +268,9 @@ public class Manic extends GdxTest {
 
         // Apply damping to the velocity on the x-axis so we don't
         // walk infinitely once a key was pressed
-        Player.velocity.x *= Player.DAMPING;
+        if (Player.grounded) {
+            Player.velocity.x *= Player.DAMPING;
+        }
     }
 
     private void checkInputs() {
