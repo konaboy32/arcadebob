@@ -241,7 +241,7 @@ public class SuperKoalio extends GdxTest {
         koala.velocity.scl(1 / deltaTime);
 
         // Apply damping to the velocity on the x-axis so we don't
-        // walk infinitely once a key was pressed
+        // animation infinitely once a key was pressed
         koala.velocity.x *= Koala.DAMPING;
 
     }

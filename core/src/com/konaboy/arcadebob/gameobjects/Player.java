@@ -1,16 +1,13 @@
 package com.konaboy.arcadebob.gameobjects;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.konaboy.arcadebob.helpers.Constants;
 import com.konaboy.arcadebob.helpers.MapLoader;
 
 public class Player {
-
-    public static void init(Vector2 startPosition, boolean b) {
-        position = startPosition;
-        velocity = new Vector2(0, 0);
-        bounds = new Rectangle(position.x, position.y, WIDTH, HEIGHT);
-    }
 
     public enum State {
         Standing, Walking, Jumping
@@ -35,6 +32,15 @@ public class Player {
     public static boolean grounded = true;
     public static boolean onLeftConveyer = false;
     public static boolean onRightConveyer = false;
+    public static Animation animation;
+    public static TextureRegion standingFrame;
+
+    public static void init(Vector2 spawnPosition, boolean spawnfacingRight) {
+        position = spawnPosition;
+        velocity = new Vector2(0, 0);
+        bounds = new Rectangle(position.x, position.y, WIDTH, HEIGHT);
+        facesRight = spawnfacingRight;
+    }
 
     public static boolean goingLeft() {
         return velocity.x < 0;
@@ -108,5 +114,40 @@ public class Player {
         if (grounded) {
             velocity.x *= DAMPING;
         }
+    }
+
+    public static void move(float deltaTime) {
+        if (onLeftConveyer) {
+            walkLeft();
+        }
+
+        if (onRightConveyer) {
+            walkRight();
+        }
+
+        // clamp the velocity to 0 if it's < 1, and set the state to standing
+        if (Math.abs(velocity.x) < 1) {
+            stopMovingX();
+            if (grounded && !state.equals(State.Standing)) {
+                standingFrame = animation.getKeyFrame(stateTime);
+                state = State.Standing;
+            }
+        }
+
+        //apply gravity to y-axis
+        velocity.add(0, Constants.GRAVITY);
+
+        //clamp fall velocity
+        clampFallVelocity();
+
+        // multiply by delta time so we know how far we go in this frame
+        velocity.scl(deltaTime);
+
+        // unscale the velocity by the inverse delta time and set to the latest position
+        position.add(velocity);
+        velocity.scl(1 / deltaTime);
+
+        // Apply damping to the velocity so we don't animation infinitely once a key was pressed
+        dampHorizontalMovement();
     }
 }

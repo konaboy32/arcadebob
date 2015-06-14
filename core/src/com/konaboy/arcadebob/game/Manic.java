@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.konaboy.arcadebob.gameobjects.Guardian;
 import com.konaboy.arcadebob.gameobjects.Player;
 import com.konaboy.arcadebob.helpers.CollisionDetector;
+import com.konaboy.arcadebob.helpers.Constants;
 import com.konaboy.arcadebob.helpers.MapLoader;
 import com.konaboy.arcadebob.helpers.TextureRegionHelper;
 import com.konaboy.arcadebob.utils.GdxTest;
@@ -22,9 +23,6 @@ import java.util.Collection;
 
 public class Manic extends GdxTest {
 
-    public static final int DEBUG_LINES = 4;
-    public static final int WIDTH_PX = 1024;
-    public static final int HEIGHT_PX = 512 + (512 / MapLoader.TILES_Y * Manic.DEBUG_LINES);
     private BitmapFont font;
     private OrthogonalTiledMapRenderer tileRenderer;
     private ShapeRenderer shapeRenderer;
@@ -33,14 +31,11 @@ public class Manic extends GdxTest {
     private OrthographicCamera gameCamera;
     private OrthographicCamera debugCamera;
     private Texture manicSpriteSheet;
-    private Animation walk;
-    private TextureRegion standingFrame;
     private MapLoader mapLoader;
     private Rectangle debugRect;
     private int touchingTiles;
     private Collection<Guardian> guardians;
 
-    private static final float GRAVITY = -0.15f;
 
     @Override
     public void create() {
@@ -48,9 +43,9 @@ public class Manic extends GdxTest {
         //create player graphics
         manicSpriteSheet = new Texture("ManicSpriteSheet2.png");
         TextureRegion[] playerRegions = TextureRegionHelper.getPlayerRegions(manicSpriteSheet);
-        walk = new Animation(0.1f, playerRegions);
-        standingFrame = playerRegions[1];
-        walk.setPlayMode(Animation.PlayMode.LOOP);
+        Player.animation = new Animation(0.1f, playerRegions);
+        Player.standingFrame = playerRegions[1];
+        Player.animation.setPlayMode(Animation.PlayMode.LOOP);
 
         //load the map from level properties
         mapLoader = new MapLoader(1);
@@ -60,7 +55,7 @@ public class Manic extends GdxTest {
         tileRenderer = new OrthogonalTiledMapRenderer(mapLoader.getMap(), 1f / MapLoader.TILE_SIZE);
         tileBatch = tileRenderer.getBatch();
         gameCamera = new OrthographicCamera();
-        gameCamera.setToOrtho(false, MapLoader.TILES_X, MapLoader.TILES_Y + DEBUG_LINES);
+        gameCamera.setToOrtho(false, MapLoader.TILES_X, MapLoader.TILES_Y + Constants.DEBUG_LINES);
         gameCamera.update();
 
         //Create special shape renderer for debugging
@@ -70,12 +65,12 @@ public class Manic extends GdxTest {
 
         //Create debug renderer, camera and font
         debugCamera = new OrthographicCamera();
-        debugCamera.setToOrtho(false, WIDTH_PX / 2, HEIGHT_PX / 2);
+        debugCamera.setToOrtho(false, Constants.WIDTH_PX / 2, Constants.HEIGHT_PX / 2);
         debugCamera.update();
         spriteBatch = new SpriteBatch();
         spriteBatch.setProjectionMatrix(debugCamera.combined);
         font = new BitmapFont();
-        debugRect = new Rectangle(0, MapLoader.TILES_Y, MapLoader.TILES_X, DEBUG_LINES);
+        debugRect = new Rectangle(0, MapLoader.TILES_Y, MapLoader.TILES_X, Constants.DEBUG_LINES);
 
         //init player
         initPlayer();
@@ -168,11 +163,12 @@ public class Manic extends GdxTest {
         Player.stateTime += deltaTime;
         checkInputs();
         collisionDetect();
-        movePlayer(deltaTime);
+        Player.move(deltaTime);
     }
 
     private void collisionDetect() {
         Collection<Rectangle> overlaps = CollisionDetector.getOverlaps(Player.getBounds(), mapLoader.getRectangles());
+//        drawRectangles(overlaps, ShapeRenderer.ShapeType.Filled, Color.RED);
         touchingTiles = overlaps.size();
         checkObjectCollisions(overlaps);
         checkMapCollisions(overlaps);
@@ -289,41 +285,6 @@ public class Manic extends GdxTest {
         Player.onRightConveyer = false;
     }
 
-    private void movePlayer(float deltaTime) {
-        if (Player.onLeftConveyer) {
-            Player.walkLeft();
-        }
-
-        if (Player.onRightConveyer) {
-            Player.walkRight();
-        }
-
-        // clamp the velocity to 0 if it's < 1, and set the state to standing
-        if (Math.abs(Player.velocity.x) < 1) {
-            Player.stopMovingX();
-            if (Player.grounded && !Player.state.equals(Player.State.Standing)) {
-                standingFrame = walk.getKeyFrame(Player.stateTime);
-                Player.state = Player.State.Standing;
-            }
-        }
-
-        //apply gravity to y-axis
-        Player.velocity.add(0, GRAVITY);
-
-        //clamp fall velocity
-        Player.clampFallVelocity();
-
-        // multiply by delta time so we know how far we go in this frame
-        Player.velocity.scl(deltaTime);
-
-        // unscale the velocity by the inverse delta time and set to the latest position
-        Player.position.add(Player.velocity);
-        Player.velocity.scl(1 / deltaTime);
-
-        // Apply damping to the velocity so we don't walk infinitely once a key was pressed
-        Player.dampHorizontalMovement();
-    }
-
     private void checkInputs() {
         if ((Gdx.input.isKeyPressed(Keys.SPACE) || isTouched(0.5f, 1))) {
             Player.jump();
@@ -350,9 +311,9 @@ public class Manic extends GdxTest {
 
     private void drawPlayer() {
         // based on the Player state, get the animation frame
-        TextureRegion frame = standingFrame;
+        TextureRegion frame = Player.standingFrame;
         if (Player.goingLeft() || Player.goingRight()) {
-            frame = walk.getKeyFrame(Player.stateTime);
+            frame = Player.animation.getKeyFrame(Player.stateTime);
         }
 
         if (Player.facesRight) {
