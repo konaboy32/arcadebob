@@ -76,22 +76,21 @@ public class LevelProperties {
     }
 
     private Guardian createGuardian(int count) {
-        Guardian guardian = new Guardian();
         String startKey = PREFIX_GUARDIAN_START_POSITION + String.format("%02d", count);
-        guardian.startPosition = getPositionProperty(startKey);
-        if (guardian.startPosition == null) {
+        Vector2 startPos = getVectorProperty(startKey);
+        if (startPos == null) {
             return null;
         }
         String endKey = PREFIX_GUARDIAN_END_POSITION + String.format("%02d", count);
-        guardian.endPosition = getPositionProperty(endKey);
-        return guardian;
+        Vector2 endPos = getVectorProperty(endKey);
+        return new Guardian(startPos, endPos);
     }
 
     public Vector2 getPlayerStartPosition() {
-        return getPositionProperty(KEY_PLAYER_START_POSITION);
+        return getVectorProperty(KEY_PLAYER_START_POSITION);
     }
 
-    private Vector2 getPositionProperty(String key) {
+    private Vector2 getVectorProperty(String key) {
         String positionStr = props.getProperty(key);
         if (positionStr == null) {
             return null;

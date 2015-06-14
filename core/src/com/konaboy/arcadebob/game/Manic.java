@@ -103,13 +103,23 @@ public class Manic extends GdxTest {
         tileRenderer.setView(gameCamera);
         tileRenderer.render();
 
-        //Render the Player
-        renderPlayer();
+        //draw player and guardians
+        tileBatch.begin();
+        drawPlayer();
+        tileBatch.end();
+
+        drawGuardians();
 
         //Update the Player
         updatePlayer(deltaTime);
 
         debug();
+    }
+
+    private void drawGuardians() {
+        for (Guardian guardian : guardians) {
+            renderRectangle(guardian.getBounds(), ShapeRenderer.ShapeType.Line, Color.RED);
+        }
     }
 
     private void debug() {
@@ -323,21 +333,18 @@ public class Manic extends GdxTest {
         return false;
     }
 
-    private void renderPlayer() {
-
+    private void drawPlayer() {
         // based on the Player state, get the animation frame
         TextureRegion frame = standingFrame;
         if (Player.goingLeft() || Player.goingRight()) {
             frame = walk.getKeyFrame(Player.stateTime);
         }
 
-        tileBatch.begin();
         if (Player.facesRight) {
             tileBatch.draw(frame, Player.position.x, Player.position.y, Player.WIDTH, Player.HEIGHT);
         } else {
             tileBatch.draw(frame, Player.position.x + Player.WIDTH, Player.position.y, -Player.WIDTH, Player.HEIGHT);
         }
-        tileBatch.end();
     }
 
     private void renderRectangles(Collection<Rectangle> rects, ShapeRenderer.ShapeType shapeType, Color color) {
