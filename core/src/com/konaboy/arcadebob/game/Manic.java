@@ -185,7 +185,7 @@ public class Manic extends GdxTest {
             for (Rectangle rect : overlaps) {
                 if (rect.x < Player.position.x && rect.y > Player.position.y) {
                     if (mapLoader.isImpassable(rect)) {
-                        Player.stopX();
+                        Player.stopMovingX();
                         Player.position.x = rect.x + rect.width;
                     }
                     break;
@@ -195,7 +195,7 @@ public class Manic extends GdxTest {
             for (Rectangle rect : overlaps) {
                 if (rect.x > Player.position.x && rect.y > Player.position.y) {
                     if (mapLoader.isImpassable(rect)) {
-                        Player.stopX();
+                        Player.stopMovingX();
                         Player.position.x = rect.x - Player.WIDTH;
                     }
                     break;
@@ -206,8 +206,8 @@ public class Manic extends GdxTest {
         CollisionDetector.removeNonOverlaps(Player.getBounds(), overlaps);
         if (Player.goingDown()) {
             for (Rectangle rect : overlaps) {
-                if (rect.y < Player.position.y - (rect.width * 0.9)) {
-                    Player.stopY();
+                if (rect.y < Player.position.y - 0.6f) {
+                    Player.stopMovingY();
                     Player.position.y = rect.y + rect.height;
                     Player.grounded = true;
                     checkIfStandingOnConveyer(rect);
@@ -219,7 +219,7 @@ public class Manic extends GdxTest {
             for (Rectangle rect : overlaps) {
                 if (rect.y > Player.position.y + 1) {
                     if (mapLoader.isImpassable(rect)) {
-                        Player.stopY();
+                        Player.stopMovingY();
                     }
                     break;
                 }
@@ -261,7 +261,7 @@ public class Manic extends GdxTest {
 
         // clamp the velocity to 0 if it's < 1, and set the state to standing
         if (Math.abs(Player.velocity.x) < 1) {
-            Player.stopX();
+            Player.stopMovingX();
             if (Player.grounded && !Player.state.equals(Player.State.Standing)) {
                 standingFrame = walk.getKeyFrame(Player.stateTime);
                 Player.state = Player.State.Standing;
@@ -271,6 +271,9 @@ public class Manic extends GdxTest {
         //apply gravity to y-axis
         Player.velocity.add(0, GRAVITY);
 
+        //clamp fall velocity
+        Player.clampFallVelocity();
+
         // multiply by delta time so we know how far we go in this frame
         Player.velocity.scl(deltaTime);
 
@@ -279,9 +282,7 @@ public class Manic extends GdxTest {
         Player.velocity.scl(1 / deltaTime);
 
         // Apply damping to the velocity so we don't walk infinitely once a key was pressed
-        if (Player.grounded) {
-            Player.velocity.x *= Player.DAMPING;
-        }
+        Player.dampHorizontalMovement();
     }
 
     private void checkInputs() {
@@ -312,10 +313,8 @@ public class Manic extends GdxTest {
 
         // based on the Player state, get the animation frame
         TextureRegion frame = standingFrame;
-        switch (Player.state) {
-            case Walking:
-            case Jumping:
-                frame = walk.getKeyFrame(Player.stateTime);
+        if (Player.goingLeft() || Player.goingRight()) {
+            frame = walk.getKeyFrame(Player.stateTime);
         }
 
         tileBatch.begin();

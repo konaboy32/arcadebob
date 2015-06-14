@@ -19,11 +19,11 @@ public class Player {
     //constants
     public static final float WIDTH = 1f / MapLoader.TILE_SIZE * 20;
     public static final float HEIGHT = 1f / MapLoader.TILE_SIZE * 32;
-    public static final float MAX_VELOCITY = 3.6f;
+    public static final float MAX_VELOCITY_X = 3.6f;
     public static final float JUMP_VELOCITY_Y = 7f;
     public static final float JUMP_VELOCITY_X = 2.8f;
+    public static final float MAX_FALL_VELOCITY = -JUMP_VELOCITY_Y;
     public static final float DAMPING = 0.5f;
-
 
     //variables
     public static Vector2 position;
@@ -58,11 +58,11 @@ public class Player {
         return velocity.y < 0;
     }
 
-    public static void stopX() {
+    public static void stopMovingX() {
         velocity.x = 0;
     }
 
-    public static void stopY() {
+    public static void stopMovingY() {
         velocity.y = 0;
     }
 
@@ -83,7 +83,7 @@ public class Player {
         if (!grounded || onRightConveyer) {
             return;
         }
-        velocity.x = -MAX_VELOCITY;
+        velocity.x = -MAX_VELOCITY_X;
         state = State.Walking;
         facesRight = false;
     }
@@ -92,8 +92,20 @@ public class Player {
         if (!grounded || onLeftConveyer) {
             return;
         }
-        velocity.x = MAX_VELOCITY;
+        velocity.x = MAX_VELOCITY_X;
         state = State.Walking;
         facesRight = true;
+    }
+
+    public static void clampFallVelocity() {
+        if (velocity.y < MAX_FALL_VELOCITY) {
+            velocity.y = MAX_FALL_VELOCITY;
+        }
+    }
+
+    public static void dampHorizontalMovement() {
+        if (grounded) {
+            velocity.x *= DAMPING;
+        }
     }
 }
