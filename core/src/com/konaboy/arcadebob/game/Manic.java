@@ -127,7 +127,7 @@ public class Manic extends GdxTest {
 
     private void drawGuardians() {
         for (Guardian guardian : guardians) {
-            drawRectangle(guardian.getBounds(), ShapeRenderer.ShapeType.Line, Color.RED);
+            drawRectangle(guardian.bounds, ShapeRenderer.ShapeType.Line, Color.RED);
         }
     }
 
@@ -180,6 +180,12 @@ public class Manic extends GdxTest {
     }
 
     private void checkGuardianCollisions() {
+        for (Guardian guardian : guardians) {
+            if (guardian.bounds.overlaps(Player.getBounds())) {
+                handleHazard();
+                break;
+            }
+        }
     }
 
     private void checkObjectCollisions(Collection<Rectangle> overlaps) {

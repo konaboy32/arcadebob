@@ -6,12 +6,10 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Guardian {
 
-    private static final float MAX_VELOCITY = Player.MAX_VELOCITY_X;
     public final float WIDTH = 1.5f;
     public final float HEIGHT = 2f;
     public final Vector2 trackStartPosition;
     public final Vector2 trackEndPosition;
-    public final Vector2 position;
     public final Rectangle bounds;
     public final Vector2 velocity;
     public final boolean isHorizontalTrack;
@@ -19,21 +17,14 @@ public class Guardian {
     public Guardian(Vector2 trackStartPosition,
                     Vector2 trackEndPosition,
                     Vector2 spawnPosition,
-                    int spawnVelocity) {
+                    float velocity) {
 
-        //put in spawn position
-        position = spawnPosition;
-
-        //bounds for collision detection
+        //bounds used for position and collision detection
         bounds = new Rectangle(spawnPosition.x, spawnPosition.y, WIDTH, HEIGHT);
 
-        //direction
-        velocity = new Vector2();
-        if (spawnVelocity < 0) {
-            velocity.x = velocity.y = -MAX_VELOCITY;
-        } else {
-            velocity.x = velocity.y = MAX_VELOCITY;
-        }
+        //direction and speed
+        this.velocity = new Vector2();
+        this.velocity.x = this.velocity.y = velocity;
 
         //track that the guardian will travel along
         this.trackStartPosition = trackStartPosition;
@@ -41,40 +32,29 @@ public class Guardian {
         isHorizontalTrack = (int) trackStartPosition.y == (int) trackEndPosition.y;
     }
 
-    public Rectangle getBounds() {
-        bounds.x = position.x;
-        bounds.y = position.y;
-        return bounds;
-    }
-
     public void move(float deltaTime) {
         if (isHorizontalTrack) {
             velocity.x *= deltaTime;
-            position.x += velocity.x;
+            bounds.x += velocity.x;
             velocity.x *= 1 / deltaTime;
             checkHorizontalLimits();
         } else {
             velocity.y *= deltaTime;
-            position.y += velocity.y;
+            bounds.y += velocity.y;
             velocity.y *= 1 / deltaTime;
             checkVerticalLimits();
         }
     }
 
     private void checkHorizontalLimits() {
-        System.out.println(position.x + " " + trackEndPosition.x);
-        if (position.x + WIDTH > trackEndPosition.x) {
-            velocity.x = -MAX_VELOCITY;
-        } else if (position.x < trackStartPosition.x) {
-            velocity.x = MAX_VELOCITY;
+        if ((bounds.x + WIDTH > trackEndPosition.x) || (bounds.x < trackStartPosition.x)) {
+            velocity.x = -velocity.x;
         }
     }
 
     private void checkVerticalLimits() {
-        if (position.y + HEIGHT > trackEndPosition.y) {
-            velocity.y = -MAX_VELOCITY;
-        } else if (position.y < trackStartPosition.y) {
-            velocity.y = MAX_VELOCITY;
+        if ((bounds.y + HEIGHT > trackEndPosition.y) || (bounds.y < trackStartPosition.y)) {
+            velocity.y = -velocity.y;
         }
     }
 }

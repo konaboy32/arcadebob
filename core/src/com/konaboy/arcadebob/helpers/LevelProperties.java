@@ -18,13 +18,13 @@ public class LevelProperties {
     private static final String KEY_PLAYER_START_POSITION = "player.spawn.position";
     private static final String KEY_PLAYER_FACING_RIGHT = "player.spawn.facingright";
 
-    //guardian property key  prefixes
+    //guardian property key prefixes
     private static final String PREFIX_GUARDIAN_TEXTURE = "guardian.texture.";
     private static final String PREFIX_GUARDIAN_TEXTUREREGION = "guardian.textureregion.";
     private static final String PREFIX_GUARDIAN_TRACK_START_POSITION = "guardian.track.start.position.";
     private static final String PREFIX_GUARDIAN_TRACK_END_POSITION = "guardian.track.end.position.";
     private static final String PREFIX_GUARDIAN_SPAWN_POSITION = "guardian.spawn.position.";
-    private static final String PREFIX_GUARDIAN_SPAWN_VELOCITY = "guardian.spawn.velocity.";
+    private static final String PREFIX_GUARDIAN_VELOCITY = "guardian.velocity.";
 
     //common stuff
     private static final String VECTOR_DELIM = ",";
@@ -78,26 +78,28 @@ public class LevelProperties {
     }
 
     private Guardian createGuardian(int count) {
-        String trackStartKey = PREFIX_GUARDIAN_TRACK_START_POSITION + String.format("%02d", count);
+        String key = PREFIX_GUARDIAN_TRACK_START_POSITION + String.format("%02d", count);
 
         //track start position
-        Vector2 trackStartPos = getVectorProperty(trackStartKey);
+        Vector2 trackStartPos = getVectorProperty(key);
         if (trackStartPos == null) {
             return null;
         }
 
         //track end position
-        String trackEndKey = PREFIX_GUARDIAN_TRACK_END_POSITION + String.format("%02d", count);
-        Vector2 trackEndPos = getVectorProperty(trackEndKey);
+        key = PREFIX_GUARDIAN_TRACK_END_POSITION + String.format("%02d", count);
+        Vector2 trackEndPos = getVectorProperty(key);
 
-        //spawn point and direction
-        String spawnPosKey = PREFIX_GUARDIAN_SPAWN_POSITION + String.format("%02d", count);
-        Vector2 spawnPos = getVectorProperty(spawnPosKey);
-        String spawnVelKey = PREFIX_GUARDIAN_SPAWN_VELOCITY + String.format("%02d", count);
-        int spawnVel = Integer.valueOf(props.getProperty(spawnVelKey));
+        //spawn point
+        key = PREFIX_GUARDIAN_SPAWN_POSITION + String.format("%02d", count);
+        Vector2 spawnPos = getVectorProperty(key);
+
+        //velocity
+        key = PREFIX_GUARDIAN_VELOCITY + String.format("%02d", count);
+        float velocity = Float.valueOf(props.getProperty(key));
 
         //create and return the guardian
-        return new Guardian(trackStartPos, trackEndPos, spawnPos, spawnVel);
+        return new Guardian(trackStartPos, trackEndPos, spawnPos, velocity);
     }
 
     public Vector2 getPlayerStartPosition() {
