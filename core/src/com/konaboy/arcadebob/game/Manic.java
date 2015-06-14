@@ -29,19 +29,16 @@ public class Manic extends GdxTest {
     private SpriteBatch spriteBatch;
     private Batch tileBatch;
     private OrthographicCamera gameCamera;
-    private OrthographicCamera debugCamera;
-    private Texture manicSpriteSheet;
     private MapLoader mapLoader;
     private Rectangle debugRect;
     private int touchingTiles;
     private Collection<Guardian> guardians;
 
-
     @Override
     public void create() {
 
         //create player graphics
-        manicSpriteSheet = new Texture("ManicSpriteSheet2.png");
+        Texture manicSpriteSheet = new Texture("ManicSpriteSheet2.png");
         TextureRegion[] playerRegions = TextureRegionHelper.getPlayerRegions(manicSpriteSheet);
         Player.animation = new Animation(0.1f, playerRegions);
         Player.standingFrame = playerRegions[1];
@@ -64,7 +61,7 @@ public class Manic extends GdxTest {
         shapeRenderer.setAutoShapeType(true);
 
         //Create debug renderer, camera and font
-        debugCamera = new OrthographicCamera();
+        OrthographicCamera debugCamera = new OrthographicCamera();
         debugCamera.setToOrtho(false, Constants.WIDTH_PX / 2, Constants.HEIGHT_PX / 2);
         debugCamera.update();
         spriteBatch = new SpriteBatch();
@@ -77,10 +74,6 @@ public class Manic extends GdxTest {
 
         //init guardians
         initGuardians();
-    }
-
-    private void initGuardians() {
-        guardians = mapLoader.getLevelProperties().getGuardians();
     }
 
     @Override
@@ -113,6 +106,10 @@ public class Manic extends GdxTest {
         debug();
     }
 
+    private void initGuardians() {
+        guardians = mapLoader.getLevelProperties().getGuardians();
+    }
+
     private void updateGuardians(float deltaTime) {
         if (deltaTime == 0) return;
         for (Guardian guardian : guardians) {
@@ -129,23 +126,18 @@ public class Manic extends GdxTest {
     private void debug() {
         drawRectangle(debugRect, ShapeRenderer.ShapeType.Filled, Color.DARK_GRAY);
         spriteBatch.begin();
-
         //column 1
         font.draw(spriteBatch, "Pos: " + formatVector(Player.position), 10, 310);
         font.draw(spriteBatch, "Vel: " + formatVector(Player.velocity), 10, 290);
-
         //column 2
         font.draw(spriteBatch, "State: " + Player.state, 140, 310);
         font.draw(spriteBatch, "Ground: " + Player.grounded, 140, 290);
-
         //column 3
         font.draw(spriteBatch, "ConvLeft: " + Player.onLeftConveyer, 250, 310);
         font.draw(spriteBatch, "ConvRight: " + Player.onRightConveyer, 250, 290);
-
         //column 4
         font.draw(spriteBatch, "Coll: " + touchingTiles, 370, 310);
         font.draw(spriteBatch, "Guard: " + guardians.size(), 370, 290);
-
         spriteBatch.end();
     }
 
