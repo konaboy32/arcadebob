@@ -8,11 +8,14 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 public class LevelProperties {
     ;
     private static final String PREFIX_LINE = "line.";
     private static final String PREFIX_MAPPING = "char.";
+    private static final String VECTOR_DELIM = ",";
+
     private Properties prop;
 
     public LevelProperties(String filename) {
@@ -50,8 +53,10 @@ public class LevelProperties {
     }
 
     public Vector2 getStartPosition() {
-        float x = Float.valueOf(prop.getProperty("start.position.x"));
-        float y = Float.valueOf(prop.getProperty("start.position.y"));
+        String pos = prop.getProperty("start.position");
+        StringTokenizer st = new StringTokenizer(pos, VECTOR_DELIM);
+        float x = Float.valueOf(st.nextToken());
+        float y = Float.valueOf(st.nextToken());
         return new Vector2(x, y);
     }
 
