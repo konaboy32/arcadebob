@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.konaboy.arcadebob.gameobjects.Guardian;
 import com.konaboy.arcadebob.gameobjects.Player;
 import com.konaboy.arcadebob.helpers.CollisionDetector;
 import com.konaboy.arcadebob.helpers.MapLoader;
@@ -37,6 +38,7 @@ public class Manic extends GdxTest {
     private MapLoader mapLoader;
     private Rectangle debugRect;
     private int touchingTiles;
+    private Collection<Guardian> guardians;
 
     private static final float GRAVITY = -0.15f;
 
@@ -77,6 +79,13 @@ public class Manic extends GdxTest {
 
         //init player
         initPlayer();
+
+        //init guardians
+        initGuardians();
+    }
+
+    private void initGuardians() {
+        guardians = mapLoader.getLevelProperties().getGuardians();
     }
 
     @Override
@@ -121,6 +130,7 @@ public class Manic extends GdxTest {
 
         //column 4
         font.draw(spriteBatch, "Coll: " + touchingTiles, 370, 310);
+        font.draw(spriteBatch, "Guard: " + guardians.size(), 370, 290);
 
         spriteBatch.end();
     }
@@ -173,7 +183,7 @@ public class Manic extends GdxTest {
     }
 
     private void initPlayer() {
-        Player.init(mapLoader.getLevelProperties().getStartPosition(), mapLoader.getLevelProperties().startFacingRight());
+        Player.init(mapLoader.getLevelProperties().getPlayerStartPosition(), mapLoader.getLevelProperties().startFacingRight());
     }
 
     private void handleCollectable(Rectangle rect) {
