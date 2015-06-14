@@ -212,29 +212,13 @@ public class Manic extends GdxTest {
     }
 
     private void checkMapCollisions(Collection<Rectangle> overlaps) {
-        if (Player.goingLeft()) {
-            for (Rectangle rect : overlaps) {
-                if (rect.x < Player.position.x && rect.y > Player.position.y) {
-                    if (mapLoader.isImpassable(rect)) {
-                        Player.stopMovingX();
-                        Player.position.x = rect.x + rect.width;
-                    }
-                    break;
-                }
-            }
-        } else if (Player.goingRight()) {
-            for (Rectangle rect : overlaps) {
-                if (rect.x > Player.position.x && rect.y > Player.position.y) {
-                    if (mapLoader.isImpassable(rect)) {
-                        Player.stopMovingX();
-                        Player.position.x = rect.x - Player.WIDTH;
-                    }
-                    break;
-                }
-            }
-        }
-
+        checkHorizontalMapCollisions(overlaps);
+        //we may have adjusted position of player horizontally in previous step, less overlaps now...
         CollisionDetector.removeNonOverlaps(Player.getBounds(), overlaps);
+        checkVerticalCollisions(overlaps);
+    }
+
+    private void checkVerticalCollisions(Collection<Rectangle> overlaps) {
         if (Player.goingDown()) {
             for (Rectangle rect : overlaps) {
                 if (rect.y < Player.position.y - 0.6f) {
@@ -251,6 +235,30 @@ public class Manic extends GdxTest {
                 if (rect.y > Player.position.y + 1) {
                     if (mapLoader.isImpassable(rect)) {
                         Player.stopMovingY();
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    private void checkHorizontalMapCollisions(Collection<Rectangle> overlaps) {
+        if (Player.goingLeft()) {
+            for (Rectangle rect : overlaps) {
+                if (rect.x < Player.position.x && rect.y > Player.position.y) {
+                    if (mapLoader.isImpassable(rect)) {
+                        Player.stopMovingX();
+                        Player.position.x = rect.x + rect.width;
+                    }
+                    break;
+                }
+            }
+        } else if (Player.goingRight()) {
+            for (Rectangle rect : overlaps) {
+                if (rect.x > Player.position.x && rect.y > Player.position.y) {
+                    if (mapLoader.isImpassable(rect)) {
+                        Player.stopMovingX();
+                        Player.position.x = rect.x - Player.WIDTH;
                     }
                     break;
                 }
@@ -315,7 +323,6 @@ public class Manic extends GdxTest {
         if (Player.goingLeft() || Player.goingRight()) {
             frame = Player.animation.getKeyFrame(Player.stateTime);
         }
-
         if (Player.facesRight) {
             tileBatch.draw(frame, Player.position.x, Player.position.y, Player.WIDTH, Player.HEIGHT);
         } else {
