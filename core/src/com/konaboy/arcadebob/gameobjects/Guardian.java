@@ -22,9 +22,9 @@ public class Guardian {
         //bounds used for position and collision detection
         bounds = new Rectangle(spawnPosition.x, spawnPosition.y, WIDTH, HEIGHT);
 
-        //direction and speed
+        //direction and speed (relative to player velocity)
         this.velocity = new Vector2();
-        this.velocity.x = this.velocity.y = velocity;
+        this.velocity.x = this.velocity.y = Player.MAX_VELOCITY_X * velocity;
 
         //track that the guardian will travel along
         this.trackStartPosition = trackStartPosition;

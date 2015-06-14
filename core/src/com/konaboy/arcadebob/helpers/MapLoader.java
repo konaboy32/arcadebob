@@ -87,7 +87,6 @@ public class MapLoader {
         return getTileType(rect).equals(TileType.Hazard);
     }
 
-
     public boolean updateCollapsible(Rectangle rect) {
         Integer touched = (Integer) layer.getCell((int) rect.x, (int) rect.y).getTile().getProperties().get(KEY_TOUCHED);
         if (touched > COLLAPSE_LIMIT) {
@@ -143,8 +142,9 @@ public class MapLoader {
                 return TileType.ExitControl;
             case 'F':
                 return TileType.Special;
+            default:
+                return null;
         }
-        return null;
     }
 
 
