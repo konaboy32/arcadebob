@@ -107,8 +107,10 @@ public class Manic extends GdxTest {
         tileBatch.begin();
         drawPlayer();
         tileBatch.end();
+        drawGuardians(); //TODO move inside later
 
-        drawGuardians();
+        //Update the Player
+        updateGuardians(deltaTime);
 
         //Update the Player
         updatePlayer(deltaTime);
@@ -116,14 +118,21 @@ public class Manic extends GdxTest {
         debug();
     }
 
+    private void updateGuardians(float deltaTime) {
+        if (deltaTime == 0) return;
+        for (Guardian guardian : guardians) {
+            guardian.move(deltaTime);
+        }
+    }
+
     private void drawGuardians() {
         for (Guardian guardian : guardians) {
-            renderRectangle(guardian.getBounds(), ShapeRenderer.ShapeType.Line, Color.RED);
+            drawRectangle(guardian.getBounds(), ShapeRenderer.ShapeType.Line, Color.RED);
         }
     }
 
     private void debug() {
-        renderRectangle(debugRect, ShapeRenderer.ShapeType.Filled, Color.DARK_GRAY);
+        drawRectangle(debugRect, ShapeRenderer.ShapeType.Filled, Color.DARK_GRAY);
         spriteBatch.begin();
 
         //column 1
@@ -188,7 +197,7 @@ public class Manic extends GdxTest {
     }
 
     private void handleHazard() {
-        renderRectangle(Player.getBounds(), ShapeRenderer.ShapeType.Filled, Color.RED);
+        drawRectangle(Player.getBounds(), ShapeRenderer.ShapeType.Filled, Color.RED);
 //        initPlayer();
     }
 
@@ -347,7 +356,7 @@ public class Manic extends GdxTest {
         }
     }
 
-    private void renderRectangles(Collection<Rectangle> rects, ShapeRenderer.ShapeType shapeType, Color color) {
+    private void drawRectangles(Collection<Rectangle> rects, ShapeRenderer.ShapeType shapeType, Color color) {
         shapeRenderer.begin(shapeType);
         shapeRenderer.setColor(color);
         for (Rectangle rect : rects) {
@@ -356,10 +365,16 @@ public class Manic extends GdxTest {
         shapeRenderer.end();
     }
 
-    private void renderRectangle(Rectangle rect, ShapeRenderer.ShapeType shapeType, Color color) {
+    private void drawRectangle(Rectangle rect, ShapeRenderer.ShapeType shapeType, Color color) {
         shapeRenderer.begin(shapeType);
         shapeRenderer.setColor(color);
         shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
+        shapeRenderer.end();
+    }
+
+    private void drawLine(Vector2 start, Vector2 end, Color color) {
+        shapeRenderer.begin();
+        shapeRenderer.line(start.x, start.y, end.x, end.y, color, color);
         shapeRenderer.end();
     }
 

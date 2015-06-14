@@ -100,6 +100,7 @@ public class Player {
     public static void clampFallVelocity() {
         if (velocity.y < MAX_FALL_VELOCITY) {
             velocity.y = MAX_FALL_VELOCITY;
+            velocity.x = 0;
         }
     }
 
