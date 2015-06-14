@@ -43,33 +43,30 @@ public class Manic extends GdxTest {
     @Override
     public void create() {
 
-        //Create player graphics
+        //create player graphics
         manicSpriteSheet = new Texture("ManicSpriteSheet2.png");
         TextureRegion[] playerRegions = TextureRegionHelper.getPlayerRegions(manicSpriteSheet);
         walk = new Animation(0.1f, playerRegions);
         standingFrame = playerRegions[1];
         walk.setPlayMode(Animation.PlayMode.LOOP);
 
-        //load the map
+        //load the map from level properties
         mapLoader = new MapLoader(1);
         mapLoader.load(manicSpriteSheet);
 
-        //Create renderers and cameras
+        //Create renderers and cameras for map, its objects and the player
         tileRenderer = new OrthogonalTiledMapRenderer(mapLoader.getMap(), 1f / MapLoader.TILE_SIZE);
         tileBatch = tileRenderer.getBatch();
         gameCamera = new OrthographicCamera();
         gameCamera.setToOrtho(false, MapLoader.TILES_X, MapLoader.TILES_Y + DEBUG_LINES);
         gameCamera.update();
 
-        //Create tileRenderer for debugging
+        //Create special shape renderer for debugging
         shapeRenderer = new ShapeRenderer();
         shapeRenderer.setProjectionMatrix(gameCamera.combined);
         shapeRenderer.setAutoShapeType(true);
 
-        //init player
-        initPlayer();
-
-        //Create font and debug renderer
+        //Create debug renderer, camera and font
         debugCamera = new OrthographicCamera();
         debugCamera.setToOrtho(false, WIDTH_PX / 2, HEIGHT_PX / 2);
         debugCamera.update();
@@ -77,6 +74,9 @@ public class Manic extends GdxTest {
         spriteBatch.setProjectionMatrix(debugCamera.combined);
         font = new BitmapFont();
         debugRect = new Rectangle(0, MapLoader.TILES_Y, MapLoader.TILES_X, DEBUG_LINES);
+
+        //init player
+        initPlayer();
     }
 
     @Override
@@ -237,15 +237,19 @@ public class Manic extends GdxTest {
     }
 
     private void checkIfStandingOnConveyer(Rectangle rect) {
+        //standing on left conveyer
         if (mapLoader.isConveyerLeft(rect)) {
             Player.onLeftConveyer = true;
+            Player.onRightConveyer = false;
             return;
         }
+        //standing on right conveyer
         if (mapLoader.isConveyerRight(rect)) {
             Player.onRightConveyer = true;
-            Player.walkRight();
+            Player.onLeftConveyer = false;
             return;
         }
+        //standing on something else
         Player.onLeftConveyer = false;
         Player.onRightConveyer = false;
     }
