@@ -1,5 +1,6 @@
 package com.konaboy.arcadebob.game;
 
+import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
@@ -17,11 +18,10 @@ import com.konaboy.arcadebob.helpers.CollisionDetector;
 import com.konaboy.arcadebob.helpers.Constants;
 import com.konaboy.arcadebob.helpers.MapLoader;
 import com.konaboy.arcadebob.helpers.TextureRegionHelper;
-import com.konaboy.arcadebob.utils.GdxTest;
 
 import java.util.Collection;
 
-public class Manic extends GdxTest {
+public class Manic extends ApplicationAdapter {
 
     private BitmapFont font;
     private OrthogonalTiledMapRenderer tileRenderer;
