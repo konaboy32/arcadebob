@@ -38,7 +38,7 @@ public class Manic extends ApplicationAdapter {
     public void create() {
 
         //create player graphics
-        Texture manicSpriteSheet = new Texture("ManicSpriteSheet2.png");
+        Texture manicSpriteSheet = new Texture("manic_sprites.png");
         TextureRegion[] playerRegions = TextureRegionHelper.getPlayerRegions(manicSpriteSheet);
         Player.animation = new Animation(0.1f, playerRegions);
         Player.standingFrame = playerRegions[1];
