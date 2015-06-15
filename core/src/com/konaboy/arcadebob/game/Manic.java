@@ -239,7 +239,6 @@ public class Manic extends GdxTest {
             for (Rectangle rect : overlaps) {
                 if (rect.x < Player.position.x && rect.y > Player.position.y) {
                     if (mapLoader.isImpassable(rect)) {
-                        Player.stopMovingX();
                         Player.position.x = rect.x + rect.width;
                     }
                     break;
@@ -249,7 +248,6 @@ public class Manic extends GdxTest {
             for (Rectangle rect : overlaps) {
                 if (rect.x > Player.position.x && rect.y > Player.position.y) {
                     if (mapLoader.isImpassable(rect)) {
-                        Player.stopMovingX();
                         Player.position.x = rect.x - Player.WIDTH;
                     }
                     break;

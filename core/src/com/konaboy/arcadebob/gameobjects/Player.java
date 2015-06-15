@@ -19,6 +19,7 @@ public class Player {
     public static final float MAX_VELOCITY_X = 3.6f;
     public static final float JUMP_VELOCITY_Y = 7f;
     public static final float JUMP_VELOCITY_X = 2.8f;
+    public static final float FALL_THRESHOLD = -1f;
     public static final float MAX_FALL_VELOCITY = -JUMP_VELOCITY_Y;
     public static final float DAMPING = 0.5f;
 
@@ -104,6 +105,11 @@ public class Player {
     }
 
     public static void clampFallVelocity() {
+        //stop horizontal movement if walking of platforms
+        if (velocity.y < FALL_THRESHOLD && !state.equals(State.Jumping)) {
+            velocity.x = 0;
+        }
+        //limit vertical speed if falling
         if (velocity.y < MAX_FALL_VELOCITY) {
             velocity.y = MAX_FALL_VELOCITY;
             velocity.x = 0;
