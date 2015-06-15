@@ -3,6 +3,7 @@ package com.konaboy.arcadebob.helpers;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
@@ -93,7 +94,9 @@ public class MapLoader {
             removeTile(rect);
             return true;
         }
-        layer.getCell((int) rect.x, (int) rect.y).getTile().getProperties().put(KEY_TOUCHED, ++touched);
+        TiledMapTile tile = layer.getCell((int) rect.x, (int) rect.y).getTile();
+        tile.setOffsetY(-touched);
+        tile.getProperties().put(KEY_TOUCHED, ++touched);
         return false;
     }
 
