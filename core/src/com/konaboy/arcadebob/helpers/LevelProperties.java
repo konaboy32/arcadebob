@@ -28,6 +28,7 @@ public class LevelProperties {
 
     //common stuff
     private static final String VECTOR_DELIM = ",";
+    private static final String[] MAPPING_KEYS = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "F"};
     private Properties props;
 
     public LevelProperties(String filename) {
@@ -45,18 +46,9 @@ public class LevelProperties {
 
     public Map<String, Integer> getRegionMappings() {
         Map<String, Integer> mappings = new HashMap<String, Integer>();
-        mappings.put("1", Integer.valueOf(props.getProperty(PREFIX_MAPPING + "1")));
-        mappings.put("2", Integer.valueOf(props.getProperty(PREFIX_MAPPING + "2")));
-        mappings.put("3", Integer.valueOf(props.getProperty(PREFIX_MAPPING + "3")));
-        mappings.put("4", Integer.valueOf(props.getProperty(PREFIX_MAPPING + "4")));
-        mappings.put("5", Integer.valueOf(props.getProperty(PREFIX_MAPPING + "5")));
-        mappings.put("6", Integer.valueOf(props.getProperty(PREFIX_MAPPING + "6")));
-        mappings.put("7", Integer.valueOf(props.getProperty(PREFIX_MAPPING + "7")));
-        mappings.put("8", Integer.valueOf(props.getProperty(PREFIX_MAPPING + "8")));
-        mappings.put("9", Integer.valueOf(props.getProperty(PREFIX_MAPPING + "9")));
-        mappings.put("A", Integer.valueOf(props.getProperty(PREFIX_MAPPING + "A")));
-        mappings.put("B", Integer.valueOf(props.getProperty(PREFIX_MAPPING + "B")));
-        mappings.put("F", Integer.valueOf(props.getProperty(PREFIX_MAPPING + "F")));
+        for (String mappingKey : MAPPING_KEYS) {
+            mappings.put(mappingKey, Integer.valueOf(props.getProperty(PREFIX_MAPPING + mappingKey)));
+        }
         return mappings;
     }
 
@@ -102,7 +94,7 @@ public class LevelProperties {
         return new Guardian(trackStartPos, trackEndPos, spawnPos, velocity);
     }
 
-    public Vector2 getPlayerStartPosition() {
+    public Vector2 getPlayerSpawnPosition() {
         return getVectorProperty(KEY_PLAYER_START_POSITION);
     }
 

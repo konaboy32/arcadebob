@@ -79,15 +79,15 @@ public class Manic extends ApplicationAdapter {
     @Override
     public void render() {
 
-        //Clear the screen
+        //clear the screen
         Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        //Get the delta time and update
+        //get the delta time and update
         float deltaTime = Gdx.graphics.getDeltaTime();
         gameCamera.update();
 
-        //Render the map
+        //render the map
         tileRenderer.setView(gameCamera);
         tileRenderer.render();
 
@@ -97,12 +97,13 @@ public class Manic extends ApplicationAdapter {
         tileBatch.end();
         drawGuardians(); //TODO move inside later
 
-        //Update the Player
+        //update guardians
         updateGuardians(deltaTime);
 
-        //Update the Player
+        //update the player
         updatePlayer(deltaTime);
 
+        //print some debug info to the screen
         debug();
     }
 
@@ -148,7 +149,6 @@ public class Manic extends ApplicationAdapter {
     private String formatVector(Vector2 v) {
         return formatFloat(v.x) + " , " + formatFloat(v.y);
     }
-
 
     private void updatePlayer(float deltaTime) {
         if (deltaTime == 0) return;
@@ -196,7 +196,7 @@ public class Manic extends ApplicationAdapter {
     }
 
     private void initPlayer() {
-        Player.init(mapLoader.getLevelProperties().getPlayerStartPosition(), mapLoader.getLevelProperties().startFacingRight());
+        Player.init(mapLoader.getLevelProperties().getPlayerSpawnPosition(), mapLoader.getLevelProperties().startFacingRight());
     }
 
     private void handleCollectable(Rectangle rect) {
