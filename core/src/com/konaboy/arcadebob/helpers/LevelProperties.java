@@ -1,6 +1,7 @@
 package com.konaboy.arcadebob.helpers;
 
 import com.badlogic.gdx.math.Vector2;
+import com.konaboy.arcadebob.game.Level;
 import com.konaboy.arcadebob.gameobjects.Guardian;
 
 import java.util.HashMap;

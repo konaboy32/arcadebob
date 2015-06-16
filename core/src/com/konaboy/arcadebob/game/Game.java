@@ -16,12 +16,11 @@ import com.konaboy.arcadebob.gameobjects.Guardian;
 import com.konaboy.arcadebob.gameobjects.Player;
 import com.konaboy.arcadebob.helpers.CollisionDetector;
 import com.konaboy.arcadebob.helpers.Constants;
-import com.konaboy.arcadebob.helpers.Level;
 import com.konaboy.arcadebob.helpers.TextureRegionHelper;
 
 import java.util.Collection;
 
-public class Manic extends ApplicationAdapter {
+public class Game extends ApplicationAdapter {
 
     private BitmapFont font;
     private OrthogonalTiledMapRenderer tileRenderer;

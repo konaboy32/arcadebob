@@ -1,6 +1,8 @@
 package com.konaboy.arcadebob.helpers;
 
 
+import com.konaboy.arcadebob.game.Level;
+
 public class Constants {
 
     public static final int DEBUG_LINES = 4;

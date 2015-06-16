@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.konaboy.arcadebob.game.Level;
 import com.konaboy.arcadebob.helpers.Constants;
-import com.konaboy.arcadebob.helpers.Level;
 
 public class Player {
 

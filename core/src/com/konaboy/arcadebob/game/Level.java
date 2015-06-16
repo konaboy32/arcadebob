@@ -1,4 +1,4 @@
-package com.konaboy.arcadebob.helpers;
+package com.konaboy.arcadebob.game;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -10,6 +10,8 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.konaboy.arcadebob.gameobjects.Guardian;
+import com.konaboy.arcadebob.helpers.LevelProperties;
+import com.konaboy.arcadebob.helpers.TextureRegionHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
