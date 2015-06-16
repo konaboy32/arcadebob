@@ -6,7 +6,6 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -14,9 +13,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.konaboy.arcadebob.gameobjects.Guardian;
 import com.konaboy.arcadebob.gameobjects.Player;
+import com.konaboy.arcadebob.gameobjects.Sprite;
 import com.konaboy.arcadebob.helpers.CollisionDetector;
 import com.konaboy.arcadebob.helpers.Constants;
-import com.konaboy.arcadebob.helpers.TextureRegionHelper;
+import com.konaboy.arcadebob.helpers.SpriteProperties;
 
 import java.util.Collection;
 
@@ -36,15 +36,17 @@ public class Game extends ApplicationAdapter {
     @Override
     public void create() {
 
-        //create player graphics
-        Texture manicSpriteSheet = new Texture("manic_sprites.png");
-        TextureRegion[] playerRegions = TextureRegionHelper.getPlayerRegions(manicSpriteSheet);
-        Player.animation = new Animation(0.1f, playerRegions);
-        Player.standingFrame = playerRegions[1];
+        //init sprite property helper
+        SpriteProperties.load();
+
+        //create player graphics and animation
+        Sprite playerSprite = SpriteProperties.getSprite(SpriteProperties.PLAYER_SPRITE_NAME);
+        Player.animation = new Animation(playerSprite.frameDuration, playerSprite.regions);
+        Player.standingFrame = playerSprite.regions[1];
         Player.animation.setPlayMode(Animation.PlayMode.LOOP);
 
         //loadMap the level from properties file
-        level = new Level(1, manicSpriteSheet);
+        level = new Level(1);
 
         //Create renderers and cameras for map, its objects and the player
         tileRenderer = new OrthogonalTiledMapRenderer(level.getMap(), 1f / Level.TILE_SIZE);

@@ -10,6 +10,7 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.konaboy.arcadebob.gameobjects.Guardian;
+import com.konaboy.arcadebob.helpers.AssetManager;
 import com.konaboy.arcadebob.helpers.LevelProperties;
 import com.konaboy.arcadebob.helpers.TextureRegionHelper;
 
@@ -35,11 +36,11 @@ public class Level {
     private Collection<Rectangle> rectangles;
     private TiledMapTileLayer layer;
 
-    public Level(int level, Texture texture) {
+    public Level(int level) {
         LevelProperties.load("level" + level + ".properties");
         rectangles = new ArrayList<Rectangle>();
         map = new TiledMap();
-        loadMap(texture);
+        loadMap();
     }
 
     public boolean isConveyerLeft(Rectangle rect) {
@@ -116,7 +117,8 @@ public class Level {
         return guardians;
     }
 
-    private void loadMap(Texture texture) {
+    private void loadMap() {
+        Texture texture = AssetManager.getTexture(AssetManager.MANIC_SPRITES);
         TextureRegion[] blocks = TextureRegionHelper.getRegions(texture, 660, 2, 288, 320, TILE_SIZE);
         String[] lines = LevelProperties.getLines();
         Map<String, Integer> regionMappings = LevelProperties.getRegionMappings();
