@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.konaboy.arcadebob.gameobjects.Guardian;
 import com.konaboy.arcadebob.helpers.AssetManager;
-import com.konaboy.arcadebob.helpers.LevelProperties;
+import com.konaboy.arcadebob.helpers.LevelCreator;
 import com.konaboy.arcadebob.helpers.TextureRegionHelper;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class Level {
     private TiledMapTileLayer layer;
 
     public Level(int level) {
-        LevelProperties.load("level" + level + ".properties");
+        LevelCreator.load("level" + level + ".properties");
         rectangles = new ArrayList<Rectangle>();
         map = new TiledMap();
         loadMap();
@@ -97,18 +97,18 @@ public class Level {
     }
 
     public Vector2 getPlayerSpawnPosition() {
-        return LevelProperties.getPlayerSpawnPosition();
+        return LevelCreator.getPlayerSpawnPosition();
     }
 
     public boolean playerSpawnsFacingRight() {
-        return LevelProperties.playerSpawnsFacingRight();
+        return LevelCreator.playerSpawnsFacingRight();
     }
 
     public Collection<Guardian> getGuardians() {
         Collection<Guardian> guardians = new ArrayList<Guardian>();
         int count = 0;
         while (true) {
-            Guardian guardian = LevelProperties.getGuardian(count++);
+            Guardian guardian = LevelCreator.createGuardian(count++);
             if (guardian == null) {
                 break;
             }
@@ -120,8 +120,8 @@ public class Level {
     private void loadMap() {
         Texture texture = AssetManager.getTexture(AssetManager.MANIC_SPRITES);
         TextureRegion[] blocks = TextureRegionHelper.getRegions(texture, 660, 2, 288, 320, TILE_SIZE);
-        String[] lines = LevelProperties.getLines();
-        Map<String, Integer> regionMappings = LevelProperties.getRegionMappings();
+        String[] lines = LevelCreator.getLines();
+        Map<String, Integer> regionMappings = LevelCreator.getRegionMappings();
         layer = new TiledMapTileLayer(TILES_X, TILES_Y, TILE_SIZE, TILE_SIZE);
         for (int y = 0; y < TILES_Y; y++) {
             for (int x = 0; x < TILES_X; x++) {

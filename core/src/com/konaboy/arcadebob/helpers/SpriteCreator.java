@@ -6,9 +6,10 @@ import com.konaboy.arcadebob.gameobjects.Sprite;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
-public class SpriteProperties extends PropertiesHelper {
+public class SpriteCreator extends Creator {
 
     public static final String PLAYER_SPRITE_NAME = "Player";
 
@@ -18,17 +19,18 @@ public class SpriteProperties extends PropertiesHelper {
     private static final String KEY_REGION_HEIGHT = "region.height";
     private static final String KEY_REGION_POSITIONS = "region.positions";
     private static final String KEY_FRAME_DURATION = "frame.duration";
+    private static Properties spriteProps;
 
     public static void load() {
-        props = loadPropertiesFile(PROPERTIES_FILENAME);
+        spriteProps = loadPropertiesFile(PROPERTIES_FILENAME);
     }
 
-    public static Sprite getSprite(String name) {
-        String textureFilename = props.getProperty(createKey(KEY_TEXTURE, name));
-        int width = Integer.valueOf(props.getProperty(createKey(KEY_REGION_WIDTH, name)));
-        int height = Integer.valueOf(props.getProperty(createKey(KEY_REGION_HEIGHT, name)));
-        float frameDuration = Float.valueOf(props.getProperty(createKey(KEY_FRAME_DURATION, name)));
-        String regionPositions = props.getProperty(createKey(KEY_REGION_POSITIONS, name));
+    public static Sprite createSprite(String name) {
+        String textureFilename = spriteProps.getProperty(createKey(KEY_TEXTURE, name));
+        int width = Integer.valueOf(spriteProps.getProperty(createKey(KEY_REGION_WIDTH, name)));
+        int height = Integer.valueOf(spriteProps.getProperty(createKey(KEY_REGION_HEIGHT, name)));
+        float frameDuration = Float.valueOf(spriteProps.getProperty(createKey(KEY_FRAME_DURATION, name)));
+        String regionPositions = spriteProps.getProperty(createKey(KEY_REGION_POSITIONS, name));
         Collection<TextureRegion> regions = new ArrayList<TextureRegion>();
         StringTokenizer stPosition = new StringTokenizer(regionPositions, POSITIION_DELIM);
         Texture texture = AssetManager.getTexture(textureFilename);

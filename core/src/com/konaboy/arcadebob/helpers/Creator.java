@@ -9,9 +9,8 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-public class PropertiesHelper {
+public class Creator {
 
-    protected static Properties props;
     protected static final String POSITIION_DELIM = ":";
     protected static final String VECTOR_DELIM = ",";
     protected static final String DOT = ".";
@@ -36,14 +35,6 @@ public class PropertiesHelper {
         return props;
     }
 
-    protected static Vector2 getVectorProperty(String key) {
-        String positionStr = props.getProperty(key);
-        if (positionStr == null) {
-            return null;
-        }
-        return stringToVector(positionStr);
-    }
-
     protected static Vector2 stringToVector(String positionStr) {
         StringTokenizer st = new StringTokenizer(positionStr, VECTOR_DELIM);
         float x = Float.valueOf(st.nextToken());
@@ -56,6 +47,7 @@ public class PropertiesHelper {
     }
 
     protected static String createKey(String key, String name) {
+        System.out.println(name + DOT + key);
         return name + DOT + key;
     }
 }

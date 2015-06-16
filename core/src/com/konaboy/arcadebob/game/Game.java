@@ -16,7 +16,7 @@ import com.konaboy.arcadebob.gameobjects.Player;
 import com.konaboy.arcadebob.gameobjects.Sprite;
 import com.konaboy.arcadebob.helpers.CollisionDetector;
 import com.konaboy.arcadebob.helpers.Constants;
-import com.konaboy.arcadebob.helpers.SpriteProperties;
+import com.konaboy.arcadebob.helpers.SpriteCreator;
 
 import java.util.Collection;
 
@@ -37,10 +37,10 @@ public class Game extends ApplicationAdapter {
     public void create() {
 
         //init sprite property helper
-        SpriteProperties.load();
+        SpriteCreator.load();
 
         //create player graphics and animation
-        Sprite playerSprite = SpriteProperties.getSprite(SpriteProperties.PLAYER_SPRITE_NAME);
+        Sprite playerSprite = SpriteCreator.createSprite(SpriteCreator.PLAYER_SPRITE_NAME);
         Player.animation = new Animation(playerSprite.frameDuration, playerSprite.regions);
         Player.standingFrame = playerSprite.regions[1];
         Player.animation.setPlayMode(Animation.PlayMode.LOOP);
@@ -94,8 +94,8 @@ public class Game extends ApplicationAdapter {
         //draw player and guardians
         tileBatch.begin();
         drawPlayer();
+        drawGuardians();
         tileBatch.end();
-        drawGuardians(); //TODO move inside later
 
         //update guardians
         updateGuardians(deltaTime);
@@ -120,7 +120,12 @@ public class Game extends ApplicationAdapter {
 
     private void drawGuardians() {
         for (Guardian guardian : guardians) {
-            drawRectangle(guardian.bounds, ShapeRenderer.ShapeType.Line, Color.RED);
+            TextureRegion frame = guardian.sprite.animation.getKeyFrame(guardian.stateTime);
+            if (guardian.goingRight()) {
+                tileBatch.draw(frame, guardian.bounds.x, guardian.bounds.y, guardian.bounds.width, guardian.bounds.height);
+            } else {
+                tileBatch.draw(frame, guardian.bounds.x + guardian.bounds.width, guardian.bounds.y, -guardian.bounds.width, guardian.bounds.height);
+            }
         }
     }
 
