@@ -19,15 +19,15 @@ public class LevelProperties {
     private static final String KEY_PLAYER_FACING_RIGHT = "player.spawn.facingright";
 
     //guardian property key prefixes
-    private static final String PREFIX_GUARDIAN_TEXTURE = "guardian.texture.";
-    private static final String PREFIX_GUARDIAN_TEXTUREREGION = "guardian.textureregion.";
-    private static final String PREFIX_GUARDIAN_TRACK_START_POSITION = "guardian.track.start.position.";
-    private static final String PREFIX_GUARDIAN_TRACK_END_POSITION = "guardian.track.end.position.";
-    private static final String PREFIX_GUARDIAN_SPAWN_POSITION = "guardian.spawn.position.";
-    private static final String PREFIX_GUARDIAN_VELOCITY = "guardian.velocity.";
+    private static final String KEY_GUARDIAN_NAME = "guardian.name";
+    private static final String KEY_GUARDIAN_TRACK_START_POSITION = "guardian.track.start.position";
+    private static final String KEY_GUARDIAN_TRACK_END_POSITION = "guardian.track.end.position";
+    private static final String KEY_GUARDIAN_SPAWN_POSITION = "guardian.spawn.position";
+    private static final String KEY_GUARDIAN_VELOCITY = "guardian.velocity";
 
     //common stuff
     private static final String VECTOR_DELIM = ",";
+    private static final String DOT = ".";
     private static final String[] MAPPING_KEYS = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "F"};
     private static Properties props;
 
@@ -57,32 +57,23 @@ public class LevelProperties {
     }
 
     public static Guardian getGuardian(int index) {
-        String key = PREFIX_GUARDIAN_TRACK_START_POSITION + String.format("%02d", index);
-
-        //track start position
-        Vector2 trackStartPos = getVectorProperty(key);
-        if (trackStartPos == null) {
+        String name = props.getProperty(createKey(KEY_GUARDIAN_NAME, index));
+        if (name == null) {
             return null;
         }
-
-        //track end position
-        key = PREFIX_GUARDIAN_TRACK_END_POSITION + String.format("%02d", index);
-        Vector2 trackEndPos = getVectorProperty(key);
-
-        //spawn point
-        key = PREFIX_GUARDIAN_SPAWN_POSITION + String.format("%02d", index);
-        Vector2 spawnPos = getVectorProperty(key);
-
-        //velocity
-        key = PREFIX_GUARDIAN_VELOCITY + String.format("%02d", index);
-        float velocity = Float.valueOf(props.getProperty(key));
-
-        //create and return the guardian
-        return new Guardian(trackStartPos, trackEndPos, spawnPos, velocity);
+        Vector2 trackStartPos = getVectorProperty(createKey(KEY_GUARDIAN_TRACK_START_POSITION, index));
+        Vector2 trackEndPos = getVectorProperty(createKey(KEY_GUARDIAN_TRACK_END_POSITION, index));
+        Vector2 spawnPos = getVectorProperty(createKey(KEY_GUARDIAN_SPAWN_POSITION, index));
+        float velocity = Float.valueOf(props.getProperty(createKey(KEY_GUARDIAN_VELOCITY, index)));
+        return new Guardian(name, trackStartPos, trackEndPos, spawnPos, velocity);
     }
 
     public static Vector2 getPlayerSpawnPosition() {
         return getVectorProperty(KEY_PLAYER_START_POSITION);
+    }
+
+    private static String createKey(String suffix, int index) {
+        return String.format("%02d", index) + DOT + suffix;
     }
 
     private static Vector2 getVectorProperty(String key) {

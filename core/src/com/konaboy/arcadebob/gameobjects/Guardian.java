@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Guardian {
 
+    public final String name;
     public final float WIDTH = 1.5f;
     public final float HEIGHT = 2f;
     public final Vector2 trackStartPosition;
@@ -14,19 +15,15 @@ public class Guardian {
     public final Vector2 velocity;
     public final boolean isHorizontalTrack;
 
-    public Guardian(Vector2 trackStartPosition,
+    public Guardian(String name,
+                    Vector2 trackStartPosition,
                     Vector2 trackEndPosition,
                     Vector2 spawnPosition,
                     float velocity) {
-
-        //bounds used for position and collision detection
+        this.name = name;
         bounds = new Rectangle(spawnPosition.x, spawnPosition.y, WIDTH, HEIGHT);
-
-        //direction and speed (relative to player velocity)
         this.velocity = new Vector2();
         this.velocity.x = this.velocity.y = Player.MAX_VELOCITY_X * velocity;
-
-        //track that the guardian will travel along
         this.trackStartPosition = trackStartPosition;
         this.trackEndPosition = trackEndPosition;
         isHorizontalTrack = (int) trackStartPosition.y == (int) trackEndPosition.y;
