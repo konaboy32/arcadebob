@@ -6,7 +6,10 @@ import com.konaboy.arcadebob.gameobjects.Guardian;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
 public class LevelProperties {
 
@@ -29,22 +32,22 @@ public class LevelProperties {
     //common stuff
     private static final String VECTOR_DELIM = ",";
     private static final String[] MAPPING_KEYS = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "F"};
-    private Properties props;
+    private static Properties props;
 
-    public LevelProperties(String filename) {
+    public static void init(String filename) {
         load(filename);
     }
 
-    public String[] getLines() {
+    public static String[] getLines() {
         String[] lines = new String[16];
-        for (int i = 0; i < MapLoader.TILES_Y; i++) {
+        for (int i = 0; i < LevelLoader.TILES_Y; i++) {
             String key = PREFIX_LINE + String.format("%02d", i);
             lines[i] = props.getProperty(key);
         }
         return lines;
     }
 
-    public Map<String, Integer> getRegionMappings() {
+    public static Map<String, Integer> getRegionMappings() {
         Map<String, Integer> mappings = new HashMap<String, Integer>();
         for (String mappingKey : MAPPING_KEYS) {
             mappings.put(mappingKey, Integer.valueOf(props.getProperty(PREFIX_MAPPING + mappingKey)));
@@ -52,25 +55,12 @@ public class LevelProperties {
         return mappings;
     }
 
-    public boolean startFacingRight() {
+    public static boolean playerSpawnsFacingRight() {
         return Boolean.valueOf(props.getProperty(KEY_PLAYER_FACING_RIGHT));
     }
 
-    public Collection<Guardian> getGuardians() {
-        Collection<Guardian> guardians = new ArrayList<Guardian>();
-        int count = 0;
-        while (true) {
-            Guardian guardian = createGuardian(count++);
-            if (guardian == null) {
-                break;
-            }
-            guardians.add(guardian);
-        }
-        return guardians;
-    }
-
-    private Guardian createGuardian(int count) {
-        String key = PREFIX_GUARDIAN_TRACK_START_POSITION + String.format("%02d", count);
+    public static Guardian getGuardian(int index) {
+        String key = PREFIX_GUARDIAN_TRACK_START_POSITION + String.format("%02d", index);
 
         //track start position
         Vector2 trackStartPos = getVectorProperty(key);
@@ -79,26 +69,26 @@ public class LevelProperties {
         }
 
         //track end position
-        key = PREFIX_GUARDIAN_TRACK_END_POSITION + String.format("%02d", count);
+        key = PREFIX_GUARDIAN_TRACK_END_POSITION + String.format("%02d", index);
         Vector2 trackEndPos = getVectorProperty(key);
 
         //spawn point
-        key = PREFIX_GUARDIAN_SPAWN_POSITION + String.format("%02d", count);
+        key = PREFIX_GUARDIAN_SPAWN_POSITION + String.format("%02d", index);
         Vector2 spawnPos = getVectorProperty(key);
 
         //velocity
-        key = PREFIX_GUARDIAN_VELOCITY + String.format("%02d", count);
+        key = PREFIX_GUARDIAN_VELOCITY + String.format("%02d", index);
         float velocity = Float.valueOf(props.getProperty(key));
 
         //create and return the guardian
         return new Guardian(trackStartPos, trackEndPos, spawnPos, velocity);
     }
 
-    public Vector2 getPlayerSpawnPosition() {
+    public static Vector2 getPlayerSpawnPosition() {
         return getVectorProperty(KEY_PLAYER_START_POSITION);
     }
 
-    private Vector2 getVectorProperty(String key) {
+    private static Vector2 getVectorProperty(String key) {
         String positionStr = props.getProperty(key);
         if (positionStr == null) {
             return null;
@@ -109,7 +99,7 @@ public class LevelProperties {
         return new Vector2(x, y);
     }
 
-    private void load(String filename) {
+    private static void load(String filename) {
         props = new Properties();
         InputStream input = null;
         try {

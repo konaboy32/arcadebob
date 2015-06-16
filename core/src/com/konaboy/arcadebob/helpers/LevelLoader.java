@@ -8,12 +8,14 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.konaboy.arcadebob.gameobjects.Guardian;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-public class MapLoader {
+public class LevelLoader {
 
     private enum TileType {
         Solid, Impassable, Collapsible, Hazard, ConveyorLeft, ConveyorRight, Collectable, Exit, ExitControl, Special
@@ -29,19 +31,19 @@ public class MapLoader {
 
     private TiledMap map;
     private Collection<Rectangle> rectangles;
-    private LevelProperties properties;
     private TiledMapTileLayer layer;
 
-    public MapLoader(int level) {
-        this.properties = new LevelProperties("level" + level + ".properties");
+    public LevelLoader(int level) {
+        LevelProperties.init("level" + level + ".properties");
         rectangles = new ArrayList<Rectangle>();
         map = new TiledMap();
+
     }
 
     public void load(Texture texture) {
         TextureRegion[] blocks = TextureRegionHelper.getRegions(texture, 660, 2, 288, 320, TILE_SIZE);
-        String[] lines = properties.getLines();
-        Map<String, Integer> regionMappings = properties.getRegionMappings();
+        String[] lines = LevelProperties.getLines();
+        Map<String, Integer> regionMappings = LevelProperties.getRegionMappings();
         layer = new TiledMapTileLayer(TILES_X, TILES_Y, TILE_SIZE, TILE_SIZE);
         for (int y = 0; y < TILES_Y; y++) {
             for (int x = 0; x < TILES_X; x++) {
@@ -117,8 +119,25 @@ public class MapLoader {
         return rectangles;
     }
 
-    public LevelProperties getLevelProperties() {
-        return properties;
+    public Vector2 getPlayerSpawnPosition() {
+        return LevelProperties.getPlayerSpawnPosition();
+    }
+
+    public boolean playerSpawnsFacingRight() {
+        return LevelProperties.playerSpawnsFacingRight();
+    }
+
+    public Collection<Guardian> getGuardians() {
+        Collection<Guardian> guardians = new ArrayList<Guardian>();
+        int count = 0;
+        while (true) {
+            Guardian guardian = LevelProperties.getGuardian(count++);
+            if (guardian == null) {
+                break;
+            }
+            guardians.add(guardian);
+        }
+        return guardians;
     }
 
     private TileType mapCharToTileTypeEnum(char s) {

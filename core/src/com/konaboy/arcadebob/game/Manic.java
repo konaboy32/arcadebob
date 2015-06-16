@@ -16,7 +16,7 @@ import com.konaboy.arcadebob.gameobjects.Guardian;
 import com.konaboy.arcadebob.gameobjects.Player;
 import com.konaboy.arcadebob.helpers.CollisionDetector;
 import com.konaboy.arcadebob.helpers.Constants;
-import com.konaboy.arcadebob.helpers.MapLoader;
+import com.konaboy.arcadebob.helpers.LevelLoader;
 import com.konaboy.arcadebob.helpers.TextureRegionHelper;
 
 import java.util.Collection;
@@ -29,7 +29,7 @@ public class Manic extends ApplicationAdapter {
     private SpriteBatch spriteBatch;
     private Batch tileBatch;
     private OrthographicCamera gameCamera;
-    private MapLoader mapLoader;
+    private LevelLoader levelLoader;
     private Rectangle debugRect;
     private int touchingTiles;
     private Collection<Guardian> guardians;
@@ -45,14 +45,14 @@ public class Manic extends ApplicationAdapter {
         Player.animation.setPlayMode(Animation.PlayMode.LOOP);
 
         //load the map from level properties
-        mapLoader = new MapLoader(1);
-        mapLoader.load(manicSpriteSheet);
+        levelLoader = new LevelLoader(1);
+        levelLoader.load(manicSpriteSheet);
 
         //Create renderers and cameras for map, its objects and the player
-        tileRenderer = new OrthogonalTiledMapRenderer(mapLoader.getMap(), 1f / MapLoader.TILE_SIZE);
+        tileRenderer = new OrthogonalTiledMapRenderer(levelLoader.getMap(), 1f / LevelLoader.TILE_SIZE);
         tileBatch = tileRenderer.getBatch();
         gameCamera = new OrthographicCamera();
-        gameCamera.setToOrtho(false, MapLoader.TILES_X, MapLoader.TILES_Y + Constants.DEBUG_LINES);
+        gameCamera.setToOrtho(false, LevelLoader.TILES_X, LevelLoader.TILES_Y + Constants.DEBUG_LINES);
         gameCamera.update();
 
         //Create special shape renderer for debugging
@@ -67,7 +67,7 @@ public class Manic extends ApplicationAdapter {
         spriteBatch = new SpriteBatch();
         spriteBatch.setProjectionMatrix(debugCamera.combined);
         font = new BitmapFont();
-        debugRect = new Rectangle(0, MapLoader.TILES_Y, MapLoader.TILES_X, Constants.DEBUG_LINES);
+        debugRect = new Rectangle(0, LevelLoader.TILES_Y, LevelLoader.TILES_X, Constants.DEBUG_LINES);
 
         //init player
         initPlayer();
@@ -108,7 +108,7 @@ public class Manic extends ApplicationAdapter {
     }
 
     private void initGuardians() {
-        guardians = mapLoader.getLevelProperties().getGuardians();
+        guardians = levelLoader.getGuardians();
     }
 
     private void updateGuardians(float deltaTime) {
@@ -159,7 +159,7 @@ public class Manic extends ApplicationAdapter {
     }
 
     private void collisionDetect() {
-        Collection<Rectangle> overlaps = CollisionDetector.getOverlaps(Player.getBounds(), mapLoader.getRectangles());
+        Collection<Rectangle> overlaps = CollisionDetector.getOverlaps(Player.getBounds(), levelLoader.getRectangles());
 //        drawRectangles(overlaps, ShapeRenderer.ShapeType.Filled, Color.RED);
         touchingTiles = overlaps.size();
         checkObjectCollisions(overlaps);
@@ -178,12 +178,12 @@ public class Manic extends ApplicationAdapter {
 
     private void checkObjectCollisions(Collection<Rectangle> overlaps) {
         for (Rectangle rect : overlaps) {
-            if (mapLoader.isCollectable(rect)) {
+            if (levelLoader.isCollectable(rect)) {
                 handleCollectable(rect);
                 overlaps.remove(rect);
                 return;
             }
-            if (mapLoader.isHazard(rect)) {
+            if (levelLoader.isHazard(rect)) {
                 handleHazard();
                 return;
             }
@@ -196,11 +196,11 @@ public class Manic extends ApplicationAdapter {
     }
 
     private void initPlayer() {
-        Player.init(mapLoader.getLevelProperties().getPlayerSpawnPosition(), mapLoader.getLevelProperties().startFacingRight());
+        Player.init(levelLoader.getPlayerSpawnPosition(), levelLoader.playerSpawnsFacingRight());
     }
 
     private void handleCollectable(Rectangle rect) {
-        mapLoader.removeTile(rect);
+        levelLoader.removeTile(rect);
     }
 
     private void checkMapCollisions(Collection<Rectangle> overlaps) {
@@ -225,7 +225,7 @@ public class Manic extends ApplicationAdapter {
         } else if (Player.goingUp()) {
             for (Rectangle rect : overlaps) {
                 if (rect.y > Player.position.y + 1) {
-                    if (mapLoader.isImpassable(rect)) {
+                    if (levelLoader.isImpassable(rect)) {
                         Player.stopMovingY();
                     }
                     break;
@@ -238,7 +238,7 @@ public class Manic extends ApplicationAdapter {
         if (Player.goingLeft()) {
             for (Rectangle rect : overlaps) {
                 if (rect.x < Player.position.x && rect.y > Player.position.y) {
-                    if (mapLoader.isImpassable(rect)) {
+                    if (levelLoader.isImpassable(rect)) {
                         Player.position.x = rect.x + rect.width;
                     }
                     break;
@@ -247,7 +247,7 @@ public class Manic extends ApplicationAdapter {
         } else if (Player.goingRight()) {
             for (Rectangle rect : overlaps) {
                 if (rect.x > Player.position.x && rect.y > Player.position.y) {
-                    if (mapLoader.isImpassable(rect)) {
+                    if (levelLoader.isImpassable(rect)) {
                         Player.position.x = rect.x - Player.WIDTH;
                     }
                     break;
@@ -257,8 +257,8 @@ public class Manic extends ApplicationAdapter {
     }
 
     private void checkIfStandingOnCollapsible(Rectangle rect, Collection<Rectangle> overlaps) {
-        if (mapLoader.isCollapsible(rect)) {
-            boolean collapsed = mapLoader.updateCollapsible(rect);
+        if (levelLoader.isCollapsible(rect)) {
+            boolean collapsed = levelLoader.updateCollapsible(rect);
             if (collapsed) {
                 overlaps.remove(rect);
             }
@@ -267,13 +267,13 @@ public class Manic extends ApplicationAdapter {
 
     private void checkIfStandingOnConveyer(Rectangle rect) {
         //standing on left conveyer
-        if (mapLoader.isConveyerLeft(rect)) {
+        if (levelLoader.isConveyerLeft(rect)) {
             Player.onLeftConveyer = true;
             Player.onRightConveyer = false;
             return;
         }
         //standing on right conveyer
-        if (mapLoader.isConveyerRight(rect)) {
+        if (levelLoader.isConveyerRight(rect)) {
             Player.onRightConveyer = true;
             Player.onLeftConveyer = false;
             return;
