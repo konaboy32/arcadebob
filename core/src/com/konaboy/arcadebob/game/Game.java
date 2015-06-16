@@ -6,14 +6,16 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.konaboy.arcadebob.gameobjects.Guardian;
 import com.konaboy.arcadebob.gameobjects.Player;
-import com.konaboy.arcadebob.gameobjects.Sprite;
 import com.konaboy.arcadebob.helpers.CollisionDetector;
 import com.konaboy.arcadebob.helpers.Constants;
 import com.konaboy.arcadebob.helpers.SpriteCreator;
@@ -40,12 +42,10 @@ public class Game extends ApplicationAdapter {
         SpriteCreator.load();
 
         //create player graphics and animation
-        Sprite playerSprite = SpriteCreator.createSprite(SpriteCreator.PLAYER_SPRITE_NAME);
-        Player.animation = new Animation(playerSprite.frameDuration, playerSprite.regions);
-        Player.standingFrame = playerSprite.regions[1];
-        Player.animation.setPlayMode(Animation.PlayMode.LOOP);
+        Player.sprite = SpriteCreator.createSprite(SpriteCreator.PLAYER_SPRITE_NAME);
+        Player.standingFrame = Player.sprite.regions[1];
 
-        //loadMap the level from properties file
+        //create the level from properties file
         level = new Level(1);
 
         //Create renderers and cameras for map, its objects and the player
@@ -316,7 +316,7 @@ public class Game extends ApplicationAdapter {
         // based on the Player state, get the animation frame
         TextureRegion frame = Player.standingFrame;
         if (Player.goingLeft() || Player.goingRight()) {
-            frame = Player.animation.getKeyFrame(Player.stateTime);
+            frame = Player.sprite.animation.getKeyFrame(Player.stateTime);
         }
         if (Player.facesRight) {
             tileBatch.draw(frame, Player.position.x, Player.position.y, Player.WIDTH, Player.HEIGHT);

@@ -1,6 +1,5 @@
 package com.konaboy.arcadebob.gameobjects;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -33,8 +32,8 @@ public class Player {
     public static boolean grounded = true;
     public static boolean onLeftConveyer = false;
     public static boolean onRightConveyer = false;
-    public static Animation animation;
     public static TextureRegion standingFrame;
+    public static Sprite sprite;
 
     public static void init(Vector2 spawnPosition, boolean spawnfacingRight) {
         position = spawnPosition;
@@ -135,7 +134,7 @@ public class Player {
         if (Math.abs(velocity.x) < 1) {
             stopMovingX();
             if (grounded && !state.equals(State.Standing)) {
-                standingFrame = animation.getKeyFrame(stateTime);
+                standingFrame = sprite.animation.getKeyFrame(stateTime);
                 state = State.Standing;
             }
         }
