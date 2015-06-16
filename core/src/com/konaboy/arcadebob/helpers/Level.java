@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-public class LevelLoader {
+public class Level {
 
     private enum TileType {
         Solid, Impassable, Collapsible, Hazard, ConveyorLeft, ConveyorRight, Collectable, Exit, ExitControl, Special
@@ -33,36 +33,11 @@ public class LevelLoader {
     private Collection<Rectangle> rectangles;
     private TiledMapTileLayer layer;
 
-    public LevelLoader(int level) {
-        LevelProperties.init("level" + level + ".properties");
+    public Level(int level, Texture texture) {
+        LevelProperties.load("level" + level + ".properties");
         rectangles = new ArrayList<Rectangle>();
         map = new TiledMap();
-    }
-
-    public void load(Texture texture) {
-        TextureRegion[] blocks = TextureRegionHelper.getRegions(texture, 660, 2, 288, 320, TILE_SIZE);
-        String[] lines = LevelProperties.getLines();
-        Map<String, Integer> regionMappings = LevelProperties.getRegionMappings();
-        layer = new TiledMapTileLayer(TILES_X, TILES_Y, TILE_SIZE, TILE_SIZE);
-        for (int y = 0; y < TILES_Y; y++) {
-            for (int x = 0; x < TILES_X; x++) {
-                char tileType = lines[y].charAt(x);
-                if (!(tileType == EMPTY_TILE)) {
-                    int regionIndex = regionMappings.get("" + tileType);
-                    Cell cell = new Cell();
-                    StaticTiledMapTile tile = new StaticTiledMapTile(blocks[regionIndex]);
-                    Enum tileTypeEnum = mapCharToTileTypeEnum(tileType);
-                    tile.getProperties().put(KEY_TYPE, tileTypeEnum);
-                    if (TileType.Collapsible.equals(tileTypeEnum)) {
-                        tile.getProperties().put(KEY_TOUCHED, 0);
-                    }
-                    cell.setTile(tile);
-                    layer.setCell(x, y, cell);
-                    rectangles.add(new Rectangle(x, y, 1, 1));
-                }
-            }
-        }
-        map.getLayers().add(layer);
+        loadMap(texture);
     }
 
     public boolean isConveyerLeft(Rectangle rect) {
@@ -137,6 +112,32 @@ public class LevelLoader {
             guardians.add(guardian);
         }
         return guardians;
+    }
+
+    private void loadMap(Texture texture) {
+        TextureRegion[] blocks = TextureRegionHelper.getRegions(texture, 660, 2, 288, 320, TILE_SIZE);
+        String[] lines = LevelProperties.getLines();
+        Map<String, Integer> regionMappings = LevelProperties.getRegionMappings();
+        layer = new TiledMapTileLayer(TILES_X, TILES_Y, TILE_SIZE, TILE_SIZE);
+        for (int y = 0; y < TILES_Y; y++) {
+            for (int x = 0; x < TILES_X; x++) {
+                char tileType = lines[y].charAt(x);
+                if (!(tileType == EMPTY_TILE)) {
+                    int regionIndex = regionMappings.get("" + tileType);
+                    Cell cell = new Cell();
+                    StaticTiledMapTile tile = new StaticTiledMapTile(blocks[regionIndex]);
+                    Enum tileTypeEnum = mapCharToTileTypeEnum(tileType);
+                    tile.getProperties().put(KEY_TYPE, tileTypeEnum);
+                    if (TileType.Collapsible.equals(tileTypeEnum)) {
+                        tile.getProperties().put(KEY_TOUCHED, 0);
+                    }
+                    cell.setTile(tile);
+                    layer.setCell(x, y, cell);
+                    rectangles.add(new Rectangle(x, y, 1, 1));
+                }
+            }
+        }
+        map.getLayers().add(layer);
     }
 
     private TileType mapCharToTileTypeEnum(char s) {

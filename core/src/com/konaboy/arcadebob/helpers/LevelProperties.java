@@ -31,13 +31,13 @@ public class LevelProperties {
     private static final String[] MAPPING_KEYS = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "F"};
     private static Properties props;
 
-    public static void init(String filename) {
+    public static void load(String filename) {
         props = PropertiesHelper.loadPropertiesFile(filename);
     }
 
     public static String[] getLines() {
         String[] lines = new String[16];
-        for (int i = 0; i < LevelLoader.TILES_Y; i++) {
+        for (int i = 0; i < Level.TILES_Y; i++) {
             String key = PREFIX_LINE + String.format("%02d", i);
             lines[i] = props.getProperty(key);
         }
