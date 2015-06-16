@@ -157,7 +157,6 @@ public class Game extends ApplicationAdapter {
 
     private void updatePlayer(float deltaTime) {
         if (deltaTime == 0) return;
-        Player.stateTime += deltaTime;
         checkInputs();
         collisionDetect();
         Player.move(deltaTime);
