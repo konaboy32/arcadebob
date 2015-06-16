@@ -3,9 +3,6 @@ package com.konaboy.arcadebob.helpers;
 import com.badlogic.gdx.math.Vector2;
 import com.konaboy.arcadebob.gameobjects.Guardian;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -35,7 +32,7 @@ public class LevelProperties {
     private static Properties props;
 
     public static void init(String filename) {
-        load(filename);
+        props = PropertiesHelper.loadPropertiesFile(filename);
     }
 
     public static String[] getLines() {
@@ -97,24 +94,5 @@ public class LevelProperties {
         float x = Float.valueOf(st.nextToken());
         float y = Float.valueOf(st.nextToken());
         return new Vector2(x, y);
-    }
-
-    private static void load(String filename) {
-        props = new Properties();
-        InputStream input = null;
-        try {
-            input = new FileInputStream(filename);
-            props.load(input);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 }

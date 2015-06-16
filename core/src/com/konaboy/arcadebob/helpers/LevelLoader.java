@@ -37,7 +37,6 @@ public class LevelLoader {
         LevelProperties.init("level" + level + ".properties");
         rectangles = new ArrayList<Rectangle>();
         map = new TiledMap();
-
     }
 
     public void load(Texture texture) {
