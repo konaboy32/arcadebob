@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.konaboy.arcadebob.game.Constants;
+import com.konaboy.arcadebob.helpers.AssetManager;
 
 public class Player {
 
@@ -33,6 +34,8 @@ public class Player {
     public static boolean onRightConveyer = false;
     public static TextureRegion standingFrame;
     public static Sprite sprite;
+
+    private static final String SOUND_JUMP = "jump.wav";
 
     public static void init(Vector2 spawnPosition, boolean spawnfacingRight) {
         position = spawnPosition;
@@ -81,6 +84,7 @@ public class Player {
             }
             state = State.Jumping;
             grounded = false;
+            AssetManager.getSound(SOUND_JUMP).play();
         }
     }
 

@@ -16,6 +16,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.konaboy.arcadebob.gameobjects.Guardian;
 import com.konaboy.arcadebob.gameobjects.Player;
+import com.konaboy.arcadebob.helpers.AssetManager;
 import com.konaboy.arcadebob.helpers.LevelCreator;
 import com.konaboy.arcadebob.helpers.OverlapHelper;
 import com.konaboy.arcadebob.helpers.SpriteCreator;
@@ -23,6 +24,10 @@ import com.konaboy.arcadebob.helpers.SpriteCreator;
 import java.util.Collection;
 
 public class Game extends ApplicationAdapter {
+
+    private static final String SOUND_COLLECT = "collect.wav";
+    private static final String SOUND_DIE = "die.wav";
+    private static final String SOUND_COLLAPSE = "collapse.wav";
 
     private BitmapFont font;
     private OrthogonalTiledMapRenderer tileRenderer;
@@ -188,6 +193,7 @@ public class Game extends ApplicationAdapter {
 
     private void handleHazard() {
         Gdx.app.log("You died", "");
+        AssetManager.getSound(SOUND_DIE).play();
         create();
     }
 
@@ -197,6 +203,7 @@ public class Game extends ApplicationAdapter {
 
     private void handleCollectable(Rectangle rect) {
         Gdx.app.log("Collectable", rect.toString());
+        AssetManager.getSound(SOUND_COLLECT).play();
         level.removeTile(rect);
     }
 
@@ -262,6 +269,7 @@ public class Game extends ApplicationAdapter {
             boolean collapsed = level.updateCollapsible(rect, touches);
             if (collapsed) {
                 overlaps.remove(rect);
+                AssetManager.getSound(SOUND_COLLAPSE).play();
             }
         }
     }

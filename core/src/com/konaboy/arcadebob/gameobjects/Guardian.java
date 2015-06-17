@@ -3,7 +3,6 @@ package com.konaboy.arcadebob.gameobjects;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.konaboy.arcadebob.helpers.SpriteCreator;
 
 public class Guardian {
 
@@ -22,15 +21,16 @@ public class Guardian {
                     Vector2 trackStartPosition,
                     Vector2 trackEndPosition,
                     Vector2 spawnPosition,
-                    float velocity) {
+                    float velocity,
+                    Sprite sprite) {
         this.name = name;
-        bounds = new Rectangle(spawnPosition.x, spawnPosition.y, WIDTH, HEIGHT);
         this.velocity = new Vector2();
         this.velocity.x = this.velocity.y = Player.MAX_VELOCITY_X * velocity;
         this.trackStartPosition = trackStartPosition;
         this.trackEndPosition = trackEndPosition;
-        isHorizontalTrack = (int) trackStartPosition.y == (int) trackEndPosition.y;
-        sprite = SpriteCreator.createSprite(name);
+        this.isHorizontalTrack = (int) trackStartPosition.y == (int) trackEndPosition.y;
+        this.sprite = sprite;
+        bounds = new Rectangle(spawnPosition.x, spawnPosition.y, WIDTH, HEIGHT);
     }
 
     public void move(float deltaTime) {

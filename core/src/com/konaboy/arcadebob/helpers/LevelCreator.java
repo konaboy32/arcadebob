@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.Array;
 import com.konaboy.arcadebob.game.Constants;
 import com.konaboy.arcadebob.game.Level;
 import com.konaboy.arcadebob.gameobjects.Guardian;
+import com.konaboy.arcadebob.gameobjects.Sprite;
 
 import java.util.*;
 
@@ -100,7 +101,8 @@ public class LevelCreator extends Creator {
         Vector2 trackEndPos = getVectorProperty(createKey(KEY_GUARDIAN_TRACK_END_POSITION, index));
         Vector2 spawnPos = getVectorProperty(createKey(KEY_GUARDIAN_SPAWN_POSITION, index));
         float velocity = Float.valueOf(levelProps.getProperty(createKey(KEY_GUARDIAN_VELOCITY, index)));
-        return new Guardian(name, trackStartPos, trackEndPos, spawnPos, velocity);
+        Sprite sprite = SpriteCreator.createSprite(name);
+        return new Guardian(name, trackStartPos, trackEndPos, spawnPos, velocity, sprite);
     }
 
     public static Vector2 getPlayerSpawnPosition() {
