@@ -32,7 +32,7 @@ public class LevelCreator extends Creator {
     //properties file containing level config
     private static Properties levelProps;
 
-    public static Level loadLevel(int levelNumber) {
+    public static Level createLevel(int levelNumber) {
         String propetiesFilename = "level_" + levelNumber + ".properties";
         Gdx.app.log("Loading level", propetiesFilename);
         levelProps = loadPropertiesFile(propetiesFilename);

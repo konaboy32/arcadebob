@@ -45,7 +45,7 @@ public class Game extends ApplicationAdapter {
         Player.standingFrame = Player.sprite.regions[1];
 
         //create the level from properties file
-        level = LevelCreator.loadLevel(1);
+        level = LevelCreator.createLevel(1);
 
         //Create renderers and cameras for map, its objects and the player
         tileRenderer = new OrthogonalTiledMapRenderer(level.getMap(), 1f / Level.TILE_SIZE);
