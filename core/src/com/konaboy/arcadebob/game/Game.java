@@ -17,6 +17,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.konaboy.arcadebob.gameobjects.Guardian;
 import com.konaboy.arcadebob.gameobjects.Player;
 import com.konaboy.arcadebob.helpers.Constants;
+import com.konaboy.arcadebob.helpers.LevelCreator;
 import com.konaboy.arcadebob.helpers.OverlapHelper;
 import com.konaboy.arcadebob.helpers.SpriteCreator;
 
@@ -37,13 +38,14 @@ public class Game extends ApplicationAdapter {
 
     @Override
     public void create() {
+        Gdx.app.log("Creating game", "");
 
         //create player graphics and animation
         Player.sprite = SpriteCreator.createSprite(SpriteCreator.PLAYER_SPRITE_NAME);
         Player.standingFrame = Player.sprite.regions[1];
 
         //create the level from properties file
-        level = new Level(1);
+        level = LevelCreator.loadLevel(1);
 
         //Create renderers and cameras for map, its objects and the player
         tileRenderer = new OrthogonalTiledMapRenderer(level.getMap(), 1f / Level.TILE_SIZE);
@@ -66,11 +68,10 @@ public class Game extends ApplicationAdapter {
         font = new BitmapFont();
         debugRect = new Rectangle(0, Level.TILES_Y, Level.TILES_X, Constants.DEBUG_LINES);
 
-        //load player
         initPlayer();
-
-        //load guardians
         initGuardians();
+
+        Gdx.app.log("Finished creating game", "");
     }
 
     @Override
@@ -192,8 +193,8 @@ public class Game extends ApplicationAdapter {
     }
 
     private void handleHazard() {
-        drawRectangle(Player.getBounds(), ShapeRenderer.ShapeType.Filled, Color.RED);
-//        initPlayer();
+        Gdx.app.log("You died", "");
+        create();
     }
 
     private void initPlayer() {
@@ -201,6 +202,7 @@ public class Game extends ApplicationAdapter {
     }
 
     private void handleCollectable(Rectangle rect) {
+        Gdx.app.log("Collectable", rect.toString());
         level.removeTile(rect);
     }
 
@@ -337,14 +339,9 @@ public class Game extends ApplicationAdapter {
         shapeRenderer.end();
     }
 
-    private void drawLine(Vector2 start, Vector2 end, Color color) {
-        shapeRenderer.begin();
-        shapeRenderer.line(start.x, start.y, end.x, end.y, color, color);
-        shapeRenderer.end();
-    }
-
     @Override
     public void dispose() {
+        Gdx.app.log("Disposing game", "");
     }
 }
 

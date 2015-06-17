@@ -1,5 +1,6 @@
 package com.konaboy.arcadebob.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -39,8 +40,7 @@ public class Level {
     private Collection<Rectangle> rectangles;
     private TiledMapTileLayer layer;
 
-    public Level(int level) {
-        LevelCreator.load("level" + level + ".properties");
+    public Level() {
         rectangles = new ArrayList<Rectangle>();
         map = new TiledMap();
         loadMap();
@@ -121,6 +121,7 @@ public class Level {
     }
 
     private void loadMap() {
+        Gdx.app.log("Loading map", "");
         Texture texture = AssetManager.getTexture(AssetManager.MANIC_SPRITES);
         TextureRegion[] blocks = TextureRegionHelper.getRegions(texture, 660, 2, 288, 320, TILE_SIZE);
         String[] lines = LevelCreator.getLines();
@@ -153,15 +154,15 @@ public class Level {
             }
         }
         map.getLayers().add(layer);
+        Gdx.app.log("Finiahed loading map, total tiles", "" + rectangles.size());
     }
 
     private TiledMapTile createAnimatedTile(TextureRegion[] blocks, int regionIndex) {
         TiledMapTile tile;
         Array<StaticTiledMapTile> tiles = new Array<StaticTiledMapTile>();
-        tiles.add(new StaticTiledMapTile(blocks[regionIndex]));
-        tiles.add(new StaticTiledMapTile(blocks[regionIndex + 1]));
-        tiles.add(new StaticTiledMapTile(blocks[regionIndex + 2]));
-        tiles.add(new StaticTiledMapTile(blocks[regionIndex + 3]));
+        for (int i = 0; i < 4; i++) {
+            tiles.add(new StaticTiledMapTile(blocks[regionIndex + i]));
+        }
         tile = new AnimatedTiledMapTile(Constants.ANIMATION_FRAME_DURATION, tiles);
         return tile;
     }

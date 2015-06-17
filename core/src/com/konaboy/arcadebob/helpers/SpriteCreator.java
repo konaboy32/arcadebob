@@ -17,13 +17,13 @@ public class SpriteCreator extends Creator {
     private static final String KEY_REGION_HEIGHT = "region.height";
     private static final String KEY_REGION_POSITIONS = "region.positions";
     private static final String KEY_ANIMATION_SPEED = "animation.speed";
-    private static final Map<String, Sprite> spriteCache = new HashMap<String, Sprite>();
+    private static final Map<String, Sprite> SPRITE_CACHE = new HashMap<String, Sprite>();
     private static Properties spriteProps;
 
     public static Sprite createSprite(String name) {
-        if (spriteCache.containsKey(name)) {
+        if (SPRITE_CACHE.containsKey(name)) {
             Gdx.app.log("Fetching sprite from cache", name);
-            return spriteCache.get(name);
+            return SPRITE_CACHE.get(name);
         }
         if (spriteProps == null) {
             Gdx.app.log("Loading", PROPERTIES_FILENAME);
@@ -46,6 +46,8 @@ public class SpriteCreator extends Creator {
             TextureRegion region = new TextureRegion(texture, x, y, width, height);
             regions.add(region);
         }
-        return new Sprite(width, height, regions, frameDuration);
+        Sprite sprite = new Sprite(width, height, regions, frameDuration);
+        SPRITE_CACHE.put(name, sprite);
+        return sprite;
     }
 }

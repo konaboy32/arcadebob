@@ -29,11 +29,14 @@ public class LevelCreator extends Creator {
     //keys for mapping chars to regions
     private static final String[] MAPPING_KEYS = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "F"};
 
+    //properties file containing level config
     private static Properties levelProps;
 
-    public static void load(String filename) {
-        Gdx.app.log("Loading", filename);
-        levelProps = loadPropertiesFile(filename);
+    public static Level loadLevel(int levelNumber) {
+        String propetiesFilename = "level_" + levelNumber + ".properties";
+        Gdx.app.log("Loading level", propetiesFilename);
+        levelProps = loadPropertiesFile(propetiesFilename);
+        return new Level();
     }
 
     public static String[] getLines() {
@@ -62,6 +65,7 @@ public class LevelCreator extends Creator {
         if (name == null) {
             return null;
         }
+        Gdx.app.log("Loading guardian", name);
         Vector2 trackStartPos = getVectorProperty(createKey(KEY_GUARDIAN_TRACK_START_POSITION, index));
         Vector2 trackEndPos = getVectorProperty(createKey(KEY_GUARDIAN_TRACK_END_POSITION, index));
         Vector2 spawnPos = getVectorProperty(createKey(KEY_GUARDIAN_SPAWN_POSITION, index));
