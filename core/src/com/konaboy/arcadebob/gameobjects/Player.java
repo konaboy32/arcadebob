@@ -3,8 +3,7 @@ package com.konaboy.arcadebob.gameobjects;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.konaboy.arcadebob.game.Level;
-import com.konaboy.arcadebob.helpers.Constants;
+import com.konaboy.arcadebob.game.Constants;
 
 public class Player {
 
@@ -13,8 +12,8 @@ public class Player {
     }
 
     //constants
-    public static final float WIDTH = 1f / Level.TILE_SIZE * 20;
-    public static final float HEIGHT = 1f / Level.TILE_SIZE * 32;
+    public static final float WIDTH = 1f / Constants.TILE_SIZE * 20;
+    public static final float HEIGHT = 1f / Constants.TILE_SIZE * 32;
     public static final float MAX_VELOCITY_X = 3.6f;
     public static final float JUMP_VELOCITY_Y = 7f;
     public static final float JUMP_VELOCITY_X = 2.8f;

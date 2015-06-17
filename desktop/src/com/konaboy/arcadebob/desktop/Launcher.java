@@ -2,8 +2,8 @@ package com.konaboy.arcadebob.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.konaboy.arcadebob.game.Constants;
 import com.konaboy.arcadebob.game.Game;
-import com.konaboy.arcadebob.helpers.Constants;
 
 public class Launcher {
     public static void main(String[] arg) {

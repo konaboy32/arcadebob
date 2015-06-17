@@ -3,6 +3,7 @@ package com.konaboy.arcadebob.helpers;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.konaboy.arcadebob.game.Constants;
 import com.konaboy.arcadebob.gameobjects.Sprite;
 
 import java.util.*;

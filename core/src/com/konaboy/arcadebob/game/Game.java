@@ -16,7 +16,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.konaboy.arcadebob.gameobjects.Guardian;
 import com.konaboy.arcadebob.gameobjects.Player;
-import com.konaboy.arcadebob.helpers.Constants;
 import com.konaboy.arcadebob.helpers.LevelCreator;
 import com.konaboy.arcadebob.helpers.OverlapHelper;
 import com.konaboy.arcadebob.helpers.SpriteCreator;
@@ -47,10 +46,10 @@ public class Game extends ApplicationAdapter {
         level = LevelCreator.createLevel(1);
 
         //Create renderers and cameras for map, its objects and the player
-        tileRenderer = new OrthogonalTiledMapRenderer(level.getMap(), 1f / Level.TILE_SIZE);
+        tileRenderer = new OrthogonalTiledMapRenderer(level.getMap(), 1f / Constants.TILE_SIZE);
         tileBatch = tileRenderer.getBatch();
         gameCamera = new OrthographicCamera();
-        gameCamera.setToOrtho(false, Level.TILES_X, Level.TILES_Y + Constants.DEBUG_LINES);
+        gameCamera.setToOrtho(false, Constants.TILES_X, Constants.TILES_Y + Constants.DEBUG_LINES);
         gameCamera.update();
 
         //Create special shape renderer for debugging
@@ -65,7 +64,7 @@ public class Game extends ApplicationAdapter {
         spriteBatch = new SpriteBatch();
         spriteBatch.setProjectionMatrix(debugCamera.combined);
         font = new BitmapFont();
-        debugRect = new Rectangle(0, Level.TILES_Y, Level.TILES_X, Constants.DEBUG_LINES);
+        debugRect = new Rectangle(0, Constants.TILES_Y, Constants.TILES_X, Constants.DEBUG_LINES);
 
         //initialize our player
         initPlayer();
