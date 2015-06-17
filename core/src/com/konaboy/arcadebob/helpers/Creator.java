@@ -1,11 +1,11 @@
 package com.konaboy.arcadebob.helpers;
 
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -16,21 +16,12 @@ public class Creator {
     protected static final String DOT = ".";
 
     protected static Properties loadPropertiesFile(String filename) {
+        FileHandle handle = Gdx.files.internal(filename);
         Properties props = new Properties();
-        InputStream input = null;
         try {
-            input = new FileInputStream(filename);
-            props.load(input);
+            props.load(handle.read());
         } catch (IOException ex) {
             ex.printStackTrace();
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
         return props;
     }
