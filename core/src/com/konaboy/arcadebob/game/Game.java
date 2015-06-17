@@ -34,7 +34,6 @@ public class Game extends ApplicationAdapter {
     private Level level;
     private Rectangle debugRect;
     private int touchingTiles;
-    private Collection<Guardian> guardians;
 
     @Override
     public void create() {
@@ -68,8 +67,8 @@ public class Game extends ApplicationAdapter {
         font = new BitmapFont();
         debugRect = new Rectangle(0, Level.TILES_Y, Level.TILES_X, Constants.DEBUG_LINES);
 
+        //initialize our player
         initPlayer();
-        initGuardians();
 
         Gdx.app.log("Finished creating game", "");
     }
@@ -105,19 +104,15 @@ public class Game extends ApplicationAdapter {
         debug();
     }
 
-    private void initGuardians() {
-        guardians = level.getGuardians();
-    }
-
     private void updateGuardians(float deltaTime) {
         if (deltaTime == 0) return;
-        for (Guardian guardian : guardians) {
+        for (Guardian guardian : level.getGuardians()) {
             guardian.move(deltaTime);
         }
     }
 
     private void drawGuardians() {
-        for (Guardian guardian : guardians) {
+        for (Guardian guardian : level.getGuardians()) {
             TextureRegion frame = guardian.sprite.animation.getKeyFrame(guardian.stateTime);
             if (guardian.goingRight()) {
                 tileBatch.draw(frame, guardian.bounds.x, guardian.bounds.y, guardian.bounds.width, guardian.bounds.height);
@@ -141,7 +136,7 @@ public class Game extends ApplicationAdapter {
         font.draw(spriteBatch, "ConvRight: " + Player.onRightConveyer, 250, 290);
         //column 4
         font.draw(spriteBatch, "Coll: " + touchingTiles, 370, 310);
-        font.draw(spriteBatch, "Guard: " + guardians.size(), 370, 290);
+        font.draw(spriteBatch, "Guard: " + level.getGuardians().size(), 370, 290);
         spriteBatch.end();
     }
 
@@ -170,7 +165,7 @@ public class Game extends ApplicationAdapter {
     }
 
     private void checkGuardianCollisions() {
-        for (Guardian guardian : guardians) {
+        for (Guardian guardian : level.getGuardians()) {
             if (guardian.bounds.overlaps(Player.getBounds())) {
                 handleHazard();
                 break;

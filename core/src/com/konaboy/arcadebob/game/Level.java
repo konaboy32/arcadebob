@@ -39,11 +39,22 @@ public class Level {
     private TiledMap map;
     private Collection<Rectangle> rectangles;
     private TiledMapTileLayer layer;
+    private Collection<Guardian> guardians;
+
 
     public Level() {
         rectangles = new ArrayList<Rectangle>();
         map = new TiledMap();
         loadMap();
+        loadGuardians();
+    }
+
+    public TiledMap getMap() {
+        return map;
+    }
+
+    public Collection<Guardian> getGuardians() {
+        return guardians;
     }
 
     public boolean isConveyerLeft(Rectangle rect) {
@@ -91,10 +102,6 @@ public class Level {
         return (BlockType) layer.getCell((int) rect.x, (int) rect.y).getTile().getProperties().get(KEY_TYPE);
     }
 
-    public TiledMap getMap() {
-        return map;
-    }
-
     public Collection<Rectangle> getRectangles() {
         return rectangles;
     }
@@ -107,20 +114,7 @@ public class Level {
         return LevelCreator.playerSpawnsFacingRight();
     }
 
-    public Collection<Guardian> getGuardians() {
-        Collection<Guardian> guardians = new ArrayList<Guardian>();
-        int count = 0;
-        while (true) {
-            Guardian guardian = LevelCreator.createGuardian(count++);
-            if (guardian == null) {
-                break;
-            }
-            guardians.add(guardian);
-        }
-        return guardians;
-    }
-
-    private void loadMap() {
+    public void loadMap() {
         Gdx.app.log("Loading map", "");
         Texture texture = AssetManager.getTexture(AssetManager.MANIC_SPRITES);
         TextureRegion[] blocks = TextureRegionHelper.getRegions(texture, 660, 2, 288, 320, TILE_SIZE);
@@ -165,6 +159,12 @@ public class Level {
         }
         tile = new AnimatedTiledMapTile(Constants.ANIMATION_FRAME_DURATION, tiles);
         return tile;
+    }
+
+    private void loadGuardians() {
+        Gdx.app.log("Loading guardians", "");
+        guardians = LevelCreator.createGuardians();
+        Gdx.app.log("Finiahed loading guardians, total number", "" + guardians.size());
     }
 
     private BlockType mapCharToBlockType(char s) {

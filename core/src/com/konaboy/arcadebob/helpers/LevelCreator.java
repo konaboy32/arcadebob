@@ -5,9 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.konaboy.arcadebob.game.Level;
 import com.konaboy.arcadebob.gameobjects.Guardian;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 public class LevelCreator extends Creator {
 
@@ -60,7 +58,20 @@ public class LevelCreator extends Creator {
         return Boolean.valueOf(levelProps.getProperty(KEY_PLAYER_FACING_RIGHT));
     }
 
-    public static Guardian createGuardian(int index) {
+    public static Collection<Guardian> createGuardians() {
+        Collection<Guardian> guardians = new ArrayList<Guardian>();
+        int count = 0;
+        while (true) {
+            Guardian guardian = LevelCreator.createGuardian(count++);
+            if (guardian == null) {
+                break;
+            }
+            guardians.add(guardian);
+        }
+        return guardians;
+    }
+
+    private static Guardian createGuardian(int index) {
         String name = levelProps.getProperty(createKey(KEY_GUARDIAN_NAME, index));
         if (name == null) {
             return null;
