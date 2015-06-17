@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-public class CollisionDetector {
+public class OverlapHelper {
 
     public static Collection<Rectangle> getOverlaps(final Rectangle rectToCheck, final Collection<Rectangle> rects) {
         final Collection<Rectangle> overlaps = new ArrayList<Rectangle>();

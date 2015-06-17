@@ -16,8 +16,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.konaboy.arcadebob.gameobjects.Guardian;
 import com.konaboy.arcadebob.gameobjects.Player;
-import com.konaboy.arcadebob.helpers.CollisionDetector;
 import com.konaboy.arcadebob.helpers.Constants;
+import com.konaboy.arcadebob.helpers.OverlapHelper;
 import com.konaboy.arcadebob.helpers.SpriteCreator;
 
 import java.util.Collection;
@@ -163,7 +163,7 @@ public class Game extends ApplicationAdapter {
     }
 
     private void collisionDetect() {
-        Collection<Rectangle> overlaps = CollisionDetector.getOverlaps(Player.getBounds(), level.getRectangles());
+        Collection<Rectangle> overlaps = OverlapHelper.getOverlaps(Player.getBounds(), level.getRectangles());
 //        drawRectangles(overlaps, ShapeRenderer.ShapeType.Filled, Color.RED);
         touchingTiles = overlaps.size();
         checkObjectCollisions(overlaps);
@@ -210,7 +210,7 @@ public class Game extends ApplicationAdapter {
     private void checkMapCollisions(Collection<Rectangle> overlaps) {
         checkHorizontalMapCollisions(overlaps);
         //we may have adjusted position of player horizontally in previous step, less overlaps now...
-        CollisionDetector.removeNonOverlaps(Player.getBounds(), overlaps);
+        OverlapHelper.removeNonOverlaps(Player.getBounds(), overlaps);
         checkVerticalCollisions(overlaps);
     }
 

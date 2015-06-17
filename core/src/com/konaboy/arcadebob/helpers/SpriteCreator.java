@@ -18,7 +18,7 @@ public class SpriteCreator extends Creator {
     private static final String KEY_REGION_WIDTH = "region.width";
     private static final String KEY_REGION_HEIGHT = "region.height";
     private static final String KEY_REGION_POSITIONS = "region.positions";
-    private static final String KEY_FRAME_DURATION = "frame.duration";
+    private static final String KEY_ANIMATION_SPEED = "animation.speed";
     private static Properties spriteProps;
 
     public static void load() {
@@ -29,7 +29,7 @@ public class SpriteCreator extends Creator {
         String textureFilename = spriteProps.getProperty(createKey(KEY_TEXTURE, name));
         int width = Integer.valueOf(spriteProps.getProperty(createKey(KEY_REGION_WIDTH, name)));
         int height = Integer.valueOf(spriteProps.getProperty(createKey(KEY_REGION_HEIGHT, name)));
-        float frameDuration = Float.valueOf(spriteProps.getProperty(createKey(KEY_FRAME_DURATION, name)));
+        float frameDuration = Float.valueOf(spriteProps.getProperty(createKey(KEY_ANIMATION_SPEED, name))) * Constants.ANIMATION_FRAME_DURATION;
         String regionPositions = spriteProps.getProperty(createKey(KEY_REGION_POSITIONS, name));
         Collection<TextureRegion> regions = new ArrayList<TextureRegion>();
         StringTokenizer stPosition = new StringTokenizer(regionPositions, POSITIION_DELIM);
