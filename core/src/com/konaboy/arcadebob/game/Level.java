@@ -6,11 +6,14 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.konaboy.arcadebob.gameobjects.Guardian;
 import com.konaboy.arcadebob.helpers.AssetManager;
+import com.konaboy.arcadebob.helpers.Constants;
 import com.konaboy.arcadebob.helpers.LevelCreator;
 import com.konaboy.arcadebob.helpers.TextureRegionHelper;
 
@@ -20,7 +23,7 @@ import java.util.Map;
 
 public class Level {
 
-    private enum TileType {
+    private enum BlockType {
         Solid, Impassable, Collapsible, Hazard, ConveyorLeft, ConveyorRight, Collectable, Exit, ExitControl, Special
     }
 
@@ -44,27 +47,27 @@ public class Level {
     }
 
     public boolean isConveyerLeft(Rectangle rect) {
-        return getTileType(rect).equals(TileType.ConveyorLeft);
+        return getBlockType(rect).equals(BlockType.ConveyorLeft);
     }
 
     public boolean isConveyerRight(Rectangle rect) {
-        return getTileType(rect).equals(TileType.ConveyorRight);
+        return getBlockType(rect).equals(BlockType.ConveyorRight);
     }
 
     public boolean isImpassable(Rectangle rect) {
-        return getTileType(rect).equals(TileType.Impassable);
+        return getBlockType(rect).equals(BlockType.Impassable);
     }
 
     public boolean isCollapsible(Rectangle rect) {
-        return getTileType(rect).equals(TileType.Collapsible);
+        return getBlockType(rect).equals(BlockType.Collapsible);
     }
 
     public boolean isCollectable(Rectangle rect) {
-        return getTileType(rect).equals(TileType.Collectable);
+        return getBlockType(rect).equals(BlockType.Collectable);
     }
 
     public boolean isHazard(Rectangle rect) {
-        return getTileType(rect).equals(TileType.Hazard);
+        return getBlockType(rect).equals(BlockType.Hazard);
     }
 
     public boolean updateCollapsible(Rectangle rect) {
@@ -84,8 +87,8 @@ public class Level {
         rectangles.remove(rect);
     }
 
-    private TileType getTileType(Rectangle rect) {
-        return (TileType) layer.getCell((int) rect.x, (int) rect.y).getTile().getProperties().get(KEY_TYPE);
+    private BlockType getBlockType(Rectangle rect) {
+        return (BlockType) layer.getCell((int) rect.x, (int) rect.y).getTile().getProperties().get(KEY_TYPE);
     }
 
     public TiledMap getMap() {
@@ -125,49 +128,68 @@ public class Level {
         layer = new TiledMapTileLayer(TILES_X, TILES_Y, TILE_SIZE, TILE_SIZE);
         for (int y = 0; y < TILES_Y; y++) {
             for (int x = 0; x < TILES_X; x++) {
-                char tileType = lines[y].charAt(x);
-                if (!(tileType == EMPTY_TILE)) {
-                    int regionIndex = regionMappings.get("" + tileType);
-                    Cell cell = new Cell();
-                    StaticTiledMapTile tile = new StaticTiledMapTile(blocks[regionIndex]);
-                    Enum tileTypeEnum = mapCharToTileTypeEnum(tileType);
-                    tile.getProperties().put(KEY_TYPE, tileTypeEnum);
-                    if (TileType.Collapsible.equals(tileTypeEnum)) {
+                char blockTypeChar = lines[y].charAt(x);
+                if (blockTypeChar == EMPTY_TILE) {
+                    continue;
+                }
+                int regionIndex = regionMappings.get("" + blockTypeChar);
+                Cell cell = new Cell();
+                Enum blockTypeEnum = mapCharToBlockType(blockTypeChar);
+                TiledMapTile tile;
+                if (BlockType.Collectable.equals(blockTypeEnum)) {
+                    tile = createAnimatedTile(blocks, regionIndex);
+                } else if (BlockType.ConveyorLeft.equals(blockTypeEnum)) {
+                    tile = createAnimatedTile(blocks, regionIndex);
+                } else {
+                    tile = new StaticTiledMapTile(blocks[regionIndex]);
+                    if (BlockType.Collapsible.equals(blockTypeEnum)) {
                         tile.getProperties().put(KEY_TOUCHED, 0);
                     }
-                    cell.setTile(tile);
-                    layer.setCell(x, y, cell);
-                    rectangles.add(new Rectangle(x, y, 1, 1));
                 }
+                tile.getProperties().put(KEY_TYPE, blockTypeEnum);
+                cell.setTile(tile);
+                layer.setCell(x, y, cell);
+                rectangles.add(new Rectangle(x, y, 1, 1));
             }
         }
         map.getLayers().add(layer);
     }
 
-    private TileType mapCharToTileTypeEnum(char s) {
+    private TiledMapTile createAnimatedTile(TextureRegion[] blocks, int regionIndex) {
+        TiledMapTile tile;
+        Array<StaticTiledMapTile> tiles = new Array<StaticTiledMapTile>();
+        tiles.add(new StaticTiledMapTile(blocks[regionIndex]));
+        tiles.add(new StaticTiledMapTile(blocks[regionIndex + 1]));
+        tiles.add(new StaticTiledMapTile(blocks[regionIndex + 2]));
+        tiles.add(new StaticTiledMapTile(blocks[regionIndex + 3]));
+        tile = new AnimatedTiledMapTile(Constants.ANIMATION_FRAME_DURATION, tiles);
+        return tile;
+    }
+
+    private BlockType mapCharToBlockType(char s) {
         switch (s) {
             case '1':
             case '2':
-                return TileType.Solid;
+                return BlockType.Solid;
             case '3':
-                return TileType.Impassable;
+                return BlockType.Impassable;
             case '4':
-                return TileType.Collapsible;
+                return BlockType.Collapsible;
             case '5':
             case '6':
-                return TileType.Hazard;
+                return BlockType.Hazard;
             case '7':
-                return TileType.ConveyorLeft;
+                return BlockType.ConveyorLeft;
             case '8':
-                return TileType.ConveyorRight;
+                return BlockType.ConveyorRight;
             case '9':
-                return TileType.Collectable;
+                return BlockType.Collectable;
             case 'A':
-                return TileType.Exit;
+                return BlockType.Exit;
             case 'B':
-                return TileType.ExitControl;
+                return BlockType.ExitControl;
             case 'F':
-                return TileType.Special;
+                return BlockType.Special;
             default:
                 return null;
         }
