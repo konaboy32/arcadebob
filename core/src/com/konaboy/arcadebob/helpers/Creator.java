@@ -47,7 +47,6 @@ public class Creator {
     }
 
     protected static String createKey(String key, String name) {
-        System.out.println(name + DOT + key);
         return name + DOT + key;
     }
 }

@@ -38,9 +38,6 @@ public class Game extends ApplicationAdapter {
     @Override
     public void create() {
 
-        //init sprite property helper
-        SpriteCreator.load();
-
         //create player graphics and animation
         Player.sprite = SpriteCreator.createSprite(SpriteCreator.PLAYER_SPRITE_NAME);
         Player.standingFrame = Player.sprite.regions[1];

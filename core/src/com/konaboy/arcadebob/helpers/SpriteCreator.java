@@ -1,13 +1,11 @@
 package com.konaboy.arcadebob.helpers;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.konaboy.arcadebob.gameobjects.Sprite;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Properties;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class SpriteCreator extends Creator {
 
@@ -19,13 +17,19 @@ public class SpriteCreator extends Creator {
     private static final String KEY_REGION_HEIGHT = "region.height";
     private static final String KEY_REGION_POSITIONS = "region.positions";
     private static final String KEY_ANIMATION_SPEED = "animation.speed";
+    private static final Map<String, Sprite> spriteCache = new HashMap<String, Sprite>();
     private static Properties spriteProps;
 
-    public static void load() {
-        spriteProps = loadPropertiesFile(PROPERTIES_FILENAME);
-    }
-
     public static Sprite createSprite(String name) {
+        if (spriteCache.containsKey(name)) {
+            Gdx.app.log("Fetching sprite from cache", name);
+            return spriteCache.get(name);
+        }
+        if (spriteProps == null) {
+            Gdx.app.log("Loading", PROPERTIES_FILENAME);
+            spriteProps = loadPropertiesFile(PROPERTIES_FILENAME);
+        }
+        Gdx.app.log("Loading sprite", name);
         String textureFilename = spriteProps.getProperty(createKey(KEY_TEXTURE, name));
         int width = Integer.valueOf(spriteProps.getProperty(createKey(KEY_REGION_WIDTH, name)));
         int height = Integer.valueOf(spriteProps.getProperty(createKey(KEY_REGION_HEIGHT, name)));
