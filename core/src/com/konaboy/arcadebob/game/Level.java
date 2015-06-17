@@ -66,15 +66,16 @@ public class Level {
         return getBlockType(rect).equals(Constants.BlockType.Hazard);
     }
 
-    public boolean updateCollapsible(Rectangle rect) {
-        Integer touched = (Integer) layer.getCell((int) rect.x, (int) rect.y).getTile().getProperties().get(LevelCreator.KEY_TOUCHED);
-        if (touched > COLLAPSE_LIMIT) {
+    public boolean updateCollapsible(Rectangle rect, int touches) {
+        Integer totalTouches = (Integer) layer.getCell((int) rect.x, (int) rect.y).getTile().getProperties().get(LevelCreator.KEY_TOUCHED);
+        if (totalTouches > COLLAPSE_LIMIT) {
             removeTile(rect);
             return true;
         }
+        totalTouches += touches;
         TiledMapTile tile = layer.getCell((int) rect.x, (int) rect.y).getTile();
-        tile.setOffsetY(-touched);
-        tile.getProperties().put(LevelCreator.KEY_TOUCHED, ++touched);
+        tile.setOffsetY(-totalTouches);
+        tile.getProperties().put(LevelCreator.KEY_TOUCHED, totalTouches);
         return false;
     }
 

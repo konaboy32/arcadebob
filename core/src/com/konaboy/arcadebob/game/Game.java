@@ -255,7 +255,11 @@ public class Game extends ApplicationAdapter {
 
     private void checkIfStandingOnCollapsible(Rectangle rect, Collection<Rectangle> overlaps) {
         if (level.isCollapsible(rect)) {
-            boolean collapsed = level.updateCollapsible(rect);
+            int touches = 1;
+            if (Player.state.equals(Player.State.Jumping)) {
+                touches = 4;
+            }
+            boolean collapsed = level.updateCollapsible(rect, touches);
             if (collapsed) {
                 overlaps.remove(rect);
             }
