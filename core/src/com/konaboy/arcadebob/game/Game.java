@@ -19,7 +19,6 @@ import com.konaboy.arcadebob.gameobjects.Player;
 import com.konaboy.arcadebob.helpers.AssetManager;
 import com.konaboy.arcadebob.helpers.LevelCreator;
 import com.konaboy.arcadebob.helpers.OverlapHelper;
-import com.konaboy.arcadebob.helpers.SpriteCreator;
 
 import java.util.Collection;
 
@@ -42,10 +41,6 @@ public class Game extends ApplicationAdapter {
     @Override
     public void create() {
         Gdx.app.log("Creating game", "");
-
-        //create player graphics and animation
-        Player.sprite = SpriteCreator.createSprite(SpriteCreator.PLAYER_SPRITE_NAME);
-        Player.standingFrame = Player.sprite.regions[1];
 
         //create the level from properties file
         level = LevelCreator.createLevel(1);
@@ -72,7 +67,7 @@ public class Game extends ApplicationAdapter {
         debugRect = new Rectangle(0, Constants.TILES_Y, Constants.TILES_X, Constants.DEBUG_LINES);
 
         //initialize our player
-        initPlayer();
+        Player.init(level.getPlayerSpawnPosition(), level.playerSpawnsFacingRight());
 
         Gdx.app.log("Finished creating game", "");
     }
@@ -194,11 +189,7 @@ public class Game extends ApplicationAdapter {
     private void handleHazard() {
         Gdx.app.log("You died", "");
         AssetManager.getSound(SOUND_DIE).play();
-        create();
-    }
-
-    private void initPlayer() {
-        Player.init(level.getPlayerSpawnPosition(), level.playerSpawnsFacingRight());
+//        create();
     }
 
     private void handleCollectable(Rectangle rect) {
@@ -208,6 +199,7 @@ public class Game extends ApplicationAdapter {
     }
 
     private void checkMapCollisions(Collection<Rectangle> overlaps) {
+//        drawRectangles(overlaps, ShapeRenderer.ShapeType.Filled, Color.WHITE);
         checkHorizontalMapCollisions(overlaps);
         //we may have adjusted position of player horizontally in previous step, less overlaps now...
         OverlapHelper.removeNonOverlaps(Player.getBounds(), overlaps);
@@ -253,6 +245,7 @@ public class Game extends ApplicationAdapter {
                 if (rect.x > Player.position.x && rect.y > Player.position.y) {
                     if (level.isImpassable(rect)) {
                         Player.position.x = rect.x - Player.WIDTH;
+                        System.out.println(Player.position.x);
                     }
                     break;
                 }

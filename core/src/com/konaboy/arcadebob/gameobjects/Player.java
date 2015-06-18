@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.konaboy.arcadebob.game.Constants;
 import com.konaboy.arcadebob.helpers.AssetManager;
+import com.konaboy.arcadebob.helpers.SpriteCreator;
 
 public class Player {
 
@@ -42,6 +43,8 @@ public class Player {
         velocity = new Vector2(0, 0);
         bounds = new Rectangle(position.x, position.y, WIDTH, HEIGHT);
         facesRight = spawnfacingRight;
+        sprite = SpriteCreator.createSprite(SpriteCreator.PLAYER_SPRITE_NAME);
+        standingFrame = Player.sprite.regions[1];
     }
 
     public static boolean goingLeft() {
