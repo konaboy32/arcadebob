@@ -37,6 +37,7 @@ public class Player {
     public static Sprite sprite;
 
     private static final String SOUND_JUMP = "jump.wav";
+    private static final String SOUND_BLIP = "blip.wav";
 
     public static void init(Vector2 spawnPosition, boolean spawnfacingRight) {
         position = spawnPosition;
@@ -110,7 +111,7 @@ public class Player {
     }
 
     public static void clampFallVelocity() {
-        //stop horizontal movement if walking of platforms
+        //stop horizontal movement if walking off platforms
         if (velocity.y < FALL_THRESHOLD && !state.equals(State.Jumping)) {
             velocity.x = 0;
         }
