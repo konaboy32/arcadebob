@@ -58,7 +58,10 @@ nb-configuration.xml
 
 .gradle
 gradle-app.setting
-build/
 
 ## OS Specific
 .DS_Store
+
+## examples
+android/assets/data/
+core/src/com/konaboy/arcadebob/examples/

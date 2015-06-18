@@ -3,6 +3,7 @@ package com.konaboy.arcadebob.gameobjects;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.konaboy.arcadebob.game.Constants;
 import com.konaboy.arcadebob.helpers.AssetManager;
 import com.konaboy.arcadebob.helpers.SpriteCreator;
@@ -35,6 +36,7 @@ public class Player {
     public static boolean onRightConveyer = false;
     public static TextureRegion standingFrame;
     public static Sprite sprite;
+    public static BodyDef bodyDef;
 
     private static final String SOUND_JUMP = "jump.wav";
     private static final String SOUND_BLIP = "blip.wav";
@@ -46,6 +48,9 @@ public class Player {
         facesRight = spawnfacingRight;
         sprite = SpriteCreator.createSprite(SpriteCreator.PLAYER_SPRITE_NAME);
         standingFrame = Player.sprite.regions[1];
+        bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.set(10f, 10f);
     }
 
     public static boolean goingLeft() {

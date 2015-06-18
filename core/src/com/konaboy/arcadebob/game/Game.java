@@ -1,6 +1,5 @@
 package com.konaboy.arcadebob.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
@@ -14,16 +13,21 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.konaboy.arcadebob.gameobjects.Guardian;
 import com.konaboy.arcadebob.gameobjects.Player;
 import com.konaboy.arcadebob.helpers.AssetManager;
+import com.konaboy.arcadebob.helpers.GdxTest;
 import com.konaboy.arcadebob.helpers.LevelCreator;
 import com.konaboy.arcadebob.helpers.OverlapHelper;
 
 import java.util.Collection;
 
-public class Game extends ApplicationAdapter {
+public class Game extends GdxTest {
 
+    private final static float MAX_VELOCITY = 4f;
     private static final String SOUND_COLLECT = "collect.wav";
     private static final String SOUND_DIE = "die.wav";
     private static final String SOUND_COLLAPSE = "collapse.wav";
@@ -37,6 +41,17 @@ public class Game extends ApplicationAdapter {
     private Level level;
     private Rectangle debugRect;
     private int touchingTiles;
+    private World world;
+    private Box2DDebugRenderer debugRenderer;
+    private Body body;
+    private Fixture fixture;
+    Fixture playerPhysicsFixture;
+    Fixture playerSensorFixture;
+    private Body playerbox;
+    private long lastGroundTime = 0;
+    private float stillTime = 0;
+    private boolean jump = false;
+
 
     @Override
     public void create() {
@@ -68,6 +83,33 @@ public class Game extends ApplicationAdapter {
 
         //initialize our player
         Player.init(level.getPlayerSpawnPosition(), level.playerSpawnsFacingRight());
+
+        world = new World(new Vector2(0, -10), true);
+        debugRenderer = new Box2DDebugRenderer();
+        body = world.createBody(Player.bodyDef);
+        PolygonShape character = new PolygonShape();
+        character.setAsBox(0.5f, 1f);
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = character;
+        fixtureDef.density = 1f;
+        fixtureDef.friction = 0.4f;
+        fixtureDef.restitution = 0.6f; // Make it bounce a little bit
+        fixture = body.createFixture(fixtureDef);
+
+        playerbox = createPlayer();
+        playerbox.setTransform(4.0f, 4.0f, 0);
+        playerbox.setFixedRotation(true);
+
+        for (Rectangle rect : level.getRectangles()) {
+            BodyDef groundBodyDef = new BodyDef();
+            groundBodyDef.position.set(new Vector2(rect.x + 0.5f, rect.y + 0.5f));
+            Body groundBody = world.createBody(groundBodyDef);
+            PolygonShape groundBox = new PolygonShape();
+            groundBox.setAsBox(0.5f, 0.5f);
+            groundBody.createFixture(groundBox, 0.0f);
+        }
+
+        Gdx.input.setInputProcessor(this);
 
         Gdx.app.log("Finished creating game", "");
     }
@@ -101,6 +143,94 @@ public class Game extends ApplicationAdapter {
 
         //print some debug info to the screen
         debug();
+
+        render2d(deltaTime);
+
+        world.step(deltaTime, 6, 2);
+        debugRenderer.render(world, gameCamera.combined);
+    }
+
+    private void render2d(float deltaTime) {
+        Vector2 vel = playerbox.getLinearVelocity();
+        Vector2 pos = playerbox.getPosition();
+        boolean grounded = isPlayerGrounded(Gdx.graphics.getDeltaTime());
+        if (grounded) {
+            lastGroundTime = TimeUtils.nanoTime();
+        } else {
+            if (TimeUtils.nanoTime() - lastGroundTime < 100000000) {
+                grounded = true;
+            }
+        }
+
+        // cap max velocity on x
+        if (Math.abs(vel.x) > MAX_VELOCITY) {
+            vel.x = Math.signum(vel.x) * MAX_VELOCITY;
+            playerbox.setLinearVelocity(vel.x, vel.y);
+        }
+
+        // calculate stilltime & damp
+        if (!Gdx.input.isKeyPressed(Keys.A) && !Gdx.input.isKeyPressed(Keys.D)) {
+            stillTime += Gdx.graphics.getDeltaTime();
+            playerbox.setLinearVelocity(vel.x * 0.9f, vel.y);
+        } else {
+            stillTime = 0;
+        }
+
+        // disable friction while jumping
+        if (!grounded) {
+            playerPhysicsFixture.setFriction(0f);
+            playerSensorFixture.setFriction(0f);
+        } else {
+            if (!Gdx.input.isKeyPressed(Keys.A) && !Gdx.input.isKeyPressed(Keys.D) && stillTime > 0.2) {
+                playerPhysicsFixture.setFriction(1000f);
+                playerSensorFixture.setFriction(1000f);
+            } else {
+                playerPhysicsFixture.setFriction(0.2f);
+                playerSensorFixture.setFriction(0.2f);
+            }
+
+//            // dampen sudden changes in x/y of a MovingPlatform a little bit, otherwise
+//            // character hops :)
+//            if (groundedPlatform != null && groundedPlatform instanceof MovingPlatform
+//                    && ((MovingPlatform) groundedPlatform).dist == 0) {
+//                player.applyLinearImpulse(0, -24, pos.x, pos.y, true);
+//            }
+        }
+
+        // since Box2D 2.2 we need to reset the friction of any existing contacts
+        Array<Contact> contacts = world.getContactList();
+        for (int i = 0; i < world.getContactCount(); i++) {
+            Contact contact = contacts.get(i);
+            contact.resetFriction();
+        }
+
+        // apply left impulse, but only if max velocity is not reached yet
+        if (Gdx.input.isKeyPressed(Keys.A) && vel.x > -MAX_VELOCITY) {
+            playerbox.applyLinearImpulse(-2f, 0, pos.x, pos.y, true);
+        }
+
+        // apply right impulse, but only if max velocity is not reached yet
+        if (Gdx.input.isKeyPressed(Keys.D) && vel.x < MAX_VELOCITY) {
+            playerbox.applyLinearImpulse(2f, 0, pos.x, pos.y, true);
+        }
+
+        System.out.println("grunded: " + grounded + " jump: " + jump);
+
+        // jump, but only when grounded
+        if (jump) {
+            jump = false;
+            if (grounded) {
+                playerbox.setLinearVelocity(vel.x, 0);
+                System.out.println("jump before: " + playerbox.getLinearVelocity());
+                playerbox.setTransform(pos.x, pos.y + 0.01f, 0);
+                playerbox.applyLinearImpulse(0, 10, pos.x, pos.y, true);
+                System.out.println("jump, " + playerbox.getLinearVelocity());
+            }
+        }
+
+        playerbox.setAwake(true);
+
+
     }
 
     private void updateGuardians(float deltaTime) {
@@ -287,13 +417,16 @@ public class Game extends ApplicationAdapter {
 
     private void checkInputs() {
         if ((Gdx.input.isKeyPressed(Keys.SPACE) || isTouched(0.5f, 1))) {
-            Player.jump();
+            playerbox.applyLinearImpulse(new Vector2(0, 1), body.getWorldCenter(), true);
+//            Player.jump();
         }
         if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A) || isTouched(0, 0.25f)) {
-            Player.walkLeft();
+            playerbox.applyLinearImpulse(new Vector2(-1, 0), body.getWorldCenter(), true);
+//            Player.walkLeft();
         }
         if (Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D) || isTouched(0.25f, 0.5f)) {
-            Player.walkRight();
+            playerbox.applyLinearImpulse(new Vector2(1, 0), body.getWorldCenter(), true);
+//            Player.walkRight();
         }
     }
 
@@ -342,5 +475,72 @@ public class Game extends ApplicationAdapter {
     public void dispose() {
         Gdx.app.log("Disposing game", "");
     }
+
+    private Body createPlayer() {
+        BodyDef def = new BodyDef();
+        def.type = BodyDef.BodyType.DynamicBody;
+        Body box = world.createBody(def);
+
+        PolygonShape poly = new PolygonShape();
+        poly.setAsBox(0.45f, 0.75f);
+        playerPhysicsFixture = box.createFixture(poly, 1);
+        poly.dispose();
+
+        CircleShape circle = new CircleShape();
+        circle.setRadius(0.45f);
+        circle.setPosition(new Vector2(0, -0.75f));
+        playerSensorFixture = box.createFixture(circle, 0);
+        circle.dispose();
+
+        box.setBullet(true);
+
+        return box;
+    }
+
+    private boolean isPlayerGrounded(float deltaTime) {
+//        groundedPlatform = null;
+        Array<Contact> contactList = world.getContactList();
+        System.out.println(contactList.size);
+        for (int i = 0; i < contactList.size; i++) {
+
+            Contact contact = contactList.get(i);
+            if (contact.isTouching()
+                    && (contact.getFixtureA() == playerSensorFixture
+                    || contact.getFixtureB() == playerSensorFixture)) {
+
+                System.out.println("CONTACT");
+                Vector2 pos = playerbox.getPosition();
+                System.out.println(playerbox.getPosition().x + " " + playerbox.getPosition().y);
+                WorldManifold manifold = contact.getWorldManifold();
+                boolean below = true;
+                for (int j = 0; j < manifold.getNumberOfContactPoints(); j++) {
+                    System.out.println("" + manifold.getPoints()[j].y);
+                    below &= (manifold.getPoints()[j].y < pos.y - 1f);
+                }
+
+                return below;
+
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        System.out.println("KEYDOWN");
+        if (keycode == Keys.W) {
+            System.out.println("JUMP ***************************************");
+            jump = true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        System.out.println("KEYUP *****************************************");
+        if (keycode == Keys.W) jump = false;
+        return false;
+    }
+
 }
 
