@@ -199,7 +199,7 @@ public class Game extends ApplicationAdapter {
     }
 
     private void checkMapCollisions(Collection<Rectangle> overlaps) {
-//        drawRectangles(overlaps, ShapeRenderer.ShapeType.Filled, Color.WHITE);
+        drawRectangles(overlaps, ShapeRenderer.ShapeType.Filled, Color.WHITE);
         checkHorizontalMapCollisions(overlaps);
         //we may have adjusted position of player horizontally in previous step, less overlaps now...
         OverlapHelper.removeNonOverlaps(Player.getBounds(), overlaps);
@@ -232,25 +232,38 @@ public class Game extends ApplicationAdapter {
 
     private void checkHorizontalMapCollisions(Collection<Rectangle> overlaps) {
         if (Player.goingLeft()) {
+            System.out.println("GOING LEFT CHECK +++++++++++++++++++++++++++++ " + overlaps.size());
             for (Rectangle rect : overlaps) {
-                if (rect.x < Player.position.x && rect.y > Player.position.y) {
-                    if (level.isImpassable(rect)) {
-                        Player.position.x = rect.x + rect.width;
+                System.out.println("Checking recangle: " + rect);
+                if (rect.x < Player.position.x) {
+                    int playerRow = roundFloat(Player.position.y);
+                    int tileRow = roundFloat(rect.y);
+                    System.out.println(playerRow + " " + tileRow);
+                    if (level.isImpassable(rect) && (tileRow == playerRow || tileRow == playerRow + 1)) {
+                        Player.stopMovingX();
+                        Player.position.x = rect.x + rect.width; //push back
                     }
-                    break;
                 }
             }
         } else if (Player.goingRight()) {
+            System.out.println("GOING RIGHT CHECK +++++++++++++++++++++++++++++ " + overlaps.size());
             for (Rectangle rect : overlaps) {
-                if (rect.x > Player.position.x && rect.y > Player.position.y) {
-                    if (level.isImpassable(rect)) {
-                        Player.position.x = rect.x - Player.WIDTH;
-                        System.out.println(Player.position.x);
+                System.out.println("Checking recangle: " + rect);
+                if (rect.x > Player.position.x) {
+                    int playerRow = roundFloat(Player.position.y);
+                    int tileRow = roundFloat(rect.y);
+                    System.out.println(playerRow + " " + tileRow);
+                    if (level.isImpassable(rect) && (tileRow == playerRow || tileRow == playerRow + 1)) {
+                        Player.stopMovingX();
+                        Player.position.x = rect.x - Player.WIDTH; //push back
                     }
-                    break;
                 }
             }
         }
+    }
+
+    private int roundFloat(float f) {
+        return Math.round(f * 100) / 100;
     }
 
     private void checkIfStandingOnCollapsible(Rectangle rect, Collection<Rectangle> overlaps) {
