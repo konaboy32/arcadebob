@@ -15,7 +15,6 @@ public class AssetManager {
 
     public static Texture getTexture(String filename) {
         if (TEXTURE_CACHE.containsKey(filename)) {
-            Gdx.app.log("Fetching texture from cache", filename);
             return TEXTURE_CACHE.get(filename);
         }
         Gdx.app.log("Loading texture", filename);
@@ -26,7 +25,6 @@ public class AssetManager {
 
     public static Sound getSound(String filename) {
         if (SOUND_CACHE.containsKey(filename)) {
-            Gdx.app.log("Fetching sound from cache", filename);
             return SOUND_CACHE.get(filename);
         }
         Gdx.app.log("Loading sound", filename);

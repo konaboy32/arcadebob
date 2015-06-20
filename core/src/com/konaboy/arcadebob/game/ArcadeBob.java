@@ -202,7 +202,7 @@ public class ArcadeBob extends Game {
     }
 
     private void handleCollectable(Rectangle rect) {
-        Gdx.app.log("Collectable", rect.toString());
+        Gdx.app.log("Collected", rect.toString());
         AssetManager.getSound(SOUND_COLLECT).play();
         level.removeTile(rect);
     }
@@ -273,6 +273,7 @@ public class ArcadeBob extends Game {
             }
             boolean collapsed = level.updateCollapsible(rect, touches);
             if (collapsed) {
+                Gdx.app.log("Collapsed", rect.toString());
                 AssetManager.getSound(SOUND_COLLAPSE).play();
             }
         }
