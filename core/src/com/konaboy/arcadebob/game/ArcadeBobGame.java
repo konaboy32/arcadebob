@@ -1,6 +1,6 @@
 package com.konaboy.arcadebob.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
@@ -23,7 +23,7 @@ import com.konaboy.arcadebob.helpers.OverlapHelper;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class Game extends ApplicationAdapter {
+public class ArcadeBobGame extends Game {
 
     private static final String SOUND_COLLECT = "collect.wav";
     private static final String SOUND_DIE = "die.wav";
