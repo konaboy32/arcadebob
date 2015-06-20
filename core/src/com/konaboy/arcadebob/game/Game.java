@@ -212,9 +212,8 @@ public class Game extends ApplicationAdapter {
     }
 
     private void checkHorizontalMapCollisions() {
-
-        Player.obstacleOnRight = false;
         if (Player.goingLeft()) {
+            Player.obstacleOnRight = false;
             Collection<Rectangle> leftSensorOverlaps = OverlapHelper.getOverlaps(Player.getLeftSensor(), level.getRectangles());
             for (Rectangle rect : leftSensorOverlaps) {
                 if (level.isImpassable(rect)) {
@@ -227,6 +226,7 @@ public class Game extends ApplicationAdapter {
                 Player.obstacleOnLeft = false;
             }
         } else if (Player.goingRight()) {
+            Player.obstacleOnLeft = false;
             Collection<Rectangle> rightSensorOverlaps = OverlapHelper.getOverlaps(Player.getRightSensor(), level.getRectangles());
             for (Rectangle rect : rightSensorOverlaps) {
                 if (level.isImpassable(rect)) {
