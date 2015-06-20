@@ -101,7 +101,7 @@ public class Game extends ApplicationAdapter {
 
         //print some debug info to the screen
         debugText();
-        debugRectangles();
+//        debugRectangles();
     }
 
     private void updateGuardians(float deltaTime) {

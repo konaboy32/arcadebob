@@ -131,21 +131,29 @@ public class Player {
     }
 
     public static void walkLeft() {
-        if (!grounded || onRightConveyer) {
+        if (onRightConveyer) {
             return;
         }
-        velocity.x = -MAX_VELOCITY_X;
-        state = State.Walking;
-        facesRight = false;
+        if (velocity.x <= 0) {
+            velocity.x = -MAX_VELOCITY_X;
+            facesRight = false;
+        }
+        if (grounded) {
+            state = State.Walking;
+        }
     }
 
     public static void walkRight() {
-        if (!grounded || onLeftConveyer) {
+        if (onLeftConveyer) {
             return;
         }
-        velocity.x = MAX_VELOCITY_X;
-        state = State.Walking;
-        facesRight = true;
+        if (velocity.x >= 0) {
+            velocity.x = MAX_VELOCITY_X;
+            facesRight = true;
+        }
+        if (grounded) {
+            state = State.Walking;
+        }
     }
 
     public static void clampFallVelocity() {
