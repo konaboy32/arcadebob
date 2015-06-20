@@ -91,9 +91,9 @@ public class Player {
     }
 
     public static Rectangle getBottomSensor() {
-        topSensor.x = position.x + SENSOR_THICKNESS;
-        topSensor.y = position.y;
-        return topSensor;
+        bottomSensor.x = position.x + SENSOR_THICKNESS;
+        bottomSensor.y = position.y;
+        return bottomSensor;
     }
 
     public static boolean goingRight() {
