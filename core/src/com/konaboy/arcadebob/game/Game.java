@@ -135,18 +135,17 @@ public class Game extends ApplicationAdapter {
         font.draw(spriteBatch, "ConvLeft: " + Player.onLeftConveyer, 250, 310);
         font.draw(spriteBatch, "ConvRight: " + Player.onRightConveyer, 250, 290);
         //column 4
-        font.draw(spriteBatch, "Coll: " + touchingTiles, 370, 310);
-        font.draw(spriteBatch, "Guard: " + level.getGuardians().size(), 370, 290);
+        font.draw(spriteBatch, "Obs L: " + Player.obstacleOnLeft, 370, 310);
+        font.draw(spriteBatch, "Obs R: " + Player.obstacleOnRight, 370, 290);
         spriteBatch.end();
-
     }
 
     private void debugRectangles() {
         drawRectangle(Player.getLeftSensor(), ShapeRenderer.ShapeType.Filled, Color.GREEN);
         drawRectangle(Player.getRightSensor(), ShapeRenderer.ShapeType.Filled, Color.GREEN);
-        drawRectangle(Player.getTopSensor(), ShapeRenderer.ShapeType.Filled, Color.GREEN);
-        drawRectangle(Player.getBottomSensor(), ShapeRenderer.ShapeType.Filled, Color.GREEN);
-        drawRectangle(Player.getBounds(), ShapeRenderer.ShapeType.Filled, Color.RED);
+        drawRectangle(Player.getTopSensor(), ShapeRenderer.ShapeType.Filled, Color.RED);
+        drawRectangle(Player.getBottomSensor(), ShapeRenderer.ShapeType.Filled, Color.RED);
+        drawRectangle(Player.getBounds(), ShapeRenderer.ShapeType.Filled, Color.WHITE);
     }
 
     private String formatFloat(float f) {
@@ -213,19 +212,31 @@ public class Game extends ApplicationAdapter {
     }
 
     private void checkHorizontalMapCollisions() {
+
+        Player.obstacleOnRight = false;
         if (Player.goingLeft()) {
             Collection<Rectangle> leftSensorOverlaps = OverlapHelper.getOverlaps(Player.getLeftSensor(), level.getRectangles());
             for (Rectangle rect : leftSensorOverlaps) {
                 if (level.isImpassable(rect)) {
                     Player.stopMovingX();
+//                    Player.position.x = rect.x + rect.width;
+                    Player.obstacleOnLeft = true;
                 }
+            }
+            if (leftSensorOverlaps.isEmpty()) {
+                Player.obstacleOnLeft = false;
             }
         } else if (Player.goingRight()) {
             Collection<Rectangle> rightSensorOverlaps = OverlapHelper.getOverlaps(Player.getRightSensor(), level.getRectangles());
             for (Rectangle rect : rightSensorOverlaps) {
                 if (level.isImpassable(rect)) {
                     Player.stopMovingX();
+//                    Player.position.x = rect.x - Player.WIDTH;
+                    Player.obstacleOnRight = true;
                 }
+            }
+            if (rightSensorOverlaps.isEmpty()) {
+                Player.obstacleOnRight = false;
             }
         }
     }
@@ -285,13 +296,13 @@ public class Game extends ApplicationAdapter {
     }
 
     private void checkInputs() {
-        if ((Gdx.input.isKeyPressed(Keys.SPACE) || isTouched(0.5f, 1))) {
+        if ((Gdx.input.isKeyPressed(Keys.SPACE) || Gdx.input.isKeyPressed(Keys.ENTER) || isTouched(0.5f, 1))) {
             Player.jump();
         }
-        if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A) || isTouched(0, 0.25f)) {
+        if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.Z) || isTouched(0, 0.25f)) {
             Player.walkLeft();
         }
-        if (Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.D) || isTouched(0.25f, 0.5f)) {
+        if (Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isKeyPressed(Keys.X) || isTouched(0.25f, 0.5f)) {
             Player.walkRight();
         }
     }

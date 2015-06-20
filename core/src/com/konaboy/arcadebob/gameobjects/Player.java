@@ -37,6 +37,8 @@ public class Player {
     public static boolean onRightConveyer = false;
     public static TextureRegion standingFrame;
     public static Sprite sprite;
+    public static boolean obstacleOnLeft;
+    public static boolean obstacleOnRight;
 
     private static Rectangle bounds;
     private static Rectangle leftSensor;
@@ -167,11 +169,11 @@ public class Player {
     public static void move(float deltaTime) {
         stateTime += deltaTime;
 
-        if (onLeftConveyer) {
+        if (onLeftConveyer && !obstacleOnLeft) {
             walkLeft();
         }
 
-        if (onRightConveyer) {
+        if (onRightConveyer && !obstacleOnRight) {
             walkRight();
         }
 
