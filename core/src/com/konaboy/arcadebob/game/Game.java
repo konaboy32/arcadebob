@@ -100,7 +100,8 @@ public class Game extends ApplicationAdapter {
         updatePlayer(deltaTime);
 
         //print some debug info to the screen
-        debug();
+        debugText();
+        debugRectangles();
     }
 
     private void updateGuardians(float deltaTime) {
@@ -121,7 +122,7 @@ public class Game extends ApplicationAdapter {
         }
     }
 
-    private void debug() {
+    private void debugText() {
         drawRectangle(debugRect, ShapeRenderer.ShapeType.Filled, Color.DARK_GRAY);
         spriteBatch.begin();
         //column 1
@@ -137,6 +138,15 @@ public class Game extends ApplicationAdapter {
         font.draw(spriteBatch, "Coll: " + touchingTiles, 370, 310);
         font.draw(spriteBatch, "Guard: " + level.getGuardians().size(), 370, 290);
         spriteBatch.end();
+
+    }
+
+    private void debugRectangles() {
+        drawRectangle(Player.getLeftSensor(), ShapeRenderer.ShapeType.Filled, Color.GREEN);
+        drawRectangle(Player.getRightSensor(), ShapeRenderer.ShapeType.Filled, Color.GREEN);
+        drawRectangle(Player.getTopSensor(), ShapeRenderer.ShapeType.Filled, Color.GREEN);
+        drawRectangle(Player.getBottomSensor(), ShapeRenderer.ShapeType.Filled, Color.GREEN);
+        drawRectangle(Player.getBounds(), ShapeRenderer.ShapeType.Filled, Color.RED);
     }
 
     private String formatFloat(float f) {
@@ -156,10 +166,9 @@ public class Game extends ApplicationAdapter {
 
     private void collisionDetect() {
         Collection<Rectangle> overlaps = OverlapHelper.getOverlaps(Player.getBounds(), level.getRectangles());
-//        drawRectangles(overlaps, ShapeRenderer.ShapeType.Filled, Color.RED);
         touchingTiles = overlaps.size();
         checkObjectCollisions(overlaps);
-        checkMapCollisions(overlaps);
+        checkMapCollisions();
         checkGuardianCollisions();
     }
 
@@ -198,75 +207,60 @@ public class Game extends ApplicationAdapter {
         level.removeTile(rect);
     }
 
-    private void checkMapCollisions(Collection<Rectangle> overlaps) {
-        drawRectangles(overlaps, ShapeRenderer.ShapeType.Filled, Color.WHITE);
-        checkHorizontalMapCollisions(overlaps);
-        //we may have adjusted position of player horizontally in previous step, less overlaps now...
-        OverlapHelper.removeNonOverlaps(Player.getBounds(), overlaps);
-        checkVerticalCollisions(overlaps);
+    private void checkMapCollisions() {
+        checkHorizontalMapCollisions();
+        checkVerticalCollisions();
     }
 
-    private void checkVerticalCollisions(Collection<Rectangle> overlaps) {
+    private void checkHorizontalMapCollisions() {
+        if (Player.goingLeft()) {
+            Collection<Rectangle> leftSensorOverlaps = OverlapHelper.getOverlaps(Player.getLeftSensor(), level.getRectangles());
+            for (Rectangle rect : leftSensorOverlaps) {
+                if (level.isImpassable(rect)) {
+                    Player.stopMovingX();
+//                    Player.position.x = rect.x + rect.width; //push back
+                }
+            }
+        } else if (Player.goingRight()) {
+            Collection<Rectangle> rightSensorOverlaps = OverlapHelper.getOverlaps(Player.getRightSensor(), level.getRectangles());
+            for (Rectangle rect : rightSensorOverlaps) {
+                if (level.isImpassable(rect)) {
+                    Player.stopMovingX();
+//                        Player.position.x = rect.x - Player.WIDTH; //push back
+                }
+            }
+        }
+    }
+
+
+    private void checkVerticalCollisions() {
         if (Player.goingDown()) {
-            for (Rectangle rect : overlaps) {
+            Collection<Rectangle> bottomSensorOverlaps = OverlapHelper.getOverlaps(Player.getBottomSensor(), level.getRectangles());
+            for (Rectangle rect : bottomSensorOverlaps) {
                 if (rect.y < Player.position.y - 0.6f) {
                     Player.stopMovingY();
                     Player.position.y = rect.y + rect.height;
                     Player.grounded = true;
                     checkIfStandingOnConveyer(rect);
-                    checkIfStandingOnCollapsible(rect, overlaps);
-                    break;
+                    checkIfStandingOnCollapsible(rect);
                 }
             }
         } else if (Player.goingUp()) {
-            for (Rectangle rect : overlaps) {
-                if (rect.y > Player.position.y + 1) {
-                    if (level.isImpassable(rect)) {
-                        Player.stopMovingY();
-                    }
-                    break;
+            Collection<Rectangle> topSensorOverlaps = OverlapHelper.getOverlaps(Player.getTopSensor(), level.getRectangles());
+            for (Rectangle rect : topSensorOverlaps) {
+                if (level.isImpassable(rect)) {
+                    Player.stopMovingY();
                 }
             }
         }
     }
 
-    private void checkHorizontalMapCollisions(Collection<Rectangle> overlaps) {
-        if (Player.goingLeft()) {
-            System.out.println("GOING LEFT CHECK +++++++++++++++++++++++++++++ " + overlaps.size());
-            for (Rectangle rect : overlaps) {
-                System.out.println("Checking recangle: " + rect);
-                if (rect.x < Player.position.x) {
-                    int playerRow = roundFloat(Player.position.y);
-                    int tileRow = roundFloat(rect.y);
-                    System.out.println(playerRow + " " + tileRow);
-                    if (level.isImpassable(rect) && (tileRow == playerRow || tileRow == playerRow + 1)) {
-                        Player.stopMovingX();
-                        Player.position.x = rect.x + rect.width; //push back
-                    }
-                }
-            }
-        } else if (Player.goingRight()) {
-            System.out.println("GOING RIGHT CHECK +++++++++++++++++++++++++++++ " + overlaps.size());
-            for (Rectangle rect : overlaps) {
-                System.out.println("Checking recangle: " + rect);
-                if (rect.x > Player.position.x) {
-                    int playerRow = roundFloat(Player.position.y);
-                    int tileRow = roundFloat(rect.y);
-                    System.out.println(playerRow + " " + tileRow);
-                    if (level.isImpassable(rect) && (tileRow == playerRow || tileRow == playerRow + 1)) {
-                        Player.stopMovingX();
-                        Player.position.x = rect.x - Player.WIDTH; //push back
-                    }
-                }
-            }
-        }
-    }
 
     private int roundFloat(float f) {
         return Math.round(f * 100) / 100;
     }
 
-    private void checkIfStandingOnCollapsible(Rectangle rect, Collection<Rectangle> overlaps) {
+    private void checkIfStandingOnCollapsible(Rectangle rect) {
         if (level.isCollapsible(rect)) {
             int touches = 1;
             if (Player.state.equals(Player.State.Jumping)) {
@@ -274,7 +268,6 @@ public class Game extends ApplicationAdapter {
             }
             boolean collapsed = level.updateCollapsible(rect, touches);
             if (collapsed) {
-                overlaps.remove(rect);
                 AssetManager.getSound(SOUND_COLLAPSE).play();
             }
         }

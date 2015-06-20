@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Rectangle;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 public class OverlapHelper {
 
@@ -17,14 +16,4 @@ public class OverlapHelper {
         }
         return overlaps;
     }
-
-    public static void removeNonOverlaps(final Rectangle rectToCheck, final Collection<Rectangle> rects) {
-        Iterator<Rectangle> i = rects.iterator();
-        while (i.hasNext()) {
-            if (!rectToCheck.overlaps(i.next())) {
-                i.remove();
-            }
-        }
-    }
-
 }

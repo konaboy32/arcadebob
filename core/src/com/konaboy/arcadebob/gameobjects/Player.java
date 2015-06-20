@@ -22,11 +22,13 @@ public class Player {
     public static final float FALL_THRESHOLD = -1f;
     public static final float MAX_FALL_VELOCITY = -JUMP_VELOCITY_Y;
     public static final float DAMPING = 0.5f;
+    public static final float SENSOR_THICKNESS = 0.1f;
+    public static final float BOUNDS_SHRINK_X = 0.4f;
+    public static final float BOUNDS_SHRINK_TOP = 0.2f;
 
     //variables
     public static Vector2 position;
     public static Vector2 velocity;
-    private static Rectangle bounds;
     public static State state = State.Standing;
     public static float stateTime = 0;
     public static boolean facesRight = true;
@@ -36,13 +38,23 @@ public class Player {
     public static TextureRegion standingFrame;
     public static Sprite sprite;
 
+    private static Rectangle bounds;
+    private static Rectangle leftSensor;
+    private static Rectangle rightSensor;
+    private static Rectangle topSensor;
+    private static Rectangle bottomSensor;
+
     private static final String SOUND_JUMP = "jump.wav";
     private static final String SOUND_BLIP = "blip.wav";
 
     public static void init(Vector2 spawnPosition, boolean spawnfacingRight) {
         position = spawnPosition;
         velocity = new Vector2(0, 0);
-        bounds = new Rectangle(position.x, position.y, WIDTH, HEIGHT);
+        bounds = new Rectangle(0, 0, WIDTH - 2 * BOUNDS_SHRINK_X, HEIGHT - BOUNDS_SHRINK_TOP);
+        leftSensor = new Rectangle(0, 0, SENSOR_THICKNESS, HEIGHT - 2 * SENSOR_THICKNESS);
+        rightSensor = new Rectangle(0, 0, SENSOR_THICKNESS, HEIGHT - 2 * SENSOR_THICKNESS);
+        topSensor = new Rectangle(0, 0, WIDTH - 2 * SENSOR_THICKNESS, SENSOR_THICKNESS);
+        bottomSensor = new Rectangle(0, 0, WIDTH - 2 * SENSOR_THICKNESS, SENSOR_THICKNESS);
         facesRight = spawnfacingRight;
         sprite = SpriteCreator.createSprite(SpriteCreator.PLAYER_SPRITE_NAME);
         standingFrame = Player.sprite.regions[1];
@@ -53,9 +65,33 @@ public class Player {
     }
 
     public static Rectangle getBounds() {
-        bounds.x = position.x;
+        bounds.x = position.x + BOUNDS_SHRINK_X;
         bounds.y = position.y;
         return bounds;
+    }
+
+    public static Rectangle getLeftSensor() {
+        leftSensor.x = position.x;
+        leftSensor.y = position.y + SENSOR_THICKNESS;
+        return leftSensor;
+    }
+
+    public static Rectangle getRightSensor() {
+        rightSensor.x = position.x + WIDTH - SENSOR_THICKNESS;
+        rightSensor.y = position.y + SENSOR_THICKNESS;
+        return rightSensor;
+    }
+
+    public static Rectangle getTopSensor() {
+        topSensor.x = position.x + SENSOR_THICKNESS;
+        topSensor.y = position.y + HEIGHT - SENSOR_THICKNESS;
+        return topSensor;
+    }
+
+    public static Rectangle getBottomSensor() {
+        topSensor.x = position.x + SENSOR_THICKNESS;
+        topSensor.y = position.y;
+        return topSensor;
     }
 
     public static boolean goingRight() {
