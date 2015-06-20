@@ -37,7 +37,6 @@ public class ArcadeBob extends Game {
     private OrthographicCamera gameCamera;
     private Level level;
     private Rectangle debugRect;
-    private int touchingTiles;
 
     @Override
     public void create() {
@@ -349,7 +348,7 @@ public class ArcadeBob extends Game {
         shapeRenderer.end();
     }
 
-    public Collection<Rectangle> getNearbyRectangles() {
+    private Collection<Rectangle> getNearbyRectangles() {
         int startX = (int) Player.position.x - 1;
         int startY = (int) Player.position.y - 1;
         int width = 4;
