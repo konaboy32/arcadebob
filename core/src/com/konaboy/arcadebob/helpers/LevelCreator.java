@@ -38,7 +38,7 @@ public class LevelCreator extends Creator {
     private static final char EMPTY_TILE = '.';
     public static final String KEY_TYPE = "TYPE";
     public static final String KEY_TOUCHED = "TOUCHED";
-    public static final String KEY_RECTANGLES = "RECTANGLES";
+    public static final String KEY_RECTANGLE = "RECTANGLE";
 
     //keys for mapping chars to regions
     private static final String[] MAPPING_KEYS = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "F"};
@@ -120,8 +120,6 @@ public class LevelCreator extends Creator {
     private static TiledMap loadMap() {
         Gdx.app.log("Loading map", "");
         TiledMap map = new TiledMap();
-        Collection<Rectangle> rectangles = new ArrayList<Rectangle>();
-        map.getProperties().put(KEY_RECTANGLES, rectangles);
         Texture texture = AssetManager.getTexture(AssetManager.MANIC_SPRITES);
         TextureRegion[] blocks = TextureRegionHelper.getRegions(texture, 660, 2, 288, 320, Constants.TILE_SIZE);
         String[] lines = LevelCreator.getLines();
@@ -140,7 +138,7 @@ public class LevelCreator extends Creator {
                 if (Constants.BlockType.Collectable.equals(blockTypeEnum)) {
                     tile = createAnimatedTile(blocks, regionIndex);
                 } else if (Constants.BlockType.ConveyorLeft.equals(blockTypeEnum)) {
-                    tile = createAnimatedTile(blocks, regionIndex);
+                    tile = createAnimatedTile(blocks, regionIndex); //TODO elevator right
                 } else {
                     tile = new StaticTiledMapTile(blocks[regionIndex]);
                     if (Constants.BlockType.Collapsible.equals(blockTypeEnum)) {
@@ -148,13 +146,13 @@ public class LevelCreator extends Creator {
                     }
                 }
                 tile.getProperties().put(KEY_TYPE, blockTypeEnum);
+                tile.getProperties().put(KEY_RECTANGLE, new Rectangle(x, y, 1, 1));
                 cell.setTile(tile);
                 layer.setCell(x, y, cell);
-                rectangles.add(new Rectangle(x, y, 1, 1));
             }
         }
         map.getLayers().add(layer);
-        Gdx.app.log("Finiahed loading map, total tiles", "" + rectangles.size());
+        Gdx.app.log("Finiahed loading map", "");
         return map;
     }
 

@@ -15,7 +15,6 @@ public class Level {
     private static final Integer COLLAPSE_LIMIT = 14;
 
     private final TiledMap map;
-    private final Collection<Rectangle> rectangles;
     private final TiledMapTileLayer layer;
     private final Collection<Guardian> guardians;
     private final Vector2 playerSpawnPosition;
@@ -31,7 +30,6 @@ public class Level {
         this.playerSpawnPosition = playerSpawnPosition;
         this.playerSpawnsFacingRight = playerSpawnsFacingRight;
         this.layer = (TiledMapTileLayer) map.getLayers().get(0);
-        this.rectangles = (Collection<Rectangle>) map.getProperties().get(LevelCreator.KEY_RECTANGLES);
     }
 
     public TiledMap getMap() {
@@ -81,15 +79,10 @@ public class Level {
 
     public void removeTile(Rectangle rect) {
         layer.setCell((int) rect.x, (int) rect.y, null);
-        rectangles.remove(rect);
     }
 
     private Constants.BlockType getBlockType(Rectangle rect) {
         return (Constants.BlockType) layer.getCell((int) rect.x, (int) rect.y).getTile().getProperties().get(LevelCreator.KEY_TYPE);
-    }
-
-    public Collection<Rectangle> getRectangles() {
-        return rectangles;
     }
 
     public Vector2 getPlayerSpawnPosition() {
@@ -98,5 +91,13 @@ public class Level {
 
     public boolean playerSpawnsFacingRight() {
         return playerSpawnsFacingRight;
+    }
+
+    public Rectangle getRectangle(int x, int y) {
+        TiledMapTileLayer.Cell cell = layer.getCell(x, y);
+        if (cell != null) {
+            return (Rectangle) cell.getTile().getProperties().get(LevelCreator.KEY_RECTANGLE);
+        }
+        return null;
     }
 }

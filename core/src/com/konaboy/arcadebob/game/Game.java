@@ -20,6 +20,7 @@ import com.konaboy.arcadebob.helpers.AssetManager;
 import com.konaboy.arcadebob.helpers.LevelCreator;
 import com.konaboy.arcadebob.helpers.OverlapHelper;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class Game extends ApplicationAdapter {
@@ -164,10 +165,9 @@ public class Game extends ApplicationAdapter {
     }
 
     private void collisionDetect() {
-        Collection<Rectangle> overlaps = OverlapHelper.getOverlaps(Player.getBounds(), level.getRectangles());
-        touchingTiles = overlaps.size();
-        checkObjectCollisions(overlaps);
-        checkMapCollisions();
+        Collection<Rectangle> nearbyRectangles = getNearbyRectangles();
+        checkObjectCollisions(nearbyRectangles);
+        checkMapCollisions(nearbyRectangles);
         checkGuardianCollisions();
     }
 
@@ -180,11 +180,12 @@ public class Game extends ApplicationAdapter {
         }
     }
 
-    private void checkObjectCollisions(Collection<Rectangle> overlaps) {
+    private void checkObjectCollisions(Collection<Rectangle> nearbyRectangles) {
+        Collection<Rectangle> overlaps = OverlapHelper.getOverlaps(Player.getBounds(), nearbyRectangles);
         for (Rectangle rect : overlaps) {
             if (level.isCollectable(rect)) {
                 handleCollectable(rect);
-                overlaps.remove(rect);
+                nearbyRectangles.remove(rect);
                 return;
             }
             if (level.isHazard(rect)) {
@@ -206,15 +207,15 @@ public class Game extends ApplicationAdapter {
         level.removeTile(rect);
     }
 
-    private void checkMapCollisions() {
-        checkHorizontalMapCollisions();
-        checkVerticalCollisions();
+    private void checkMapCollisions(Collection<Rectangle> nearbyRectangles) {
+        checkHorizontalMapCollisions(nearbyRectangles);
+        checkVerticalCollisions(nearbyRectangles);
     }
 
-    private void checkHorizontalMapCollisions() {
+    private void checkHorizontalMapCollisions(Collection<Rectangle> nearbyRectangles) {
         if (Player.goingLeft()) {
             Player.obstacleOnRight = false;
-            Collection<Rectangle> leftSensorOverlaps = OverlapHelper.getOverlaps(Player.getLeftSensor(), level.getRectangles());
+            Collection<Rectangle> leftSensorOverlaps = OverlapHelper.getOverlaps(Player.getLeftSensor(), nearbyRectangles);
             for (Rectangle rect : leftSensorOverlaps) {
                 if (level.isImpassable(rect)) {
                     Player.stopMovingX();
@@ -227,7 +228,7 @@ public class Game extends ApplicationAdapter {
             }
         } else if (Player.goingRight()) {
             Player.obstacleOnLeft = false;
-            Collection<Rectangle> rightSensorOverlaps = OverlapHelper.getOverlaps(Player.getRightSensor(), level.getRectangles());
+            Collection<Rectangle> rightSensorOverlaps = OverlapHelper.getOverlaps(Player.getRightSensor(), nearbyRectangles);
             for (Rectangle rect : rightSensorOverlaps) {
                 if (level.isImpassable(rect)) {
                     Player.stopMovingX();
@@ -242,9 +243,9 @@ public class Game extends ApplicationAdapter {
     }
 
 
-    private void checkVerticalCollisions() {
+    private void checkVerticalCollisions(Collection<Rectangle> nearbyRectangles) {
         if (Player.goingDown()) {
-            Collection<Rectangle> bottomSensorOverlaps = OverlapHelper.getOverlaps(Player.getBottomSensor(), level.getRectangles());
+            Collection<Rectangle> bottomSensorOverlaps = OverlapHelper.getOverlaps(Player.getBottomSensor(), nearbyRectangles);
             for (Rectangle rect : bottomSensorOverlaps) {
                 if (rect.y < Player.position.y - 0.6f) {
                     Player.stopMovingY();
@@ -255,7 +256,7 @@ public class Game extends ApplicationAdapter {
                 }
             }
         } else if (Player.goingUp()) {
-            Collection<Rectangle> topSensorOverlaps = OverlapHelper.getOverlaps(Player.getTopSensor(), level.getRectangles());
+            Collection<Rectangle> topSensorOverlaps = OverlapHelper.getOverlaps(Player.getTopSensor(), nearbyRectangles);
             for (Rectangle rect : topSensorOverlaps) {
                 if (level.isImpassable(rect)) {
                     Player.stopMovingY();
@@ -346,6 +347,27 @@ public class Game extends ApplicationAdapter {
         shapeRenderer.setColor(color);
         shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
         shapeRenderer.end();
+    }
+
+    public Collection<Rectangle> getNearbyRectangles() {
+        int startX = (int) Player.position.x - 1;
+        int startY = (int) Player.position.y - 1;
+        int width = 4;
+        int height = 5;
+
+//        Rectangle rect = new Rectangle(startX, startY, width, height);
+//        drawRectangle(rect, ShapeRenderer.ShapeType.Line, Color.YELLOW);
+
+        final Collection<Rectangle> rects = new ArrayList<Rectangle>();
+        for (int y = startY; y < startY + height; y++) {
+            for (int x = startX; x < startX + width; x++) {
+                Rectangle rect = level.getRectangle(x, y);
+                if (rect != null) {
+                    rects.add(rect);
+                }
+            }
+        }
+        return rects;
     }
 
     @Override
