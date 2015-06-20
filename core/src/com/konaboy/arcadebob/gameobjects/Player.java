@@ -26,7 +26,7 @@ public class Player {
     public static final float BOUNDS_SHRINK_X = 0.4f;
     public static final float BOUNDS_SHRINK_TOP = 0.2f;
 
-    //variables
+    //public variables
     public static Vector2 position;
     public static Vector2 velocity;
     public static State state = State.Standing;
@@ -40,6 +40,7 @@ public class Player {
     public static boolean obstacleOnLeft;
     public static boolean obstacleOnRight;
 
+    //private variables
     private static Rectangle bounds;
     private static Rectangle leftSensor;
     private static Rectangle rightSensor;
@@ -47,7 +48,6 @@ public class Player {
     private static Rectangle bottomSensor;
 
     private static final String SOUND_JUMP = "jump.wav";
-    private static final String SOUND_BLIP = "blip.wav";
 
     public static void init(Vector2 spawnPosition, boolean spawnfacingRight) {
         position = spawnPosition;
@@ -135,7 +135,11 @@ public class Player {
             return;
         }
         if (velocity.x <= 0) {
-            velocity.x = -MAX_VELOCITY_X;
+            if (grounded) {
+                velocity.x = -MAX_VELOCITY_X;
+            } else {
+                velocity.x = -JUMP_VELOCITY_X;
+            }
             facesRight = false;
         }
         if (grounded) {
@@ -148,7 +152,11 @@ public class Player {
             return;
         }
         if (velocity.x >= 0) {
-            velocity.x = MAX_VELOCITY_X;
+            if (grounded) {
+                velocity.x = MAX_VELOCITY_X;
+            } else {
+                velocity.x = JUMP_VELOCITY_X;
+            }
             facesRight = true;
         }
         if (grounded) {

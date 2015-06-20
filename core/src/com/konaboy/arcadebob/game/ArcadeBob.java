@@ -23,7 +23,7 @@ import com.konaboy.arcadebob.helpers.OverlapHelper;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class ArcadeBobGame extends Game {
+public class ArcadeBob extends Game {
 
     private static final String SOUND_COLLECT = "collect.wav";
     private static final String SOUND_DIE = "die.wav";
