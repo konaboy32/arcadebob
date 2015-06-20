@@ -218,7 +218,6 @@ public class Game extends ApplicationAdapter {
             for (Rectangle rect : leftSensorOverlaps) {
                 if (level.isImpassable(rect)) {
                     Player.stopMovingX();
-//                    Player.position.x = rect.x + rect.width; //push back
                 }
             }
         } else if (Player.goingRight()) {
@@ -226,7 +225,6 @@ public class Game extends ApplicationAdapter {
             for (Rectangle rect : rightSensorOverlaps) {
                 if (level.isImpassable(rect)) {
                     Player.stopMovingX();
-//                        Player.position.x = rect.x - Player.WIDTH; //push back
                 }
             }
         }
@@ -253,11 +251,6 @@ public class Game extends ApplicationAdapter {
                 }
             }
         }
-    }
-
-
-    private int roundFloat(float f) {
-        return Math.round(f * 100) / 100;
     }
 
     private void checkIfStandingOnCollapsible(Rectangle rect) {
