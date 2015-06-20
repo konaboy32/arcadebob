@@ -17,8 +17,8 @@ public class Player {
     public static final float WIDTH = 1f / Constants.TILE_SIZE * 20;
     public static final float HEIGHT = 1f / Constants.TILE_SIZE * 32;
     public static final float MAX_VELOCITY_X = 3.6f;
-    public static final float JUMP_VELOCITY_Y = 7f;
-    public static final float JUMP_VELOCITY_X = 2.8f;
+    public static final float JUMP_VELOCITY_Y = 6.6f;
+    public static final float JUMP_VELOCITY_X = 2.6f;
     public static final float FALL_THRESHOLD = -1f;
     public static final float MAX_FALL_VELOCITY = -JUMP_VELOCITY_Y;
     public static final float DAMPING = 0.5f;
