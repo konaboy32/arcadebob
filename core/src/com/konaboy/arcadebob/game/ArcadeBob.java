@@ -28,6 +28,7 @@ public class ArcadeBob extends Game {
     private static final String SOUND_COLLECT = "collect.wav";
     private static final String SOUND_DIE = "die.wav";
     private static final String SOUND_COLLAPSE = "collapse.wav";
+    private static final int LEVEL = 2;
 
     private BitmapFont font;
     private OrthogonalTiledMapRenderer tileRenderer;
@@ -43,7 +44,7 @@ public class ArcadeBob extends Game {
         Gdx.app.log("Creating game", "");
 
         //create the level from properties file
-        level = LevelCreator.createLevel(1);
+        level = LevelCreator.createLevel(LEVEL);
 
         //Create renderers and cameras for map, its objects and the player
         tileRenderer = new OrthogonalTiledMapRenderer(level.getMap(), 1f / Constants.TILE_SIZE);
@@ -268,7 +269,7 @@ public class ArcadeBob extends Game {
         if (level.isCollapsible(rect)) {
             int touches = 1;
             if (Player.state.equals(Player.State.Jumping)) {
-                touches = 4;
+                touches = 3;
             }
             boolean collapsed = level.updateCollapsible(rect, touches);
             if (collapsed) {

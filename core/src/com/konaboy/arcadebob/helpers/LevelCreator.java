@@ -126,6 +126,7 @@ public class LevelCreator extends Creator {
         Map<String, Integer> regionMappings = LevelCreator.getRegionMappings();
         TiledMapTileLayer layer = new TiledMapTileLayer(Constants.TILES_X, Constants.TILES_Y, Constants.TILE_SIZE, Constants.TILE_SIZE);
         for (int y = 0; y < Constants.TILES_Y; y++) {
+            Gdx.app.log("Processing line " + y, lines[y]);
             for (int x = 0; x < Constants.TILES_X; x++) {
                 char blockTypeChar = lines[y].charAt(x);
                 if (blockTypeChar == EMPTY_TILE) {
@@ -136,9 +137,11 @@ public class LevelCreator extends Creator {
                 Enum blockTypeEnum = mapCharToBlockType(blockTypeChar);
                 TiledMapTile tile;
                 if (Constants.BlockType.Collectable.equals(blockTypeEnum)) {
-                    tile = createAnimatedTile(blocks, regionIndex);
+                    tile = createAnimatedTile(blocks, regionIndex, false);
                 } else if (Constants.BlockType.ConveyorLeft.equals(blockTypeEnum)) {
-                    tile = createAnimatedTile(blocks, regionIndex); //TODO elevator right
+                    tile = createAnimatedTile(blocks, regionIndex, false);
+                } else if (Constants.BlockType.ConveyorRight.equals(blockTypeEnum)) {
+                    tile = createAnimatedTile(blocks, regionIndex, true);
                 } else {
                     tile = new StaticTiledMapTile(blocks[regionIndex]);
                     if (Constants.BlockType.Collapsible.equals(blockTypeEnum)) {
@@ -156,11 +159,15 @@ public class LevelCreator extends Creator {
         return map;
     }
 
-    private static TiledMapTile createAnimatedTile(TextureRegion[] blocks, int regionIndex) {
+    private static TiledMapTile createAnimatedTile(TextureRegion[] blocks, int regionIndex, boolean reverse) {
         TiledMapTile tile;
         Array<StaticTiledMapTile> tiles = new Array<StaticTiledMapTile>();
         for (int i = 0; i < 4; i++) {
-            tiles.add(new StaticTiledMapTile(blocks[regionIndex + i]));
+            if (reverse) {
+                tiles.add(new StaticTiledMapTile(blocks[regionIndex + 3 - i]));
+            } else {
+                tiles.add(new StaticTiledMapTile(blocks[regionIndex + i]));
+            }
         }
         tile = new AnimatedTiledMapTile(Constants.ANIMATION_FRAME_DURATION, tiles);
         return tile;
