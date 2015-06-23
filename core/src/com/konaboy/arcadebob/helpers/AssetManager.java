@@ -10,6 +10,7 @@ import java.util.Map;
 public class AssetManager {
     public static final String MANIC_SPRITES = "manic_sprites.png";
     private static final String SOUND_FOLDER = "sounds/";
+    private static final String TEXTURE_FOLDER = "textures/";
     private static final Map<String, Texture> TEXTURE_CACHE = new HashMap<String, Texture>();
     private static final Map<String, Sound> SOUND_CACHE = new HashMap<String, Sound>();
 
@@ -18,7 +19,7 @@ public class AssetManager {
             return TEXTURE_CACHE.get(filename);
         }
         Gdx.app.log("Loading texture", filename);
-        Texture texture = new Texture(filename);
+        Texture texture = new Texture(TEXTURE_FOLDER + filename);
         TEXTURE_CACHE.put(filename, texture);
         return texture;
     }

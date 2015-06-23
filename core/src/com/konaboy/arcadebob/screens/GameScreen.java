@@ -1,8 +1,8 @@
-package com.konaboy.arcadebob.game;
+package com.konaboy.arcadebob.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -14,6 +14,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.konaboy.arcadebob.game.Constants;
+import com.konaboy.arcadebob.game.Level;
 import com.konaboy.arcadebob.gameobjects.Guardian;
 import com.konaboy.arcadebob.gameobjects.Player;
 import com.konaboy.arcadebob.helpers.AssetManager;
@@ -23,7 +25,7 @@ import com.konaboy.arcadebob.helpers.OverlapHelper;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class ArcadeBob extends Game {
+public class GameScreen extends ScreenAdapter {
 
     private static final String SOUND_COLLECT = "collect.wav";
     private static final String SOUND_DIE = "die.wav";
@@ -40,7 +42,7 @@ public class ArcadeBob extends Game {
     private Rectangle debugRect;
 
     @Override
-    public void create() {
+    public void show() {
         Gdx.app.log("Creating game", "");
 
         //create the level from properties file
@@ -74,7 +76,7 @@ public class ArcadeBob extends Game {
     }
 
     @Override
-    public void render() {
+    public void render(float delta) {
 
         //clear the screen
         Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);

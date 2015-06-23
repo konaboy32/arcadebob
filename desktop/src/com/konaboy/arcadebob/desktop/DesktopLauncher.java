@@ -2,8 +2,8 @@ package com.konaboy.arcadebob.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.konaboy.arcadebob.game.ArcadeBob;
 import com.konaboy.arcadebob.game.Constants;
+import com.konaboy.arcadebob.game.Runner;
 
 public class DesktopLauncher {
     public static void main(String[] arg) {
@@ -11,6 +11,6 @@ public class DesktopLauncher {
         config.title = "Tile Demo";
         config.width = Constants.WIDTH_PX;
         config.height = Constants.HEIGHT_PX;
-        new LwjglApplication(new ArcadeBob(), config);
+        new LwjglApplication(new Runner(), config);
     }
 }
