@@ -47,8 +47,6 @@ public class Player {
     private static Rectangle topSensor;
     private static Rectangle bottomSensor;
 
-    private static final String SOUND_JUMP = "jump.wav";
-
     public static void init(Vector2 spawnPosition, boolean spawnfacingRight) {
         position = spawnPosition;
         velocity = new Vector2(0, 0);
@@ -126,7 +124,7 @@ public class Player {
             }
             state = State.Jumping;
             grounded = false;
-            AssetManager.getSound(SOUND_JUMP).play();
+            AssetManager.getSound(AssetManager.SOUND_JUMP).play();
         }
     }
 
@@ -168,6 +166,7 @@ public class Player {
         //stop horizontal movement if walking off platforms
         if (velocity.y < FALL_THRESHOLD && !state.equals(State.Jumping)) {
             velocity.x = 0;
+            grounded = false;
         }
         //limit vertical speed if falling
         if (velocity.y < MAX_FALL_VELOCITY) {

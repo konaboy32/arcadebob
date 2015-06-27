@@ -27,9 +27,7 @@ import java.util.Collection;
 
 public class GameScreen extends ScreenAdapter {
 
-    private static final String SOUND_COLLECT = "collect.wav";
-    private static final String SOUND_DIE = "die.wav";
-    private static final String SOUND_COLLAPSE = "collapse.wav";
+    private static final String SOUND_LAND = "land.wav";
     private static final int LEVEL = 2;
 
     private BitmapFont font;
@@ -199,13 +197,13 @@ public class GameScreen extends ScreenAdapter {
 
     private void handleHazard() {
         Gdx.app.log("You died", "");
-        AssetManager.getSound(SOUND_DIE).play();
+        AssetManager.getSound(AssetManager.SOUND_DIE).play();
 //        create();
     }
 
     private void handleCollectable(Rectangle rect) {
         Gdx.app.log("Collected", rect.toString());
-        AssetManager.getSound(SOUND_COLLECT).play();
+        AssetManager.getSound(AssetManager.SOUND_COLLECT).play();
         level.removeTile(rect);
     }
 
@@ -252,6 +250,9 @@ public class GameScreen extends ScreenAdapter {
                 if (rect.y < Player.position.y - 0.6f) {
                     Player.stopMovingY();
                     Player.position.y = rect.y + rect.height;
+                    if (!Player.grounded) {
+                        AssetManager.getSound(SOUND_LAND).play();
+                    }
                     Player.grounded = true;
                     checkIfStandingOnConveyer(rect);
                     checkIfStandingOnCollapsible(rect);
@@ -276,7 +277,7 @@ public class GameScreen extends ScreenAdapter {
             boolean collapsed = level.updateCollapsible(rect, touches);
             if (collapsed) {
                 Gdx.app.log("Collapsed", rect.toString());
-                AssetManager.getSound(SOUND_COLLAPSE).play();
+                AssetManager.getSound(AssetManager.SOUND_COLLAPSE).play();
             }
         }
     }

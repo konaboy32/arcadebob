@@ -8,7 +8,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AssetManager {
+    //sprites
     public static final String MANIC_SPRITES = "manic_sprites.png";
+
+    //sounds
+    public static final String SOUND_COLLECT = "collect.wav";
+    public static final String SOUND_DIE = "die.wav";
+    public static final String SOUND_COLLAPSE = "collapse.wav";
+    public static final String SOUND_JUMP = "jump.wav";
+
+    //privates
     private static final String SOUND_FOLDER = "sounds/";
     private static final String TEXTURE_FOLDER = "textures/";
     private static final Map<String, Texture> TEXTURE_CACHE = new HashMap<String, Texture>();
