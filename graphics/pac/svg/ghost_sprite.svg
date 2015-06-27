@@ -7,7 +7,6 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="210mm"
@@ -16,7 +15,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="pac.svg">
+   sodipodi:docname="ghost_sprite.svg">
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -25,10 +24,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.35"
-     inkscape:cx="1362.9707"
+     inkscape:cx="885.82784"
      inkscape:cy="88.051553"
      inkscape:document-units="px"
-     inkscape:current-layer="g4378"
+     inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="1920"
      inkscape:window-height="1005"
@@ -63,19 +62,6 @@
      id="layer1"
      inkscape:groupmode="layer"
      inkscape:label="Layer 1">
-    <image
-       y="141.71733"
-       x="237.89857"
-       id="image4282"
-       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAIAAAD2HxkiAAAAA3NCSVQICAjb4U/gAAAD3ElEQVR4 nO3cMW7CQBRAwRBxjBT4Hhyfe5ibkDZFRBIt9nPsmRZhr1f7tN1/ewMAAAAAAAAAgCM51QvYj0e9 gJU5Oq/yXi8Ajk6EEBMhxEQIMRFCTIQQEyHERAgxEUJMhBATIcRECDERQkyEEBMhxEQIMRFCTIQQ EyHEdjgo5GizXo5mf0fWTQgxEUJMhBATIcRECDERQkyEEBMhxEQIMRFCTIQQEyHERAgxEUJMhBAT IcRECDERQkyEENvowA5zYljCNo+7mxBiIoSYCCEmQoiJEGIihJgIISZCiIkQYiKEmAghJkKIiRBi IoSYCCEmQoiJEGIihJgIIbbg0I2ROTH3eX7ZOv7iMk3Jeyv2+feWS8VNCDERQkyEEBMhxEQIMRFC TIQQEyHERAgxEUJMhBATIcRECDERQkyEEBMhxEQIMRFCTIQQW3DGzBzNL6lUc1OqOTGVap/NmIHd EiHERAgxEUJMhBATIcRECDERQkyEEBMhxEQIMRFCTIQQEyHERAgxEUJMhBATIcRECLHzco++Xpd7 9jO3W/Pein3+79yEEBMhxEQIMRFCTIQQEyHERAgxEUJMhBATIcRECDERQkyEEBMhxEQIMRFCTIQQ EyHERAixH2bMPAYe/THwX9iakRZOT391E0JMhBATIcRECDERQkyEEBMhxEQIMRFCTIQQEyHERAgx EUJMhBATIcRECDERQkyEEBMhxJ4PvxiaqzHiPs/Jey/TlLy3Yp/XYcYMbJoIISZCiIkQYiKEmAgh JkKIiRBiIoSYCCEmQoiJEGIihJgIISZCiIkQYiKEmAghJkKIbXTGDOyJGTOwaSKEmAghJkKIiRBi IoSYCCEmQoiJEGIihJgIISZCiIkQYiKEmAghJkKIiRBiIoSYCCEmQoiJEGIihJgIISZCiIkQYiKE mAghJkKIiRBiIoSYCCEmQoiJEGIihJgIISZCiIkQYiKEmAghJkKIiRBiIoSYCCEmQoiJEGIihJgI ISZCiIkQYiKEmAghJkKIiRBiIoSYCCEmQoiJEGIihJgIISZCiIkQYiKEmAghJkKIiRBiIoSYCCEm QoiJEGIihJgIISZCiIkQYiKEmAghJkKIiRBiIoSYCCF2rhfwvdPAfx8vW8V6Rr53xNH2apvf6yaE mAghJkKIiRBiIoSYCCEmQoiJEGIihJgIISZCiIkQYiKEmAghJkKIiRBiIoSYCCEmQogtOGOmmpuy vxkk++NsfOUmhJgIISZCiIkQYiKEmAghJkKIiRBiIoSYCCEmQoiJEGIihJgIISZCiIkQYiKEmAgh JkIAAAAAAAAAAABW9AnSlSVP7xWEvAAAAABJRU5ErkJggg== "
-       preserveAspectRatio="none"
-       height="300"
-       width="300" />
-    <path
-       style="fill:#000000;stroke-width:10;stroke-miterlimit:4;stroke-dasharray:none;stroke:#5e2828;stroke-opacity:1"
-       d="m 248.37323,430.50508 c -0.27034,-0.70826 -0.37524,-36.61275 -0.2331,-79.78775 l 0.25844,-78.5 9.75138,0 9.75138,0 -0.003,-10.5 -0.003,-10.5 19.75138,0.5 19.75138,0.5 0,19.5 0,19.5 -9.78577,0.28664 -9.78577,0.28665 0.28577,9.71335 0.28585,9.71336 19.5,0 19.5,0 0.5,-9.5 0.5,-9.5 9.5,-0.5 9.5,-0.5 0,-29.5 0,-29.5 -9.5,-0.5 -9.5,-0.5 -0.5,-9.5 -0.5,-9.5 -19.5,0 -19.5,0 -0.5,9.5 -0.5,9.5 -9.78445,0.5 -9.78445,0.5 0.28445,-10 0.28445,-10 9.5,-0.5 9.5,-0.5 0.5,-9.5 0.5,-9.5 9.5,-0.5 9.5,-0.5 0.5,-9.5 0.5,-9.5 19.5,-0.5 19.5,-0.5 0.5,-9.5 0.5,-9.5 39.5,0 39.5,0 0.5,9.5 0.5,9.5 19.5,0.5 19.5,0.5 0.5,9.5 0.5,9.5 9.5,0.5 9.5,0.5 0.5,9.5 0.5,9.5 9.5,0.5 9.5,0.5 0.5,29.5 0.5,29.5 9.5,0.5 9.5,0.5 0,79.5 0,79.5 -9.5,0 -9.5,0 -0.5,-9.5 -0.5,-9.5 -9.5,-0.5 -9.5,-0.5 -0.5,-9.5 -0.5,-9.5 -9.5,0 -9.5,0 -0.5,9.5 -0.5,9.5 -9.5,0.5 -9.5,0.5 -0.5,9.5 -0.5,9.5 -19.5,0 -19.5,0 -0.5,-19.5 -0.5,-19.5 -19.5,0 -19.5,0 -0.5,19.5 -0.5,19.5 -19.5,0 -19.5,0 -0.5,-9.5 -0.5,-9.5 -9.5,-0.5 -9.5,-0.5 -0.5,-9.5 -0.5,-9.5 -9.5,0 -9.5,0 -0.5,9.5 -0.5,9.5 -9.5,0.5 -9.5,0.5 -0.5,9.5 -0.5,9.5 -9.2669,0.28775 -9.2669,0.28775 -0.49154,-1.28775 z m 199.52534,-128.78775 0.5,-9.5 9.5,-0.5 9.5,-0.5 0,-29.5 0,-29.5 -9.5,-0.5 -9.5,-0.5 -0.5,-9.5 -0.5,-9.5 -19.5,0 -19.5,0 -0.5,9.5 -0.5,9.5 -9.5,0.5 -9.5,0.5 -0.28596,9.72874 -0.28595,9.72874 19.78595,0.27126 19.78596,0.27126 0,19.5 0,19.5 -9.75,0.28621 -9.75,0.28621 0,9.29713 0,9.29712 0.6876,0.6876 0.68761,0.6876 19.06239,-0.27093 19.0624,-0.27094 0.5,-9.5 z"
-       id="path4285"
-       inkscape:connector-curvature="0" />
     <g
        id="g4378">
       <g
