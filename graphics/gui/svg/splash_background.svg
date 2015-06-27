@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1024mm"
+   height="640mm"
+   viewBox="0 0 3628.3464 2267.7165"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="splash_background.svg">
+  <defs
+     id="defs4">
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern5652"
+       id="pattern5665"
+       patternTransform="matrix(1.0858035,-0.07367757,0.05512304,0.81236109,-1661.7009,-804.29808)" />
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern5652"
+       id="pattern5663"
+       patternTransform="matrix(0.87907465,-0.15831283,0.2515054,1.3965515,-1661.7009,-804.29808)" />
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern5637"
+       id="pattern5650"
+       patternTransform="matrix(1,0,0,1.551724,2.7734375e-5,1.5703125e-5)" />
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="589.92908"
+       height="282.84264"
+       patternTransform="translate(-2432.4473,-967.94279)"
+       id="pattern5601">
+      <g
+         id="g4159"
+         transform="translate(2432.4473,967.94281)">
+        <rect
+           style="opacity:1;fill:#d4ff00;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="rect4136"
+           width="589.92908"
+           height="145.46196"
+           x="-2432.4473"
+           y="-967.94281" />
+        <rect
+           style="opacity:1;fill:#f47c00;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="rect4136-6"
+           width="589.92908"
+           height="145.46196"
+           x="-2432.4473"
+           y="-830.56213" />
+      </g>
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="427.14276"
+       height="151.42858"
+       patternTransform="translate(-2222.8569,-819.06627)"
+       id="pattern5625">
+      <rect
+         y="0"
+         x="1.4284668"
+         height="75.714287"
+         width="425.71429"
+         id="rect5610"
+         style="opacity:1;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <rect
+         style="opacity:1;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5612"
+         width="425.71429"
+         height="75.714287"
+         x="0"
+         y="75.714294" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="276.7818"
+       height="117.17772"
+       patternTransform="translate(-1661.7009,-804.29808)"
+       id="pattern5637">
+      <rect
+         y="0"
+         x="0"
+         height="58.588848"
+         width="276.7818"
+         id="rect5633"
+         style="opacity:1;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <rect
+         style="opacity:1;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="rect5635"
+         width="276.7818"
+         height="58.588848"
+         x="0"
+         y="58.588867" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="276.7818"
+       height="181.82748"
+       patternTransform="translate(-1661.7009,-804.29808)"
+       id="pattern5652">
+      <rect
+         id="rect5641"
+         y="0"
+         x="0"
+         height="181.82748"
+         width="276.7818"
+         style="fill:url(#pattern5650);stroke:none" />
+    </pattern>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.22627417"
+     inkscape:cx="-2409.3933"
+     inkscape:cy="304.70882"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     width="1024mm"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-paths="true"
+     inkscape:bbox-nodes="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1005"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,1215.3543)">
+    <rect
+       style="opacity:1;fill:url(#pattern5663);fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4155"
+       width="3897.1428"
+       height="2491.4285"
+       x="-4651.4287"
+       y="-353.35205"
+       ry="0"
+       inkscape:export-filename="C:\gdx\arcadebob\graphics\splash.png"
+       inkscape:export-xdpi="23.119267"
+       inkscape:export-ydpi="23.119267" />
+    <rect
+       style="fill:url(#pattern5665);stroke:none"
+       width="276.78174"
+       height="116.20251"
+       x="-1661.7009"
+       y="-804.2981"
+       id="rect5655" />
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect5675"
+       width="3959.2043"
+       height="832.26843"
+       x="-4725.5024"
+       y="-488.50076"
+       transform="matrix(0.98432471,-0.17636573,0,1,0,0)"
+       inkscape:export-filename="C:\gdx\arcadebob\graphics\splash.png"
+       inkscape:export-xdpi="23.119267"
+       inkscape:export-ydpi="23.119267" />
+  </g>
+</svg>
