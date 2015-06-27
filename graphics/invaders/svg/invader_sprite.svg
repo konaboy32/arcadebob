@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="-1358.2136"
-     inkscape:cy="808.02875"
+     inkscape:zoom="1.4"
+     inkscape:cx="-1380.9889"
+     inkscape:cy="810.56136"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -54,7 +54,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -63,8 +63,11 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
+       style="opacity:1;fill:#00ca00;fill-opacity:1;stroke:#ffffff;stroke-width:6;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;stroke-linejoin:miter"
+       d="m -1400,402.36133 0,-50 50,0 50,0 0,50 -50,0 -50,0 z m 0,-50 -50,0 0,-50 0,-50 -50,0 0,50 0,50 -50,0 0,-50 0,-50 0,-50 50,0 0,-50 50,0 0,-50 50,0 0,-50.000002 50,0 0,50.000002 150,0 0,-50.000002 50,0 0,50.000002 50,0 0,50 50,0 0,50 50,0 0,50 0,50 0,50 -50,0 0,-50 0,-50 -50,0 0,50 0,50 -50,0 0,-50 -250,0 0,50 z m 250,0 0,50 -50,0 -50,0 0,-50 50,0 50,0 z m 0,-300.000002 0,-49.9999999 50,0 0,49.9999999 -50,0 z m -250,0 -50,0 0,-49.9999999 50,0 0,49.9999999 z m 0,150.000002 50,0 0,-50 -50,0 0,50 z m 200,0 50,0 0,-50 -50,0 0,50 z"
        id="rect4937-5-4"
-       style="opacity:1;fill:#00ca00;fill-opacity:1;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m -1150,352.36221 50,0 0,50 -50,0 z m -300,0 50,0 0,50 -50,0 z m 250,-50 50,0 0,50 -50,0 z m -200,0 50,0 0,50 -50,0 z m -50,-50 350,0 0,50 -350,0 z m 350,-49.99998 50,0 0,50 -50,0 z m -50,-2e-5 50,0 0,50 -50,0 z m -300,2e-5 50,0 0,50 -50,0 z m -50,-2e-5 50,0 0,50 -50,0 z m 150,0 150,0 0,50 -150,0 z m 200,-149.999985 50,0 0,49.999995 -50,0 z m -50,-50.0000009 50,0 0,49.9999999 -50,0 z m -50,-3.8e-6 50,0 0,49.9999997 -50,0 z m 200,100.0000097 50,0 0,50 -50,0 z m 0,-50.000002 50,0 0,50.000002 -50,0 z m -500,49.999992 50,0 0,50 -50,0 z m 0,-49.999995 50,0 0,49.999995 -50,0 z m 0,100.000045 550,0 0,50 -550,0 z m 150,-50.00004 300,0 0,50 -300,0 z m -50,-1e-5 50,0 0,50 -50,0 z m 0,-49.999995 50,0 0,49.999995 -50,0 z m 100,-49.9999983 50,0 0,50.0000003 -50,0 z m -50,-2.6e-6 50,0 0,49.9999999 -50,0 z" />
+       inkscape:connector-curvature="0"
+       inkscape:export-xdpi="64.748199"
+       inkscape:export-ydpi="64.748199" />
   </g>
 </svg>
