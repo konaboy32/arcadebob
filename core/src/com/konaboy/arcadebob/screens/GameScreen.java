@@ -28,7 +28,7 @@ import java.util.Collection;
 public class GameScreen extends ScreenAdapter {
 
     private static final String SOUND_LAND = "land.wav";
-    private static final int LEVEL = 2;
+    private static final int LEVEL = 1;
 
     private BitmapFont font;
     private OrthogonalTiledMapRenderer tileRenderer;
