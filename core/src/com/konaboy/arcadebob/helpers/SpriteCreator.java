@@ -12,24 +12,18 @@ public class SpriteCreator extends Creator {
 
     public static final String PLAYER_SPRITE_NAME = "Player";
 
-    private static final String PROPERTIES_FILENAME = "sprites.properties";
     private static final String KEY_TEXTURE = "texture";
     private static final String KEY_REGION_WIDTH = "region.width";
     private static final String KEY_REGION_HEIGHT = "region.height";
     private static final String KEY_REGION_POSITIONS = "region.positions";
     private static final String KEY_ANIMATION_SPEED = "animation.speed";
     private static final Map<String, Sprite> SPRITE_CACHE = new HashMap<String, Sprite>();
-    private static Properties spriteProps;
 
     public static Sprite createSprite(String name) {
         if (SPRITE_CACHE.containsKey(name)) {
-            Gdx.app.log("Fetching sprite from cache", name);
             return SPRITE_CACHE.get(name);
         }
-        if (spriteProps == null) {
-            Gdx.app.log("Loading", PROPERTIES_FILENAME);
-            spriteProps = loadPropertiesFile(PROPERTIES_FILENAME);
-        }
+        Properties spriteProps = AssetManager.getProperties(AssetManager.SPRITES_PROPERTIES_FILENAME);
         Gdx.app.log("Loading sprite", name);
         String textureFilename = spriteProps.getProperty(createKey(KEY_TEXTURE, name));
         int width = Integer.valueOf(spriteProps.getProperty(createKey(KEY_REGION_WIDTH, name)));

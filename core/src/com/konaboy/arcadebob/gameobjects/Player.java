@@ -26,7 +26,7 @@ public class Player {
     public static final float BOUNDS_SHRINK_X = 0.4f;
     public static final float BOUNDS_SHRINK_TOP = 0.2f;
 
-    //public variables
+    //public properties
     public static Vector2 position;
     public static Vector2 velocity;
     public static State state = State.Standing;
@@ -40,7 +40,7 @@ public class Player {
     public static boolean obstacleOnLeft;
     public static boolean obstacleOnRight;
 
-    //private variables
+    //private properties
     private static Rectangle bounds;
     private static Rectangle leftSensor;
     private static Rectangle rightSensor;

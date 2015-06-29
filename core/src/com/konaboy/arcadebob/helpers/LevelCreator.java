@@ -49,7 +49,7 @@ public class LevelCreator extends Creator {
     public static Level createLevel(int levelNumber) {
         String propetiesFilename = "level_" + levelNumber + ".properties";
         Gdx.app.log("Loading level", propetiesFilename);
-        levelProps = loadPropertiesFile(propetiesFilename);
+        levelProps = AssetManager.getProperties(propetiesFilename);
         TiledMap map = loadMap();
         Collection<Guardian> guardians = loadGuardians();
         Vector2 playerSpawnPosition = getPlayerSpawnPosition();
@@ -118,15 +118,15 @@ public class LevelCreator extends Creator {
     }
 
     private static TiledMap loadMap() {
-        Gdx.app.log("Loading map", "");
+        Gdx.app.log("Generating level map", "");
         TiledMap map = new TiledMap();
         Texture texture = AssetManager.getTexture(AssetManager.MANIC_SPRITES);
         TextureRegion[] blocks = TextureRegionHelper.getRegions(texture, 660, 2, 288, 320, Constants.TILE_SIZE);
         String[] lines = LevelCreator.getLines();
         Map<String, Integer> regionMappings = LevelCreator.getRegionMappings();
         TiledMapTileLayer layer = new TiledMapTileLayer(Constants.TILES_X, Constants.TILES_Y, Constants.TILE_SIZE, Constants.TILE_SIZE);
-        for (int y = 0; y < Constants.TILES_Y; y++) {
-            Gdx.app.log("Processing line " + y, lines[y]);
+        for (int y = Constants.TILES_Y - 1; y >= 0; y--) {
+            Gdx.app.log("Processing line", lines[y]);
             for (int x = 0; x < Constants.TILES_X; x++) {
                 char blockTypeChar = lines[y].charAt(x);
                 if (blockTypeChar == EMPTY_TILE) {
@@ -155,7 +155,7 @@ public class LevelCreator extends Creator {
             }
         }
         map.getLayers().add(layer);
-        Gdx.app.log("Finiahed loading map", "");
+        Gdx.app.log("Finiahed generating level map", "");
         return map;
     }
 

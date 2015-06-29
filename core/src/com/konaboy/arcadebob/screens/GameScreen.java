@@ -41,7 +41,7 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void show() {
-        Gdx.app.log("Creating game", "");
+        Gdx.app.log("Creating game screen", "");
 
         //create the level from properties file
         level = LevelCreator.createLevel(LEVEL);
@@ -70,7 +70,7 @@ public class GameScreen extends ScreenAdapter {
         //initialize our player
         Player.init(level.getPlayerSpawnPosition(), level.playerSpawnsFacingRight());
 
-        Gdx.app.log("Finished creating game", "");
+        Gdx.app.log("Finished creating game screen", "");
     }
 
     @Override
